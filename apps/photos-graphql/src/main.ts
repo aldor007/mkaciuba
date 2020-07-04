@@ -13,9 +13,9 @@ async function main() {
   const connection = await connect()
   try {
     const schema = await buildSchema({
-      resolvers: [CategoryResolver] 
+      resolvers: [CategoryResolver]
     })
-    const server = new ApolloServer({ schema })
+    const server = new ApolloServer({ schema, introspection: true })
     await server.listen(4000)
     console.log("Server has started! 4000")
   } catch (err) {
