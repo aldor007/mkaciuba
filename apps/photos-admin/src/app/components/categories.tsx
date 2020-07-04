@@ -3,17 +3,18 @@ import { List, Datagrid, Edit, Create, SimpleForm, DateField, TextField, EditBut
 export { default as CategoryIcon} from '@material-ui/icons/Category';
 
 
-export const CategoryList = (props) => (
+export const CategoryList = (props) =>
+  (
     <List {...props}>
-        <Datagrid>
-            <TextField source="id" />
-            <TextField source="name" />
-            <DateField source="publicationDate" />
-            <BooleanField  source="public" />
-            <EditButton basePath="/category" />
-        </Datagrid>
+      <Datagrid>
+        <TextField source="id"/>
+        <TextField source="name"/>
+        <DateField source="publicationDate"/>
+        <BooleanField source="public"/>
+        <EditButton basePath="/category"/>
+      </Datagrid>
     </List>
-);
+  );
 
 const CategoryTitle = ({ record }) => {
     return <span>Category {record ? `"${record.name}"` : ''}</span>;

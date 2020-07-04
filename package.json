@@ -91,6 +91,7 @@
     "tslint": "~6.0.0",
     "typescript": "~3.7.4",
     "graphql-cli": "4.0.1-beta.6",
+    "class-validator": "^0.12.2",
     "@test-graphql-cli/coverage": "4.0.1-beta.6",
     "@test-graphql-cli/validate": "4.0.1-beta.6",
     "@test-graphql-cli/diff": "4.0.1-beta.6",

@@ -1,34 +1,49 @@
 import gql from 'graphql-tag';
 
-const buildFieldList = (introspectionResults, resource, raFetchType) => {
-    console.info(introspectionResults, resource, raFetchType )
+const buildFieldList = (fields) => {
+  return fields
+    .filter(({type}) => type.ofType.kind === 'SCALAR')
+    .map(({name}) => name)
+    .join(',')
+}
+
+const QUERIES = {
+  'Category': 'categories'
 }
 
 export const buildQuery = introspectionResults => (raFetchType, resourceName, params) => {
-    const resource = introspectionResults.resources.find(r =>{console.info('----', r.type.name, resourceName); return r.type.name === resourceName } );
-    console.info('buildQuery', raFetchType, resourceName, params, resource)
+    const resource = introspectionResults.queries.find(r =>{console.info('----', r.name, resourceName); return r.name === QUERIES[resourceName] } );
+    const type = introspectionResults.types.find(r =>{console.info('----', r.name, resourceName); return r.name === resourceName } );
     switch (raFetchType) {
-        case 'GET_ONE':
-            return {
-                query: gql`query ${resource[raFetchType].name}($id: ID) {
-                    data: ${resource[raFetchType].name}(id: $id) {
-                        ${buildFieldList(introspectionResults, resource, raFetchType)}
+        case 'GET_ONE': {
+
+          return {
+            query: gql`query ${resource.name}($id: ID) {
+              ${resource.name}(id: $id) {
+                ${buildFieldList(type.fields)}
+              }
+            }`,
+            variables: params, // params = { id: ... }
+            parseResponse: response => response.data,
+          }
+        }
+        case 'GET_LIST': {
+          const query = `query ${resource.name} {
+                    ${resource.name} {
+                        ${buildFieldList(type.fields)}
                     }
-                }`,
-                variables: params, // params = { id: ... }
-                parseResponse: response => response.data,
-            }
-            break;
-        case 'GET_LIST':
-            return {
-                query: gql`query ${resource[raFetchType].name}() {
-                    data: ${resource[raFetchType].name}() {
-                        ${buildFieldList(introspectionResults, resource, raFetchType)}
-                    }
-                }`,
-                variables: params, // params = { id: ... }
-                parseResponse: response => response.data,
-            }
-            break;
+                }`;
+
+          return {
+            query: gql`${query}`,
+            variables: params, // params = { id: ... }
+            parseResponse: response => {
+              return {
+                data: response.data[QUERIES[resourceName]],
+                total: response.data[QUERIES[resourceName]].length,
+              }
+            },
+          }
+        }
     }
 }
