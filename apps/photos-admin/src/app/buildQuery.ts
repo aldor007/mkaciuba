@@ -7,6 +7,17 @@ const buildFieldList = (fields) => {
     .join(',')
 }
 
+const buildMutationFields = (fields) => {
+  return fields
+    .filter(({type}) => type.ofType.kind === 'SCALAR')
+    .filter(({name}) => name != 'id')
+    .map(({name}) => `${name}: $${name}`)
+    .join(',')
+}
+
+const firstLetterUpper = (str) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
 const QUERIES = {
   'Category': 'categories'
 }
@@ -14,12 +25,24 @@ const QUERIES = {
 export const buildQuery = introspectionResults => (raFetchType, resourceName, params) => {
     const resource = introspectionResults.queries.find(r =>{console.info('----', r.name, resourceName); return r.name === QUERIES[resourceName] } );
     const type = introspectionResults.types.find(r =>{console.info('----', r.name, resourceName); return r.name === resourceName } );
+    console.info(raFetchType, params)
+    const resourceNameCap = firstLetterUpper(resource.name)
     switch (raFetchType) {
-        case 'GET_ONE': {
-
+        case 'CREATE': {
           return {
-            query: gql`query ${resource.name}($id: ID) {
-              ${resource.name}(id: $id) {
+            query: gql`mutation create${resourceName}($data: Create${resourceName}Input!) {
+              create${resourceName}(data: $data) {
+                ${buildFieldList(type.fields)}
+              }
+            }`,
+            variables: { data: params, ...params }, // params = { id: ... }
+            parseResponse: response => response,
+          }
+        }
+        case 'GET_ONE': {
+          return {
+            query: gql`query ${resourceName.toLowerCase()}($id: String) {
+              ${resourceName.toLowerCase()}(id: $id) {
                 ${buildFieldList(type.fields)}
               }
             }`,

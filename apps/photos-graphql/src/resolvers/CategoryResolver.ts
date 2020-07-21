@@ -14,6 +14,7 @@ export class CategoryResolver {
     return Category.find()
   }
 
+  @Query(returns => Category)
   category(@Arg('id') id: string) {
     return Category.find({id})
   }
@@ -21,7 +22,7 @@ export class CategoryResolver {
   @Mutation(() => Category)
   async createCategory(@Arg("data") data: CreateCategoryInput) {
 
-    const category = Category.create(data) 
+    const category = Category.create(data)
     await category.save();
     return category;
   }

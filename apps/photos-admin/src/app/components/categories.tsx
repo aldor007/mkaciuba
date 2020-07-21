@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, Datagrid, Edit, Create, SimpleForm, DateField, TextField, EditButton, TextInput, DateInput, BooleanField  } from 'react-admin';
+import { List, Datagrid, Edit, Create, SimpleForm, DateField, TextField, EditButton, TextInput, DateInput, BooleanField, BooleanInput   } from 'react-admin';
 export { default as CategoryIcon} from '@material-ui/icons/Category';
 
 
@@ -26,7 +26,7 @@ export const CategoryEdit = (props) => (
             <TextInput disabled source="id" />
             <TextInput source="name" />
             <DateInput label="Publication date" source="publicationDate" />
-            <BooleanField label="Public"  source="public" />
+            <BooleanInput  label="Public"  source="public" />
         </SimpleForm>
     </Edit>
 );
@@ -36,7 +36,7 @@ export const CategoryCreate = (props) => (
         <SimpleForm>
             <TextInput source="name" />
             <DateInput label="Publication date" source="publicationDate" />
-            <BooleanField label="Public"  source="public" />
+            <BooleanInput  label="Public"  source="public" />
         </SimpleForm>
     </Create>
 );

@@ -7,7 +7,7 @@ import { Media } from './Media';
 @Entity()
 export class Category extends BaseEntity {
   @Field()
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Field()

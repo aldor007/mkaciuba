@@ -4,10 +4,12 @@
  */
 
 import "reflect-metadata";
-import { ApolloServer } from "apollo-server";
 import { buildSchema } from 'type-graphql';
 import { CategoryResolver } from './resolvers/CategoryResolver'; // add this
 import  {connect } from './connection';
+import { ApolloServer } from 'apollo-server-express';
+import  express from 'express';
+import cors from 'cors';
 
 async function main() {
   const connection = await connect()
@@ -15,8 +17,11 @@ async function main() {
     const schema = await buildSchema({
       resolvers: [CategoryResolver]
     })
+    const app = express();
+    app.use(cors())
     const server = new ApolloServer({ schema, introspection: true })
-    await server.listen(4000)
+    server.applyMiddleware({ app,  path: '/graphql' });
+    await app.listen(4000)
     console.log("Server has started! 4000")
   } catch (err) {
     console.error('Error',err, err.message)
