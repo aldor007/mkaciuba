@@ -16,7 +16,7 @@ export class CategoryResolver {
 
   @Query(returns => Category)
   category(@Arg('id') id: string) {
-    return Category.find({id})
+    return Category.findOne({id})
   }
 
   @Mutation(() => Category)
@@ -24,6 +24,18 @@ export class CategoryResolver {
 
     const category = Category.create(data)
     await category.save();
+    return category;
+  }
+
+  @Mutation(() => Category)
+  async deleteCategory(@Arg("id") id: string) {
+    const category = await Category.delete(id)
+    return category;
+  }
+
+  @Mutation(() => Category)
+  async deleteCategories(@Arg("ids", () => [String])ids: string[]) {
+    const category = await Category.delete(ids)
     return category;
   }
 }

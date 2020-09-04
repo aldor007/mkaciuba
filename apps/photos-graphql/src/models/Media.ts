@@ -6,12 +6,16 @@ import { Field, ObjectType } from 'type-graphql';
 @Entity()
 export class Media extends BaseEntity {
   @Field()
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Field()
   @Column()
   name: string;
+
+  @Field()
+  @Column()
+  url: string;
 
   @Field()
   @Column()

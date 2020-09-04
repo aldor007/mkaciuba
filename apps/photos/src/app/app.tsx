@@ -3,11 +3,12 @@ import { Message } from '@mkaciuba/api-interfaces';
 import  Header from './Header';
 import { faFacebook } from '@fortawesome/free-brands-svg-icons';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { gql, useQuery, ApolloProvider, ApolloClient, InMemoryCache  } from '@apollo/client';
 
 
 const header = {
   brand: {
-    imageUrl: 'https://aaa/[;', 
+    imageUrl: 'https://aaa/[;',
     name: 'mkaciuba.pl'
   },
   mainMenu: [
@@ -30,16 +31,20 @@ const header = {
   ]
 }
 
+const client = new ApolloClient({
+  uri: 'http://localhost:1337/graphql',
+  cache: new InMemoryCache()
+});
+
 export const App = () => {
 ;
 
   return (
-    <>
-          <CssBaseline />
+    <ApolloProvider client={client}>
+        <CssBaseline />
+        <Header brand={header.brand} mainMenu={header.mainMenu} social={header.social} topMenu={header.topMenu}/>
 
-        <Header brand={header.brand} mainMenu={header.mainMenu} social={header.social} topMenu={header.topMenu}/> 
-
-    </>
+    </ApolloProvider>
   );
 };
 

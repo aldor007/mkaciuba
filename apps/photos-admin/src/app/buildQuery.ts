@@ -19,15 +19,35 @@ const firstLetterUpper = (str) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 const QUERIES = {
-  'Category': 'categories'
+  'Category': 'categories',
+  'Media': 'medias'
 }
 
 export const buildQuery = introspectionResults => (raFetchType, resourceName, params) => {
     const resource = introspectionResults.queries.find(r =>{console.info('----', r.name, resourceName); return r.name === QUERIES[resourceName] } );
     const type = introspectionResults.types.find(r =>{console.info('----', r.name, resourceName); return r.name === resourceName } );
-    console.info(raFetchType, params)
+    console.info('type', raFetchType, params)
     const resourceNameCap = firstLetterUpper(resource.name)
     switch (raFetchType) {
+        case 'DELETE': {
+          console.info('----Remocw')
+          return {
+            query: gql`mutation delete${resourceName}($id: String!) {
+              delete${resourceName}(id: $id)
+            }`,
+            variables:  params, // params = { id: ... }
+            parseResponse: response => response,
+          }
+        }
+        case 'DELETE_MANY': {
+          return {
+            query: gql`mutation delete${resourceNameCap}($ids: [String]!) {
+              delete${resourceNameCap}(ids: $ids)
+            }`,
+            variables:  params, // params = { id: ... }
+            parseResponse: response => response,
+          }
+        }
         case 'CREATE': {
           return {
             query: gql`mutation create${resourceName}($data: Create${resourceName}Input!) {
@@ -41,13 +61,17 @@ export const buildQuery = introspectionResults => (raFetchType, resourceName, pa
         }
         case 'GET_ONE': {
           return {
-            query: gql`query ${resourceName.toLowerCase()}($id: String) {
+            query: gql`query ${resourceName.toLowerCase()}($id: String!) {
               ${resourceName.toLowerCase()}(id: $id) {
                 ${buildFieldList(type.fields)}
               }
             }`,
             variables: params, // params = { id: ... }
-            parseResponse: response => response.data,
+            parseResponse: response => {
+              return {
+                data: response.data[resourceName.toLowerCase()]
+              }
+            },
           }
         }
         case 'GET_LIST': {

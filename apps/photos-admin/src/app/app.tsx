@@ -6,6 +6,7 @@ import authProvider from './auth';
 import { Admin, Resource, Delete, Authenticated } from 'react-admin';
 
 import { CategoryCreate, CategoryEdit, CategoryList } from './components/categories';
+import { MediaCreate, MediaEdit, MediaList } from './components/media';
 
 interface IProps {
 
@@ -38,6 +39,7 @@ class App extends Component<IProps, IState> {
         return (
             <Admin dataProvider={dataProvider} authProvider={authProvider} >
                 <Resource name="Category" list={CategoryList} edit={CategoryEdit} create={CategoryCreate} />
+                <Resource name="Media" list={MediaList} edit={MediaEdit} create={MediaCreate} />
             </Admin>
         );
     }

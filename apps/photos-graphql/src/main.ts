@@ -6,6 +6,7 @@
 import "reflect-metadata";
 import { buildSchema } from 'type-graphql';
 import { CategoryResolver } from './resolvers/CategoryResolver'; // add this
+import { MediaResolver } from './resolvers/MediaResolver'; // add this
 import  {connect } from './connection';
 import { ApolloServer } from 'apollo-server-express';
 import  express from 'express';
@@ -15,7 +16,7 @@ async function main() {
   const connection = await connect()
   try {
     const schema = await buildSchema({
-      resolvers: [CategoryResolver]
+      resolvers: [CategoryResolver, MediaResolver]
     })
     const app = express();
     app.use(cors())
