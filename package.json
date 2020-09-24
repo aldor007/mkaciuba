@@ -68,7 +68,8 @@
     "tailwind": "^4.0.0",
     "tailwindcss": "^1.8.0",
     "type-graphql": "1.0.0-rc.2",
-    "typeorm": "^0.2.24"
+    "typeorm": "^0.2.24",
+    "popper.js": "^1.16.1"
   },
   "devDependencies": {
     "@apollo/client": "^3.1.3",

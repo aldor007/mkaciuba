@@ -4,6 +4,7 @@ import  Header from './Header';
 import { faFacebook } from '@fortawesome/free-brands-svg-icons';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { gql, useQuery, ApolloProvider, ApolloClient, InMemoryCache  } from '@apollo/client';
+import '../assets/main.css'
 
 
 const header = {
