@@ -4,8 +4,8 @@ import Popper from "popper.js";
 export const Dropdown = ({ color = "white" }) => {
   // dropdown props
   const [dropdownPopoverShow, setDropdownPopoverShow] = React.useState(false);
-  const btnDropdownRef = React.createRef<Element>();
-  const popoverDropdownRef = React.createRef<Element>();
+  const btnDropdownRef = React.createRef<HTMLDivElement>();
+  const popoverDropdownRef = React.createRef<HTMLDivElement>();
   const openDropdownPopover = () => {
     new Popper(btnDropdownRef.current, popoverDropdownRef.current, {
       placement: "bottom-start"

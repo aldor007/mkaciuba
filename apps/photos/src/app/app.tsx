@@ -5,6 +5,8 @@ import { faFacebook } from '@fortawesome/free-brands-svg-icons';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { gql, useQuery, ApolloProvider, ApolloClient, InMemoryCache  } from '@apollo/client';
 import '../assets/main.css'
+import { ImageList } from './ImagesList';
+import { Footer } from './Footer';
 
 
 const header = {
@@ -44,7 +46,8 @@ export const App = () => {
     <ApolloProvider client={client}>
         <CssBaseline />
         <Header brand={header.brand} mainMenu={header.mainMenu} social={header.social} topMenu={header.topMenu}/>
-
+        <ImageList></ImageList>
+        <Footer></Footer>
     </ApolloProvider>
   );
 };
