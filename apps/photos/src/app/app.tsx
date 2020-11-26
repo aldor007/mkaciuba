@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Message } from '@mkaciuba/api-interfaces';
 import  Header from './Header';
-import { faFacebook } from '@fortawesome/free-brands-svg-icons';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { gql, useQuery, ApolloProvider, ApolloClient, InMemoryCache  } from '@apollo/client';
 import '../assets/main.css'
 import { ImageList } from './ImagesList';
 import { Footer } from './Footer';
+import { faFacebook, faGithub, faInstagram, faTwitch, faTwitter } from '@fortawesome/free-brands-svg-icons';
 
 
 const header = {
@@ -22,8 +22,20 @@ const header = {
   ],
   social: [
     {
-      url: 'https://facebook.com',
+      url: 'https://github.com/aldor007',
+      icon: faGithub
+    },
+    {
+      url: 'https://twitter.com/mkaciubapl',
+      icon: faTwitter
+    },
+    {
+      url: 'https://facebook.com/mkaciubapl',
       icon: faFacebook
+    },
+    {
+      url: 'https://instagram.com/mkaciubapl',
+      icon: faInstagram
     }
   ],
   topMenu: [

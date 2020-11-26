@@ -75,7 +75,7 @@ export default function Header(props: HeaderProps)  {
 
   return (
     <React.Fragment>
-        <Navbar></Navbar>
+        <Navbar social={social} topMenu={topMenu}></Navbar>
     </React.Fragment>
   );
 }
