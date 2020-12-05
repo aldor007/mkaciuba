@@ -1,13 +1,28 @@
 import React from "react";
+import { SimpleImg } from 'react-simple-img';
 
+type Image = {
+  url: string;
+  mediaQuery: string;
+  webp: boolean;
+  type: string;
+}
 
 type Props = {
-  src: string;
+  images: [Image];
   title: string;
+  defaultImage: string
 };
-export default ({ src, title }: Props) => (
+export default ({ images, title, defaultImage }: Props) => {
+    const sources = images.map(image => (
+      <source srcSet={image.url} media={image.mediaQuery} type={image.type}/>
+    ));
+    return (
   <div className="relative cursor-pointer">
-    <img className="rounded" src={src} />
+    <picture>
+      {sources}
+      <img src={defaultImage}/>
+    </picture>
     <style jsx>{`
       .overlay {
         background: linear-gradient(0deg, black, transparent);
@@ -18,4 +33,5 @@ export default ({ src, title }: Props) => (
       <div className="text-gray-400 text-sm">Photographer</div>
     </div>
   </div>
-);
+  );
+}
