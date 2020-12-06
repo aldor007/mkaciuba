@@ -6,12 +6,14 @@ type Image = {
   mediaQuery: string;
   webp: boolean;
   type: string;
+  width: number;
+  height: number
 }
 
 type Props = {
   images: [Image];
   title: string;
-  defaultImage: string
+  defaultImage: Image
 };
 export default ({ images, title, defaultImage }: Props) => {
     const sources = images.map(image => (
@@ -21,16 +23,15 @@ export default ({ images, title, defaultImage }: Props) => {
   <div className="relative cursor-pointer">
     <picture>
       {sources}
-      <img src={defaultImage}/>
+      <img src={defaultImage.url} width={defaultImage.width} height={defaultImage.height} />
     </picture>
-    <style jsx>{`
+    <style>{`
       .overlay {
         background: linear-gradient(0deg, black, transparent);
       }
     `}</style>
     <div className="overlay absolute bottom-0 w-full h-24 px-4 pt-6">
       <div className="text-white text-lg">{title}</div>
-      <div className="text-gray-400 text-sm">Photographer</div>
     </div>
   </div>
   );

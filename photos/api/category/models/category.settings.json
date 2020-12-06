@@ -19,7 +19,7 @@
     "slug": {
       "type": "string",
       "required": false,
-      "unique": false
+      "unique": true
     },
     "public": {
       "type": "boolean"
