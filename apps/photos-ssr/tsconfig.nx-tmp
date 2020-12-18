@@ -1,0 +1,26 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc",
+    "types": [
+      "node"
+    ],
+    "paths": {
+      "@mkaciuba/api-interfaces": [
+        "libs/api-interfaces/src/index.ts"
+      ],
+      "@mkaciuba/image": [
+        "libs/image/src/index.ts"
+      ],
+      "@mkaciuba/photos": [
+        "apps/photos/src/index.ts"
+      ]
+    }
+  },
+  "exclude": [
+    "**/*.spec.ts"
+  ],
+  "include": [
+    "**/*.ts"
+  ]
+}
