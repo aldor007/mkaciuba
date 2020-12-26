@@ -2,25 +2,33 @@
   "kind": "collectionType",
   "collectionName": "categories",
   "info": {
-    "name": "Category"
+    "name": "Category",
+    "description": ""
   },
   "options": {
     "increments": true,
-    "timestamps": true
+    "timestamps": true,
+    "draftAndPublish": false
   },
   "attributes": {
-    "Name": {
+    "name": {
       "type": "string",
       "required": true,
+      "unique": false
+    },
+    "slug": {
+      "type": "string",
+      "required": false,
       "unique": true
     },
-    "Public": {
+    "public": {
       "type": "boolean"
     },
-    "PublicationDate": {
-      "type": "datetime"
+    "publicationDate": {
+      "type": "datetime",
+      "required": true
     },
-    "File": {
+    "file": {
       "model": "file",
       "via": "related",
       "allowedTypes": [
@@ -29,7 +37,7 @@
       "plugin": "upload",
       "required": false
     },
-    "Image": {
+    "image": {
       "model": "file",
       "via": "related",
       "allowedTypes": [
@@ -38,7 +46,7 @@
       "plugin": "upload",
       "required": true
     },
-    "Medias": {
+    "medias": {
       "collection": "file",
       "via": "related",
       "allowedTypes": [
@@ -54,8 +62,8 @@
       "dominant": true
     },
     "gallery": {
-      "via": "categories",
-      "model": "gallery"
+      "model": "gallery",
+      "via": "categories"
     }
   }
 }

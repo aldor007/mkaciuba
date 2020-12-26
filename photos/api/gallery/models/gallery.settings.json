@@ -9,15 +9,20 @@
     "timestamps": true
   },
   "attributes": {
-    "Name": {
+    "name": {
       "type": "string"
     },
-    "Public": {
+    "slug": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "public": {
       "type": "boolean"
     },
     "categories": {
-      "collection": "category",
-      "via": "gallery"
+      "via": "gallery",
+      "collection": "category"
     }
   }
 }

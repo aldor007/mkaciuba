@@ -1,0 +1,18 @@
+{
+  "name": "strapi-provider-upload-mort",
+  "version": "1.0.0",
+  "maintainers": [
+    "my-email.domain.com"
+  ],
+  "description": "ovh upload provider for strapi",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Christos Sotiriou",
+  "license": "ISC",
+  "dependencies": {
+    "pkgcloud": "^2.2.0",
+    "streamifier": "^0.1.1"
+  }
+}
