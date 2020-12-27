@@ -67,7 +67,7 @@ const getImage = (obj, preset) => {
 const getImageUrl = (obj, preset) => {
   const parent = base64Url(getStoragePath(obj));
   let caption = obj.caption || obj.alternativeText || obj.name;
-  caption = caption.replace(/_/, '-').replace('\.', '-')
+  caption = caption.replace(/_/g, '-').replace(/\./g, '-').replace(/ /g, '-')
   return `https://mort.mkaciuba.com/images/transform/${parent}/photo_${caption}_${preset}${obj.ext}`
 }
 module.exports = {
@@ -114,7 +114,6 @@ module.exports = {
         resolver: async (obj, options, ctx) => {
           // return getImage(obj, presetList.filter(p => p.name == 'big1000')[0]);
           return getImage(obj, presetList.filter(p => {
-            console.info(p.name)
             if (p.name == 'big1000') {
               return p;
             }

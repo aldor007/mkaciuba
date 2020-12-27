@@ -22,8 +22,13 @@ const GET_CATEGORIES = gql`
         webp
         type
       }
-      defaultImage
-    }
+      defaultImage {
+        url
+        mediaQuery
+        webp
+        type
+       }
+      }
      name
 
 

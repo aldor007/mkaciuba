@@ -2,7 +2,7 @@ import React from "react";
 
 export const Footer = () => {
 
-return (<div className="bg-gray-500">
+return (<div className="bg-gray-700">
 
     <div className="container mx-auto pt-8 pb-4">
 

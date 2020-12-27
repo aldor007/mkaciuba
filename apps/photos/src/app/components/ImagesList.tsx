@@ -6,8 +6,8 @@ import { useWebPSupportCheck } from "react-use-webp-support-check";
 import {
   useWindowWidth
 } from '@react-hook/window-size';
-// import 'photoswipe/dist/photoswipe.css'
-// import 'photoswipe/dist/default-skin/default-skin.css'
+import 'photoswipe/dist/photoswipe.css'
+import 'photoswipe/dist/default-skin/default-skin.css'
 
 import { Gallery, Item } from 'react-photoswipe-gallery'
 const GET_IMAGES = gql`
@@ -65,23 +65,7 @@ export const ImageList = ({ categorySlug }: ImageListProps) => {
    const images = data.categories[0].medias;
     return (
       <Masonry>
-         <style jsx>{`
-      @screen md {
-        .masonry {
-          column-count: 2;
-        }
-      }
-      .masonry {
-        column-count: 3;
-        column-gap: 2rem;
-      }
-      @screen lg {
-        .masonry {
-          column-count: 4;
-        }
-      }
-    `}</style>
-            <div className="masonry px-16 py-8">
+            <div className="flex flex-wrap -mx-1 overflow-hidden">
 
   <Gallery shareButton={false}>
       {images.map(item => (
@@ -91,20 +75,16 @@ export const ImageList = ({ categorySlug }: ImageListProps) => {
         width={item.defaultImage.width}
         height={item.defaultImage.height}
         id={item.id}
+        key={item.id}
       >
         {({ ref, open }) => (
-<div className="relative cursor-pointer">
+<div className="my-1 px-1 w-1/2 overflow-hidden sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/3">
   <picture>
-   {item.thumbnails.map(thumbnail=> (
-    <source srcSet={thumbnail.url} media={thumbnail.mediaQuery} type={thumbnail.type}/>
+   {item.thumbnails.map(thumbnail => (
+    <source srcSet={thumbnail.url} key={thumbnail.url}  media={thumbnail.mediaQuery} type={thumbnail.type}/>
   ))}
      <img ref={ref}  width={item.defaultImage.width} height={item.defaultImage.height} onClick={open} src={item.defaultImage.url} />
   </picture>
-  <style>{`
-    .overlay {
-      background: linear-gradient(0deg, black, transparent);
-    }
-  `}</style>
   <div className="overlay absolute bottom-0 w-full h-24 px-4 pt-6">
     <div className="text-white text-lg">{item.alternativeText}</div>
   </div>
