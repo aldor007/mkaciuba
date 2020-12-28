@@ -7,6 +7,7 @@ class Preset {
     this.height = height;
     this.mediaQuery = mediaQuery;
     this.type = type;
+    this.webp = type.includes('webp')
   }
 
   calculateSize(imageWidth, imageHeight) {
@@ -85,6 +86,7 @@ module.exports = {
     transforms(presets: [String]!): [Image!]
     thumbnails: [Image]
     defaultImage: Image
+    thumbnail(width: Int, webp: Boolean): Image
   }
   `,
   resolver: {
@@ -112,12 +114,32 @@ module.exports = {
       defaultImage: {
         resolverOf: 'application::category.category.findOne', // Will apply the same policy on the custom resolver as the controller's action `findByCategories`.
         resolver: async (obj, options, ctx) => {
-          // return getImage(obj, presetList.filter(p => p.name == 'big1000')[0]);
           return getImage(obj, presetList.filter(p => {
             if (p.name == 'big1000') {
               return p;
             }
-        })[0]);
+          })[0]);
+        },
+      },
+      thumbnail: {
+        resolverOf: 'application::category.category.findOne', // Will apply the same policy on the custom resolver as the controller's action `findByCategories`.
+        resolver: async (obj, options, ctx) => {
+          // return getImage(obj, presetList.filter(p => p.name == 'big1000')[0]);
+          const filterPresets = presetList.filter(p => {
+            if (p.webp == options.webp) {
+              return p;
+            }
+          });
+          let minIndex = 0;
+          let minValue = options.width - filterPresets[0].width;
+          filterPresets.forEach((p, index) => {
+            const tmpValue = options.width - p.width;
+            if (tmpValue > 0 && tmpValue < minValue) {
+              minIndex = index;
+              minValue = tmpValue;
+            }
+          });
+          return getImage(obj, filterPresets[minIndex]);
         },
       },
       thumbnails: {

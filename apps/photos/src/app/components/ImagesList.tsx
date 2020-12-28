@@ -4,6 +4,7 @@ import Card from "./Card";
 import { gql, useQuery } from '@apollo/client';
 import { useWebPSupportCheck } from "react-use-webp-support-check";
 import {
+  useWindowHeight,
   useWindowWidth
 } from '@react-hook/window-size';
 import 'photoswipe/dist/photoswipe.css'
@@ -16,9 +17,6 @@ const GET_IMAGES = gql`
     slug: $categorySlug
   }) {
     id
-    image {
-      url
-    }
     name
     medias {
       id
@@ -31,69 +29,89 @@ const GET_IMAGES = gql`
         width
         height
       }
-      defaultImage {
-        url
-        mediaQuery
-        webp
-        type
-        width
-        height
-      }
     }
-
   }
 }
 `;
 
 export interface ImageListProps {
-  categorySlug: number
+  categorySlug: string
+}
+
+export interface Image {
+  url: string
+  mediaQuery: string 
+  webp: boolean
+  type: string
+  width: number
+  height: number
+}
+
+const findImageForWidth = (images: Image[], width: number, webp: boolean) => {
+  const filterPresets = images.filter(p => {
+    if (p.webp == webp) {
+      return p;
+    }
+  });
+  let minIndex = 0;
+  let minValue = width - filterPresets[0].width;
+  filterPresets.forEach((p, index) => {
+    const tmpValue = width - p.width;
+    if (tmpValue > 0 && tmpValue < minValue) {
+      minIndex = index;
+      minValue = tmpValue;
+    }
+  });
+
+  return filterPresets[minIndex];
 }
 
 export const ImageList = ({ categorySlug }: ImageListProps) => {
-
+  const webp = useWebPSupportCheck();
+  const width = useWindowWidth({wait: 553});
   const { loading, error, data } = useQuery(GET_IMAGES, {
     variables: { categorySlug },
   });
   if (loading) return <p>Loading...</p>;
   if (error) {
+
     console.info(error)
      return <p>Error :(</p>
    };
    if (data.categories.length === 0 ) {
      return <p> Not found </p>
    }
-   const images = data.categories[0].medias;
-    return (
-      <Masonry>
-            <div className="flex flex-wrap -mx-1 overflow-hidden">
 
-  <Gallery shareButton={false}>
-      {images.map(item => (
-      <Item
-        original={item.defaultImage.url}
-        thumbnail={item.url}
-        width={item.defaultImage.width}
-        height={item.defaultImage.height}
-        id={item.id}
-        key={item.id}
-      >
-        {({ ref, open }) => (
-<div className="my-1 px-1 w-1/2 overflow-hidden sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/3">
-  <picture>
-   {item.thumbnails.map(thumbnail => (
-    <source srcSet={thumbnail.url} key={thumbnail.url}  media={thumbnail.mediaQuery} type={thumbnail.type}/>
-  ))}
-     <img ref={ref}  width={item.defaultImage.width} height={item.defaultImage.height} onClick={open} src={item.defaultImage.url} />
-  </picture>
-  <div className="overlay absolute bottom-0 w-full h-24 px-4 pt-6">
-    <div className="text-white text-lg">{item.alternativeText}</div>
-  </div>
-</div>
-        )}
+   const images = data.categories[0].medias;
+   const defaultImages = images.map((item) => findImageForWidth(item.thumbnails, width, webp));
+   return (
+        <div className="flex flex-wrap -mx-1 overflow-hidden">
+          <Gallery shareButton={false}>
+            {images.map( (item, index) => (
+            <Item
+              original={defaultImages[index].url}
+              thumbnail={defaultImages[index].url}
+              width={defaultImages[index].width}
+              height={defaultImages[index].height}
+              id={item.id}
+              key={item.id}
+            >
+            {({ ref, open }) => (
+              <div className="my-1 px-1 w-1/2 overflow-hidden sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/3">
+                <picture>
+                  {item.thumbnails.map(thumbnail => (
+                   <source srcSet={thumbnail.url} key={thumbnail.url}  media={thumbnail.mediaQuery} type={thumbnail.type}/>
+                  ))}
+                <img ref={ref}  width={defaultImages[index].url} height={defaultImages[index].height} onClick={open} src={defaultImages[index].url} />
+                </picture>
+                 <div className="my-1 px-1 w-1/2 overflow-hidden sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/3">
+                  <div className="text-white text-lg">{item.alternativeText}</div>
+                </div>
+              </div>
+            )}
       </Item>
       ))}
   </Gallery>
 </div>
-  </Masonry>
   )
 };
