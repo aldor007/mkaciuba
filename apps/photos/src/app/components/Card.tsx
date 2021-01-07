@@ -1,5 +1,4 @@
 import React from "react";
-import { SimpleImg } from 'react-simple-img';
 
 type Image = {
   url: string;

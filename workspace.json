@@ -108,63 +108,6 @@
         }
       }
     },
-    "api": {
-      "root": "apps/api",
-      "sourceRoot": "apps/api/src",
-      "projectType": "application",
-      "prefix": "api",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@nrwl/node:build",
-          "options": {
-            "outputPath": "dist/apps/api",
-            "main": "apps/api/src/main.ts",
-            "tsConfig": "apps/api/tsconfig.app.json",
-            "assets": ["apps/api/src/assets"]
-          },
-          "configurations": {
-            "production": {
-              "optimization": true,
-              "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/api/src/environments/environment.ts",
-                  "with": "apps/api/src/environments/environment.prod.ts"
-                }
-              ]
-            }
-          }
-        },
-        "serve": {
-          "builder": "@nrwl/node:execute",
-          "options": {
-            "buildTarget": "api:build"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "config": "apps/api/.eslintrc",
-            "tsConfig": [
-              "apps/api/tsconfig.app.json",
-              "apps/api/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!apps/api/**"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "apps/api/jest.config.js",
-            "tsConfig": "apps/api/tsconfig.spec.json",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "api-interfaces": {
       "root": "libs/api-interfaces",
       "sourceRoot": "libs/api-interfaces/src",
@@ -279,93 +222,62 @@
         }
       }
     },
-    "photos-graphql": {
-      "root": "apps/photos-graphql",
-      "sourceRoot": "apps/photos-graphql/src",
-      "projectType": "application",
-      "prefix": "photos-graphql",
+    "images": {
+      "root": "libs/images",
+      "sourceRoot": "libs/images/src",
+      "projectType": "library",
       "schematics": {},
       "architect": {
-        "build": {
-          "builder": "@nrwl/node:build",
-          "options": {
-            "outputPath": "dist/apps/photos-graphql",
-            "main": "apps/photos-graphql/src/main.ts",
-            "tsConfig": "apps/photos-graphql/tsconfig.app.json",
-            "assets":[
-              { "glob": "ormconfig.json", "input": "./", "output": "./"}
-            ]
-          },
-          "configurations": {
-            "production": {
-              "optimization": true,
-              "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/photos-graphql/src/environments/environment.ts",
-                  "with": "apps/photos-graphql/src/environments/environment.prod.ts"
-                }
-              ]
-            }
-          }
-        },
-        "serve": {
-          "builder": "@nrwl/node:execute",
-          "options": {
-            "buildTarget": "photos-graphql:build"
-          }
-        },
         "lint": {
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "apps/photos-graphql/.eslintrc",
+            "config": "libs/images/.eslintrc",
             "tsConfig": [
-              "apps/photos-graphql/tsconfig.app.json",
-              "apps/photos-graphql/tsconfig.spec.json"
+              "libs/images/tsconfig.lib.json",
+              "libs/images/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!apps/photos-graphql/**"]
+            "exclude": ["**/node_modules/**", "!libs/images/**"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "apps/photos-graphql/jest.config.js",
-            "tsConfig": "apps/photos-graphql/tsconfig.spec.json",
+            "jestConfig": "libs/images/jest.config.js",
+            "tsConfig": "libs/images/tsconfig.spec.json",
             "passWithNoTests": true
           }
         }
       }
     },
-    "photos-admin": {
-      "root": "apps/photos-admin",
-      "sourceRoot": "apps/photos-admin/src",
+    "photos-embed": {
+      "root": "apps/photos-embed",
+      "sourceRoot": "apps/photos-embed/src",
       "projectType": "application",
       "schematics": {},
       "architect": {
         "build": {
           "builder": "@nrwl/web:build",
           "options": {
-            "outputPath": "dist/apps/photos-admin",
-            "index": "apps/photos-admin/src/index.html",
-            "main": "apps/photos-admin/src/main.tsx",
-            "polyfills": "apps/photos-admin/src/polyfills.ts",
-            "tsConfig": "apps/photos-admin/tsconfig.app.json",
+            "outputPath": "dist/apps/photos-embed",
+            "index": "apps/photos-embed/src/index.html",
+            "main": "apps/photos-embed/src/main.tsx",
+            "polyfills": "apps/photos-embed/src/polyfills.ts",
+            "tsConfig": "apps/photos-embed/tsconfig.app.json",
             "assets": [
-              "apps/photos-admin/src/favicon.ico",
-              "apps/photos-admin/src/assets"
+              "apps/photos-embed/src/favicon.ico",
+              "apps/photos-embed/src/assets"
             ],
             "styles": [],
             "scripts": [],
-            "webpackConfig": "@nrwl/react/plugins/webpack"
+            "webpackConfig": "apps/photos-embed/webpack.config.ts"
           },
           "configurations": {
             "production": {
               "fileReplacements": [
                 {
-                  "replace": "apps/photos-admin/src/environments/environment.ts",
-                  "with": "apps/photos-admin/src/environments/environment.prod.ts"
+                  "replace": "apps/photos-embed/src/environments/environment.ts",
+                  "with": "apps/photos-embed/src/environments/environment.prod.ts"
                 }
               ],
               "optimization": true,
@@ -388,11 +300,11 @@
         "serve": {
           "builder": "@nrwl/web:dev-server",
           "options": {
-            "buildTarget": "photos-admin:build"
+            "buildTarget": "photos-embed:build"
           },
           "configurations": {
             "production": {
-              "buildTarget": "photos-admin:build:production"
+              "buildTarget": "photos-embed:build:production"
             }
           }
         },
@@ -400,39 +312,39 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "apps/photos-admin/.eslintrc",
+            "config": "apps/photos-embed/.eslintrc",
             "tsConfig": [
-              "apps/photos-admin/tsconfig.app.json",
-              "apps/photos-admin/tsconfig.spec.json"
+              "apps/photos-embed/tsconfig.app.json",
+              "apps/photos-embed/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!apps/photos-admin/**"]
+            "exclude": ["**/node_modules/**", "!apps/photos-embed/**"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "apps/photos-admin/jest.config.js",
-            "tsConfig": "apps/photos-admin/tsconfig.spec.json",
+            "jestConfig": "apps/photos-embed/jest.config.js",
+            "tsConfig": "apps/photos-embed/tsconfig.spec.json",
             "passWithNoTests": true
           }
         }
       }
     },
-    "photos-admin-e2e": {
-      "root": "apps/photos-admin-e2e",
-      "sourceRoot": "apps/photos-admin-e2e/src",
+    "photos-embed-e2e": {
+      "root": "apps/photos-embed-e2e",
+      "sourceRoot": "apps/photos-embed-e2e/src",
       "projectType": "application",
       "architect": {
         "e2e": {
           "builder": "@nrwl/cypress:cypress",
           "options": {
-            "cypressConfig": "apps/photos-admin-e2e/cypress.json",
-            "tsConfig": "apps/photos-admin-e2e/tsconfig.e2e.json",
-            "devServerTarget": "photos-admin:serve"
+            "cypressConfig": "apps/photos-embed-e2e/cypress.json",
+            "tsConfig": "apps/photos-embed-e2e/tsconfig.e2e.json",
+            "devServerTarget": "photos-embed:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "photos-admin:serve:production"
+              "devServerTarget": "photos-embed:serve:production"
             }
           }
         },
@@ -440,9 +352,9 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "apps/photos-admin-e2e/.eslintrc",
-            "tsConfig": ["apps/photos-admin-e2e/tsconfig.e2e.json"],
-            "exclude": ["**/node_modules/**", "!apps/photos-admin-e2e/**"]
+            "config": "apps/photos-embed-e2e/.eslintrc",
+            "tsConfig": ["apps/photos-embed-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/photos-embed-e2e/**"]
           }
         }
       }

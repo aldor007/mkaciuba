@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Link, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Link, Switch } from 'react-router-dom';
 import '../assets/main.css'
 import '../assets/photos.css'
 import { Home } from './pages/Home'
@@ -15,9 +15,7 @@ const client = new ApolloClient({
 export const App = () => {
   return (
       <ApolloProvider client={client}>
-    <Switch>
-    {renderRoutes(Routes)}
-  </Switch>
+        {renderRoutes(Routes)}
       </ApolloProvider>
   );
 };

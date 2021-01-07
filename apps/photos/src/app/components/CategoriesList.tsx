@@ -53,22 +53,6 @@ export const CategoriesList = ({ galleryId, gallerySlug}: CategoriesListProps) =
    };
     return (
   <Masonry>
-    <style jsx>{`
-      @screen md {
-        .masonry {
-          column-count: 2;
-        }
-      }
-      .masonry {
-        column-count: 3;
-        column-gap: 2rem;
-      }
-      @screen lg {
-        .masonry {
-          column-count: 4;
-        }
-      }
-    `}</style>
     <div className="masonry px-16 py-8">
 
       {!loading && data.categories.map(item => (

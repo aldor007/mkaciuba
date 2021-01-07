@@ -1,6 +1,7 @@
 import { Home } from './app/pages/Home';
 import { Categories } from './app/pages/Categories';
 import { Photos } from './app/pages/Photos';
+import { IframePhotos } from './app/pages/IframePhotos';
 
 
 export const Routes = [
@@ -13,6 +14,11 @@ export const Routes = [
         component: Categories,
         path: '/gallery/:gallerySlug',
         name: 'categoryList'
+    },
+    {
+        component: IframePhotos,
+        path: '/iframe/:gallerySlug/:categorySlug',
+       name: 'iframe-photos'
     },
     {
         component: Home,

@@ -1,12 +1,12 @@
 
 import { CategoriesList } from '../components/CategoriesList';
-import { Footer } from '../Footer';
+import { Footer } from '../components/Footer';
 import { faFacebook, faGithub, faInstagram, faTwitch, faTwitter } from '@fortawesome/free-brands-svg-icons';
 import React, { useEffect, useState } from 'react';
 import  Header from '../Header';
 import { gql, useQuery } from '@apollo/client';
 import { useParams } from 'react-router-dom';
-import { ImageList } from '../components/ImagesList';
+import { ImageList } from '@mkaciuba/image';
 
 const header = {
   brand: {
