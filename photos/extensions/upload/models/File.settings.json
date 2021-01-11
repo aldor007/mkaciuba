@@ -56,6 +56,11 @@
       "configurable": false,
       "required": true
     },
+    "path": {
+      "type": "string",
+      "configurable": false,
+      "private": true
+    },
     "previewUrl": {
       "type": "string",
       "configurable": false

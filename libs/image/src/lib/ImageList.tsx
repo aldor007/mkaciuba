@@ -42,7 +42,7 @@ export interface ImageListProps {
 }
 
 
-const findImageForWidth = (images: Image[], width: number, webp: boolean) => {
+export const findImageForWidth = (images: Image[], width: number, webp: boolean) => {
   const filterPresets = images.filter(p => {
     if (p.webp == webp) {
       return p;
@@ -103,7 +103,7 @@ export const ImageList = ({ categorySlug }: ImageListProps) => {
                     {item.thumbnails.map(thumbnail => (
                     <source srcSet={thumbnail.url} key={thumbnail.url}  media={thumbnail.mediaQuery} type={thumbnail.type}/>
                     ))}
-                  <img ref={ref as RefObject<HTMLImageElement>}  width={defaultImages[index].url} height={defaultImages[index].height} onClick={open} src={defaultImages[index].url} />
+                  <img ref={ref as RefObject<HTMLImageElement>}  width={defaultImages[index].width} height={defaultImages[index].height} onClick={open} src={defaultImages[index].url} />
                   </picture>
               </LazyLoad>
                   <div className="my-1 px-1 w-1/2 overflow-hidden sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/3">

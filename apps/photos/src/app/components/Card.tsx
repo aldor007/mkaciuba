@@ -24,11 +24,6 @@ export default ({ images, title, defaultImage }: Props) => {
       {sources}
       <img src={defaultImage.url} width={defaultImage.width} height={defaultImage.height} />
     </picture>
-    <style>{`
-      .overlay {
-        background: linear-gradient(0deg, black, transparent);
-      }
-    `}</style>
     <div className="overlay absolute bottom-0 w-full h-24 px-4 pt-6">
       <div className="text-white text-lg">{title}</div>
     </div>

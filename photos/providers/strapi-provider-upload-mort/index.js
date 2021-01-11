@@ -35,6 +35,8 @@ module.exports = {
               const base64Parent = Buffer.from(storagePath).toString('base64').replace('+', '-').replace('/', '_').replace(/=+$/, '');
               file.url = `https://mort.mkaciuba.com/images/transform/${base64Parent}/photo_admin_big.jpg`;
               file.previewUrl = `https://mort.mkaciuba.com/images/transform/${base64Parent}/photo_opis_small.jpg`
+              file.path = storagePath;
+
               resolve();
             }
           );

@@ -1,4 +1,8 @@
 const { getStoragePath, base64Url } = require('../../../lib/index');
+const LRU = require("lru-cache");
+const lruCache = new LRU({ max: 30, maxAge: 1000 * 60 * 5 });
+const slugify = require('slugify');
+
 
 class Preset {
   constructor(name, width, height, mediaQuery, type) {
@@ -56,6 +60,7 @@ class Image {
     this.height = height;
     this.type = type;
     this.webp = type.includes('webp')
+
   }
 }
 
@@ -66,9 +71,10 @@ const getImage = (obj, preset) => {
 }
 
 const getImageUrl = (obj, preset) => {
-  const parent = base64Url(getStoragePath(obj));
+  const parent = base64Url(obj.path);
   let caption = obj.caption || obj.alternativeText || obj.name;
   caption = caption.replace(/_/g, '-').replace(/\./g, '-').replace(/ /g, '-')
+  caption = slugify(caption);
   return `https://mort.mkaciuba.com/images/transform/${parent}/photo_${caption}_${preset}${obj.ext}`
 }
 module.exports = {
@@ -82,45 +88,12 @@ module.exports = {
     webp: Boolean!
   }
   extend type UploadFile {
-    transform(preset: String!): Image!
-    transforms(presets: [String]!): [Image!]
     thumbnails: [Image]
-    defaultImage: Image
     thumbnail(width: Int, webp: Boolean): Image
   }
   `,
   resolver: {
     UploadFile: {
-      transform: {
-        resolverOf: 'application::category.category.findOne', // Will apply the same policy on the custom resolver as the controller's action `findByCategories`.
-        resolver: async (obj, options, ctx) => {
-          const presetName = options.preset;
-          const preset = presetList.filter(p => p.name == presetName);
-          return getImage(obj, preset[0])
-        },
-      },
-      transforms: {
-        resolverOf: 'application::category.category.findOne', // Will apply the same policy on the custom resolver as the controller's action `findByCategories`.
-        resolver: async (obj, options, ctx) => {
-          const presetNames = options.presets;
-          const preset = presetList.filter(p => presetNames.include(p.name));
-          const result = [];
-          for (const preset of presets) {
-            result.push(getImage(obj, preset));
-          }
-          return result;
-        },
-      },
-      defaultImage: {
-        resolverOf: 'application::category.category.findOne', // Will apply the same policy on the custom resolver as the controller's action `findByCategories`.
-        resolver: async (obj, options, ctx) => {
-          return getImage(obj, presetList.filter(p => {
-            if (p.name == 'big1000') {
-              return p;
-            }
-          })[0]);
-        },
-      },
       thumbnail: {
         resolverOf: 'application::category.category.findOne', // Will apply the same policy on the custom resolver as the controller's action `findByCategories`.
         resolver: async (obj, options, ctx) => {
@@ -145,9 +118,21 @@ module.exports = {
       thumbnails: {
         resolverOf: 'application::category.category.findOne',
         resolver: async (obj, options, ctx) => {
+
+          let image = lruCache.get(obj.id)
+          if (!image) {
+            image = await strapi
+            .query('File', 'upload')
+            .model.query(qb => {
+              qb.where('id', obj.id);
+            })
+            .fetch();
+            lruCache.set(obj.id, image);
+          }
+
           const result = [];
           for (const p of presetList) {
-            result.push(getImage(obj, p))
+            result.push(getImage(image.attributes, p))
           }
           return result;
         },
