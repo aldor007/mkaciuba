@@ -176,8 +176,9 @@
           "proxyConfig": "apps/photos-ssr/proxy.conf.json",
           "options": {
             "outputPath": "dist/apps/photos-ssr",
-            "main": "apps/photos-ssr/src/main.ts",
+            "main": "apps/photos-ssr/src/main.tsx",
             "tsConfig": "apps/photos-ssr/tsconfig.app.json",
+            "webpackConfig": "apps/photos-ssr/webpack.config.ts",
             "assets": ["apps/photos-ssr/src/assets"]
           },
           "configurations": {

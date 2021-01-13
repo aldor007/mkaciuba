@@ -40,11 +40,9 @@ class Preset {
 }
 
 const presetList = [
-  new Preset('smallwebp', 150, null, '(max-width: 200px)', 'webp'),
   new Preset('bigwebp', 700, null, '(max-width: 1000px)', 'webp'),
   new Preset('big1000webp', 1000, null, '(max-width: 1300px)', 'webp'),
   new Preset('big1300webp', 1300, null, '(max-width: 1600px)', 'webp'),
-  new Preset('small', 150, null, '(max-width: 200px)', 'jpeg'),
   new Preset('big', 700, null, '(max-width: 1000px)', 'jpeg'),
   new Preset('big1000', 1000, null, '(max-width: 1300px)', 'jpeg'),
   new Preset('big1300', 1300, null, '(max-width: 1600px)', 'jpeg'),
@@ -73,7 +71,7 @@ const getImage = (obj, preset) => {
 const getImageUrl = (obj, preset) => {
   const parent = base64Url(obj.path);
   let caption = obj.caption || obj.alternativeText || obj.name;
-  caption = caption.replace(/_/g, '-').replace(/\./g, '-').replace(/ /g, '-')
+  caption = caption.replace(/_/g, '-').replace(/\./g, '-').replace(/ /g, '-').replace(':', '').replace(')', '')
   caption = slugify(caption);
   return `https://mort.mkaciuba.com/images/transform/${parent}/photo_${caption}_${preset}${obj.ext}`
 }

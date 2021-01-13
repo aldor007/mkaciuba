@@ -1,14 +1,19 @@
-const nrwlConfig = require("@nrwl/react/plugins/webpack"); // require the main @nrwl/react/plugins/webpack configuration function.
-module.exports = config => {
+module.exports = (config, context) => {
+   const {
+    options: { outputPath, filename },
+  } = context;
+
   config.module.rules.push(
       {
         test: /\.css$/,
         use: [
-          'isomorphic-style-loader',
           {
+            // Interprets `@import` and `url()` like `import/require()` and will resolve them
             loader: 'css-loader',
             options: {
-              importLoaders: 1
+              modules: {
+                exportOnlyLocals: true
+              }
             }
           },
           {
@@ -24,5 +29,5 @@ module.exports = config => {
         ],
       }
   );
-  return nrwlConfig(config);
+  return config;
 };

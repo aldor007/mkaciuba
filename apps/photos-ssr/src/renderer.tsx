@@ -45,8 +45,10 @@ export default (req: Request, store, context) => {
 
             </head>
             <body>
-                <div id="root">${content}</div>
-               
+            <div id="root" dangerouslySetInnerHTML={{ __html: content }} />
+            <script dangerouslySetInnerHTML={{
+              __html: window.__APOLLO_STATE__=${JSON.stringify(state).replace(/</g, '\\u003c')};,
+            }} />
                 <!--- <script src="${assetsPath}/runtime.js" defer></script> --->
                 <script src="${assetsPath}/polyfills.js" defer></script>
                 <script src="${assetsPath}/vendor.js" defer></script>
