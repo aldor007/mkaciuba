@@ -2,8 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Route, Link, Switch, useLocation } from 'react-router-dom';
 import withStyles from 'isomorphic-style-loader/withStyles'
 
-import mainCss from  '../assets/main.css'
-import photo from '../assets/photos.css'
+import '../assets/photos.css'
 import { Home } from './pages/Home'
 import { renderRoutes } from 'react-router-config';
 import { Routes } from '../routes';
@@ -20,8 +19,11 @@ export function ScrollToTop() {
 
   return null;
 }
+export interface AppsProps {
+  client?: any
+}
 
-export const App = ({ client }) => {
+export const App = ({ client }: AppsProps) => {
   if (!client) {
     client = new ApolloClient({
       uri: 'http://localhost:1337/graphql',

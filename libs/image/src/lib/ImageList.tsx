@@ -4,8 +4,8 @@ import { useWebPSupportCheck } from "react-use-webp-support-check";
 import {
   useWindowWidth
 } from '@react-hook/window-size';
-// import photoswipe from  'photoswipe/dist/photoswipe.css'
-// import defaultSkinPhotoswipe from 'photoswipe/dist/default-skin/default-skin.css'
+// import 'photoswipe/dist/photoswipe.css'
+// import 'photoswipe/dist/default-skin/default-skin.css'
 import withStyles from 'isomorphic-style-loader/withStyles'
 
 import { Image, ImageComponent } from './image';
