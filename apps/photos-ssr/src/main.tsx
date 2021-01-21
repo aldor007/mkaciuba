@@ -15,14 +15,19 @@ import {
 } from '@apollo/client';
 import { getDataFromTree } from "@apollo/client/react/ssr";
 import React from 'react';
+import path from 'path';
 
 import { Routes, App } from '@mkaciuba/photos';
 import { matchRoutes } from 'react-router-config';
 import { Html } from './html'
-import { renderToStaticMarkup } from 'react-dom/server';
+import { renderToNodeStream, renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router';
 
 const app = express();
+console.log(__dirname)
+ app.use(
+    express.static(path.join(__dirname, '../photos'))
+ );
 
 app.get('*', (req, res) => {
   const params = req.params[0].split('/');
@@ -49,17 +54,19 @@ app.get('*', (req, res) => {
           <App client={client} />
           </StaticRouter>
   )
+  console.info('Before getDataFromTree')
   getDataFromTree(staticApp).then((content) => {
     // Extract the entirety of the Apollo Client cache's current state
     const initialState = client.extract();
+    console.info('Callback getDataFromTree')
 
     // Add both the page content and the cache state to a top-level component
     const html = <Html content={content} state={initialState} />;
 
     // Render the component to static markup and return it
-    res.status(200);
-    res.send(`<!doctype html>\n${renderToStaticMarkup(html)}`);
-    res.end();
+    // res.status(200);
+    renderToNodeStream(html).pipe(res);
+    // res.end();
   });
 
 

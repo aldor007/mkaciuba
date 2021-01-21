@@ -16442,6 +16442,11 @@ react-redux@~5.0.7:
     loose-envify "^1.1.0"
     prop-types "^15.6.0"
 
+react-responsive-masonry@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/react-responsive-masonry/-/react-responsive-masonry-2.1.1.tgz#f3793177d11e4df751122ac9acf88a157c6e0943"
+  integrity sha512-ec39c5Ot/p8tcjOIBn6pORybHD3870hXZ332Xk1dK5Ky+lNAj7S8giRWSDr5PLaCKQvaf+4Xje3hIQH3D0By1Q==
+
 react-router-config@^5.1.1:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/react-router-config/-/react-router-config-5.1.1.tgz#0f4263d1a80c6b2dc7b9c1902c9526478194a988"

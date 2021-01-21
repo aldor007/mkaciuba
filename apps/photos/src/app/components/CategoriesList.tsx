@@ -104,8 +104,10 @@ export const CategoriesList = ({ galleryId, gallerySlug}: CategoriesListProps) =
             gallerySlug,
             categorySlug: item.slug,
           })}>
-              { item.image &&   <ImageComponent thumbnails={item.image.thumbnails} defaultImage={defaultImages[item.id]} />
-               }
+              { item.image &&   <ImageComponent thumbnails={item.image.thumbnails} defaultImage={defaultImages[item.id]} />  }
+              <div className="category-heading">
+               <h2>{item.name}</h2>
+              </div>
           </Link>
         </div>
       ))}

@@ -3,3 +3,11 @@
 @import "tailwindcss/components";
 
 @import "tailwindcss/utilities";
+
+.category-heading {
+    margin-top: -60px;
+    text-align: center;
+    color: white;
+    padding: 5px;
+    background: black;
+}

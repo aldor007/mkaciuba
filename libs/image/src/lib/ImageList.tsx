@@ -6,7 +6,7 @@ import {
 } from '@react-hook/window-size';
 // import 'photoswipe/dist/photoswipe.css'
 // import 'photoswipe/dist/default-skin/default-skin.css'
-import withStyles from 'isomorphic-style-loader/withStyles'
+
 
 import { Image, ImageComponent } from './image';
 
@@ -108,7 +108,7 @@ export const ImageList = ({ categorySlug }: ImageListProps) => {
             )}
       </Item>
       ))}
-  </Gallery>
+      </Gallery>
 </div>
   )
 };

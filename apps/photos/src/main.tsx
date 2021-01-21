@@ -5,7 +5,13 @@ import { gql, useQuery, ApolloProvider, ApolloClient, InMemoryCache  } from '@ap
 
 import App from './app/app';
 
-ReactDOM.hydrate(
+const mountElement = document.getElementById('root');
+const reactMountFn = (mountElement.childElementCount === 0)
+    ? ReactDOM.render
+    : ReactDOM.hydrate;
+
+console.info('mount', mountElement.childElementCount)
+reactMountFn(
     <BrowserRouter>
         <App />
     </BrowserRouter>,
