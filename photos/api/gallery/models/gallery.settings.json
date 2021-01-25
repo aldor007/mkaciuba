@@ -2,11 +2,13 @@
   "kind": "collectionType",
   "collectionName": "galleries",
   "info": {
-    "name": "Gallery"
+    "name": "Gallery",
+    "description": ""
   },
   "options": {
     "increments": true,
-    "timestamps": true
+    "timestamps": true,
+    "draftAndPublish": false
   },
   "attributes": {
     "name": {
@@ -21,8 +23,14 @@
       "type": "boolean"
     },
     "categories": {
-      "via": "gallery",
-      "collection": "category"
+      "collection": "category",
+      "via": "gallery"
+    },
+    "keywords": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
     }
   }
 }

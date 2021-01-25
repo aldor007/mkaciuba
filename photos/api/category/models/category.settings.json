@@ -62,8 +62,14 @@
       "dominant": true
     },
     "gallery": {
-      "model": "gallery",
-      "via": "categories"
+      "via": "categories",
+      "model": "gallery"
+    },
+    "keywords": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
     }
   }
 }

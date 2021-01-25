@@ -52,6 +52,8 @@ query  galleries($gallerySlug: String!) {
     id
     name
     slug
+    keywords
+    description
   }
 }
 `;
@@ -72,7 +74,7 @@ export const Categories = () => {
   return  (
     <>
     <Header brand={header.brand} mainMenu={header.mainMenu} social={header.social} topMenu={header.topMenu}/>
-    <CategoriesList galleryId={galleries[0].id} gallerySlug={galleries[0].slug}></CategoriesList>
+    <CategoriesList gallery={galleries[0]}></CategoriesList>
     <Footer></Footer>
     </>
   )

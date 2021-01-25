@@ -6,6 +6,7 @@ import {
 } from '@react-hook/window-size';
 // import 'photoswipe/dist/photoswipe.css'
 // import 'photoswipe/dist/default-skin/default-skin.css'
+import MetaTags from 'react-meta-tags';
 
 
 import { Image, ImageComponent } from './image';
@@ -21,6 +22,18 @@ const GET_IMAGES = gql`
   }) {
     id
     name
+    description
+    keywords
+    image {
+     thumbnails {
+        url
+        mediaQuery
+        webp
+        type
+        width
+        height
+     }
+    }
     medias {
       id
      alternativeText
@@ -84,9 +97,18 @@ export const ImageList = ({ categorySlug }: ImageListProps) => {
    }
 
    const images = data.categories[0].medias;
+   const category = data.categories[0];
    const defaultImages = images.map((item) => findImageForWidth(item.thumbnails, width, webp));
+   const seoImage = images.map((item) => findImageForWidth(category.image.thumbnails, 1024, false));
    return (
         <div className="flex flex-wrap -mx-1 overflow-hidden">
+          <MetaTags>
+            <title>{category.name}</title>
+            <meta name="description" content={category.description} />
+            <meta property="og:title" content={category.name} />
+            <meta name="twitter:image" content={seoImage[0].url} />
+            <meta property="og:image" content={seoImage[0].url} />
+          </MetaTags>
           <Gallery shareButton={false}>
             {images.map( (item, index) => (
             <Item

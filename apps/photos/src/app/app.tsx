@@ -32,11 +32,17 @@ declare global {
 
 export const App = ({ client }: AppsProps) => {
   if (!client) {
-    if (window.__APOLLO_STATE__ )
-    client = new ApolloClient({
-      uri: 'http://localhost:1337/graphql',
-      cache: new InMemoryCache().restore(window.__APOLLO_STATE__),
-    });
+    if (window.__APOLLO_STATE__ ) {
+      client = new ApolloClient({
+        uri: 'http://localhost:1337/graphql',
+        cache: new InMemoryCache().restore(window.__APOLLO_STATE__),
+      });
+    } else {
+      client = new ApolloClient({
+        uri: 'http://localhost:1337/graphql',
+        cache: new InMemoryCache()
+      });
+    }
   }
   return (
       <ApolloProvider client={client}>

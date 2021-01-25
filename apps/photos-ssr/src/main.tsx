@@ -22,16 +22,21 @@ import { matchRoutes } from 'react-router-config';
 import { Html } from './html'
 import { renderToNodeStream, renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router';
+import MetaTagsServer from 'react-meta-tags/server';
+import {MetaTagsContext} from 'react-meta-tags';
+
 
 const app = express();
 console.log(__dirname)
- app.use(
+app.use('/assets',
     express.static(path.join(__dirname, '../photos'))
  );
 
 app.get('*', (req, res) => {
   const params = req.params[0].split('/');
   const id = params[2];
+  const metaTagsInstance = MetaTagsServer();
+
 
   const client = new ApolloClient({
     ssrMode: true,
@@ -51,7 +56,9 @@ app.get('*', (req, res) => {
   const routes = matchRoutes(Routes, req.path);
   const staticApp = (
           <StaticRouter location={req.url} context={context}>
-          <App client={client} />
+            <MetaTagsContext extract = {metaTagsInstance.extract}>
+              <App client={client} />
+              </MetaTagsContext>
           </StaticRouter>
   )
   console.info('Before getDataFromTree')
@@ -59,18 +66,25 @@ app.get('*', (req, res) => {
     // Extract the entirety of the Apollo Client cache's current state
     const initialState = client.extract();
     console.info('Callback getDataFromTree')
+    const meta =    `<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet"/>
+      <link href="/main.css" rel="stylesheet"/>
+      <link href="/assets/photos.css" rel="stylesheet"/>${metaTagsInstance.renderToString()}`
+
 
     // Add both the page content and the cache state to a top-level component
-    const html = <Html content={content} state={initialState} />;
+    const html = <Html content={content} state={initialState} meta={meta} />;
 
     // Render the component to static markup and return it
     // res.status(200);
     renderToNodeStream(html).pipe(res);
     // res.end();
+  }).catch((e) => {
+    console.error('Error reading', e)
   });
 
 
 });
+
 
 const port = process.env.port || 3333;
 const server = app.listen(port, () => {

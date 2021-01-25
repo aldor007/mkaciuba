@@ -16404,6 +16404,11 @@ react-loader-spinner@^3.1.14:
     babel-runtime "^6.26.0"
     prop-types "^15.7.2"
 
+react-meta-tags@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/react-meta-tags/-/react-meta-tags-1.0.1.tgz#be18e88adafca280d6bd12839b530f9cfb7edbab"
+  integrity sha512-uylBI9UOI0QCGDsl6PlZaHnp+MxEpwslTlicPjnlcD68I8Kl2hdbuAZBRih+yU5StArSMB6T0jBrgst6rAuDYQ==
+
 react-modal@^3.8.1:
   version "3.11.2"
   resolved "https://registry.yarnpkg.com/react-modal/-/react-modal-3.11.2.tgz#bad911976d4add31aa30dba8a41d11e21c4ac8a4"
