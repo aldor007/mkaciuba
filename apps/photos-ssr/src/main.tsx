@@ -24,6 +24,9 @@ import { renderToNodeStream, renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router';
 import MetaTagsServer from 'react-meta-tags/server';
 import {MetaTagsContext} from 'react-meta-tags';
+import { createPersistedQueryLink } from "@apollo/client/link/persisted-queries";
+import { sha256 } from 'crypto-hash';
+import { BatchHttpLink } from "@apollo/client/link/batch-http";
 
 
 const app = express();
@@ -37,16 +40,17 @@ app.get('*', (req, res) => {
   const id = params[2];
   const metaTagsInstance = MetaTagsServer();
 
+  const persistedQueriesLink = createPersistedQueryLink({ sha256 });
 
   const client = new ApolloClient({
     ssrMode: true,
-    link: createHttpLink({
+    link: persistedQueriesLink.concat(new BatchHttpLink({
       uri: 'http://localhost:1337/graphql',
       credentials: 'same-origin',
       headers: {
         cookie: req.header('Cookie'),
       },
-    }),
+    })),
     cache: new InMemoryCache(),
   });
 
@@ -61,14 +65,20 @@ app.get('*', (req, res) => {
               </MetaTagsContext>
           </StaticRouter>
   )
-  console.info('Before getDataFromTree')
+  if (routes.length === 0) {
+    res.status(404);
+    res.send();
+    return;
+  }
+
+  console.info('Before getDataFromTree', routes)
   getDataFromTree(staticApp).then((content) => {
     // Extract the entirety of the Apollo Client cache's current state
     const initialState = client.extract();
-    console.info('Callback getDataFromTree')
     const meta =    `<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet"/>
-      <link href="/main.css" rel="stylesheet"/>
-      <link href="/assets/photos.css" rel="stylesheet"/>${metaTagsInstance.renderToString()}`
+      <link href="/assets/assets/main.css" rel="stylesheet"/>
+      <link href="/assets/assets/default-skin.css" rel="stylesheet"/>
+      <link href="/assets/assets/photos.css" rel="stylesheet"/>${metaTagsInstance.renderToString()}`
 
 
     // Add both the page content and the cache state to a top-level component
