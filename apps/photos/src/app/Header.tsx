@@ -65,13 +65,6 @@ export interface HeaderProps {
 export default function Header(props: HeaderProps)  {
   const classes = useStyles();
   const { social, brand, mainMenu, topMenu } = props;
-  const socialIcons = social.map((icon, id) => (
-    <div key={id} className={classes.socialIconsItems}>
-      <a href={icon.url} key={id} target="_blank">
-        <FontAwesomeIcon icon={icon.icon} size='1x' />
-      </a>
-    </div>
-  ))
 
   return (
     <React.Fragment>

@@ -2,15 +2,19 @@
   "kind": "singleType",
   "collectionName": "homes",
   "info": {
-    "name": "Home"
+    "name": "Home",
+    "description": ""
   },
   "options": {
     "increments": true,
-    "timestamps": true
+    "timestamps": true,
+    "draftAndPublish": false
   },
   "attributes": {
-    "test": {
-      "type": "string"
+    "menuConfig": {
+      "type": "component",
+      "repeatable": true,
+      "component": "config.menu"
     }
   }
 }
