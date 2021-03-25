@@ -19,6 +19,10 @@
       "required": true,
       "unique": true
     },
+    "slugOverride": {
+      "type": "string",
+      "required": false
+    },
     "public": {
       "type": "boolean"
     },
@@ -31,6 +35,13 @@
     },
     "description": {
       "type": "string"
+    },
+    "navigation": {
+      "model": "navigationitem",
+      "plugin": "navigation",
+      "via": "related",
+      "configurable": false,
+      "hidden": true
     }
   }
 }

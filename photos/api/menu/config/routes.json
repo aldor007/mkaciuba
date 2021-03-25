@@ -2,24 +2,24 @@
   "routes": [
     {
       "method": "GET",
-      "path": "/home",
-      "handler": "home.find",
+      "path": "/menu",
+      "handler": "menu.find",
       "config": {
         "policies": []
       }
     },
     {
       "method": "PUT",
-      "path": "/home",
-      "handler": "home.update",
+      "path": "/menu",
+      "handler": "menu.update",
       "config": {
         "policies": []
       }
     },
     {
       "method": "DELETE",
-      "path": "/home",
-      "handler": "home.delete",
+      "path": "/menu",
+      "handler": "menu.delete",
       "config": {
         "policies": []
       }

@@ -183,7 +183,7 @@ const main = async () => {
   let media = await mkaciuba.awaitQuery(`SELECT id, name, description, width, height, length, content_type, provider_reference, content_size, updated_at, created_at FROM media__media`)
   let galleryCollection = await mkaciuba.awaitQuery(`select * from gallery_collection`);
   let galleryCollectionMap = await mkaciuba.awaitQuery(`select * from galleries_gallery_collection`);
-  let galleries = await mkaciuba.awaitQuery(`SELECT id, name, public, description, slug, image_id, file_id, updated_at, created_at FROM media__gallery order by updated_at ASC`)
+  let galleries = await mkaciuba.awaitQuery(`SELECT id, name, public, description, keywords, slug, image_id, file_id, updated_at, created_at FROM media__gallery order by updated_at ASC`)
   let mediaGallery = await mkaciuba.awaitQuery('Select gallery_id, media_id, position from media__gallery_media')
 
   let counter = 1;
@@ -241,8 +241,8 @@ const main = async () => {
  await connection.awaitBeginTransaction();
  try {
   await galleryCollection.map( async g => {
-      await connection.awaitQuery(`INSERT INTO galleries (id, name, slug, public,  created_by, updated_by) VALUES (?, ?, ?, ?, ?, ?)`,
-      [g.idCounter, g.name, g.slug +'-'+makeid(3), g.public, 1, 1, 1]);
+      await connection.awaitQuery(`INSERT INTO galleries (id, name, slug, public, keywords, description, created_by, updated_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [g.idCounter, g.name, g.slug +'-'+makeid(3), g.public, g.keywords, g.description, 1, 1, 1]);
   })
   await galleries.map(async (g) => {
       let galleryId = null;
@@ -251,11 +251,11 @@ const main = async () => {
           console.info('gallery coll for', g.name,  galleryCollectionById[galleryCollectionToGallery[g.id].gallery_collection_id].name, galleryId);
       }
       if (galleryId) {
-        await connection.awaitQuery(`INSERT INTO categories  (id, name, slug, public, publicationDate, created_by, updated_by, gallery ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-        [g.idCounter, g.name, g.slug +'-'+makeid(3), g.public, new Date(),  1, 1, galleryId]);
+        await connection.awaitQuery(`INSERT INTO categories  (id, name, slug, public, keywords, description, publicationDate, created_by, updated_by, gallery ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [g.idCounter, g.name, g.slug +'-'+makeid(3), g.public, g.keywords, g.description, new Date(),  1, 1, galleryId]);
       } else {
-        await connection.awaitQuery(`INSERT INTO categories  (id, name, slug, public, publicationDate, created_by, updated_by ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [g.idCounter, g.name, g.slug +'-'+makeid(3), g.public, new Date(),  1, 1]);
+        await connection.awaitQuery(`INSERT INTO categories  (id, name, slug, public, keywords, description, publicationDate, created_by, updated_by ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [g.idCounter, g.name, g.slug +'-'+makeid(3), g.public, g.keywords, g.description, new Date(),  1, 1]);
       }
       const file = mediaById[g.file_id];
       const mainImage = mediaById[g.image_id];

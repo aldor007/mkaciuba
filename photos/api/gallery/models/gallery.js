@@ -6,21 +6,21 @@
  */
 
 const slugify = require('slugify');
-const strapiProviderUploadMort = require('../../../providers/strapi-provider-upload-mort');
-
 module.exports = {
   /**
    * Triggered before user creation.
    */
   lifecycles: {
     async beforeCreate(data) {
-      if (data.Name) {
-        data.slug = `${slugify(data.name, {lower: true})}-${data.id}`;
+      if (data.name) {
+        data.slug = `${slugify(data.name, {lower: true})}-${Math.random()}`;
       }
     },
     async beforeUpdate(params, data) {
-      if (data.name) {
+      if (data.name && !data.slugOverride) {
         data.slug = `${slugify(data.name, {lower: true})}-${params.id}`;
+      } else {
+        data.slug = data.slugOverride
       }
     },
   },

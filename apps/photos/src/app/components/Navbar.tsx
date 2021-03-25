@@ -1,8 +1,30 @@
 import React from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { gql, useQuery } from '@apollo/client';
 // import Logo from '../../assets/logo_icon.png'
 
-export const Navbar = function ({ social, topMenu, brandName = 'mkaciuba.pl' }) {
+export interface MenuType {
+  url: string
+  name: string
+  children?: MenuType[]
+}
+const GET_MENU = gql`
+  query menu() {
+   menu() {
+    topMenu {
+      name
+      url
+      icon
+    }
+ }
+}
+`;
+
+export interface NavbarProps {
+  mainMenu: MenuType[] | null
+}
+
+export const Navbar = function (props: NavbarProps) {
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const [navbarOpen, setNavbarOpen] = React.useState(false);
   const socialIcons = social.map((icon, id) => (
