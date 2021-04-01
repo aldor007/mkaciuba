@@ -11,5 +11,8 @@ module.exports = ({ env }) => ({
       },
     },
   },
+  graphql: {
+    amountLimit: 10
+  },
   // ...
 });

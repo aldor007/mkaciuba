@@ -136,5 +136,8 @@ module.exports = {
         },
       },
     },
+    Category: {
+      
+    }
   }
 };
