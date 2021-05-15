@@ -1,7 +1,18 @@
 import React from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { gql, useQuery } from '@apollo/client';
+import { Menu, Enum_Componentmenuconfigmenu_Icon, Maybe } from '../api/graphql'
 // import Logo from '../../assets/logo_icon.png'
+import { faFacebook, faGithub, faInstagram, faLinkedin, faTwitter } from '@fortawesome/free-brands-svg-icons';
+import { QueryMenuArgs } from "../api/graphql";
+import { Query } from "../api/graphql";
+
+const ICONS = {
+  [Enum_Componentmenuconfigmenu_Icon.Facebook]: faFacebook,
+  [Enum_Componentmenuconfigmenu_Icon.Instagram]: faInstagram,
+  [Enum_Componentmenuconfigmenu_Icon.Github]: faGithub,
+  [Enum_Componentmenuconfigmenu_Icon.Linkedin]: faLinkedin
+}
 
 export interface MenuType {
   url: string
@@ -9,31 +20,53 @@ export interface MenuType {
   children?: MenuType[]
 }
 const GET_MENU = gql`
-  query menu() {
-   menu() {
+  query menu {
+   menu {
+    brandName
     topMenu {
       name
       url
+    }
+    mainMenu {
+      name
+      url
+    }
+    socialIcons {
+      name
+      url
       icon
+    }
+    brand {
+      url
     }
  }
 }
 `;
 
 export interface NavbarProps {
-  mainMenu: MenuType[] | null
+  additionalMainMenu?: MenuType[]
 }
 
 export const Navbar = function (props: NavbarProps) {
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const [navbarOpen, setNavbarOpen] = React.useState(false);
+  const { loading, error, data } = useQuery<Query,QueryMenuArgs>(GET_MENU, {
+  });
+  if (loading) return <p>Loading...</p>;
+  if (error) {
+    console.info(error)
+     return <p>Error :(</p>
+   };
+   console.info(data)
+  const social = data.menu.socialIcons;
+  const { topMenu, mainMenu, brandName, brand } = data.menu;
   const socialIcons = social.map((icon, id) => (
     <li className="nav-item" key={id}>
       <a
         className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
         href={icon.url}
       >
-        <FontAwesomeIcon icon={icon.icon} size='1x' />
+        <FontAwesomeIcon icon={ICONS[icon.icon]} size='1x' />
       </a>
     </li>
   ))
@@ -48,6 +81,11 @@ export const Navbar = function (props: NavbarProps) {
       </a>
     </li>
   ))
+  const mainMenuList = mainMenu.map((item, id) => {
+     <a href={item.url} className="px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg dark-mode:bg-transparent dark-mode:hover:bg-gray-600 dark-mode:focus:bg-gray-600 dark-mode:focus:text-white dark-mode:hover:text-white dark-mode:text-gray-200 md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline">
+       {item.name}
+     </a>
+  })
 
   let navbarCSS = '';
   if (navbarOpen) {
@@ -75,7 +113,7 @@ export const Navbar = function (props: NavbarProps) {
         <div x-data="{ open: false }" className="flex flex-col max-w-screen-xl px-4 mx-auto md:items-center md:justify-between md:flex-row md:px-6 lg:px-8">
           <div className="p-4 flex flex-row items-center justify-between">
             <a href="#" className="flex flex-wrap -mx-1 overflow-hidden text-lg font-semibold tracking-widest text-gray-900 rounded-lg dark-mode:text-white focus:outline-none focus:shadow-outline">
-              {/* <img  className="py-2" src={Logo}/> */}
+              <img  className="py-2" width="35px" height="35px" src={brand.url}/>
               <span className="px-2 py-2 mt-2">{brandName}</span>
               </a>
             <button className="md:hidden rounded-lg focus:outline-none focus:shadow-outline" onClick={() => setNavbarOpen(!navbarOpen)}>
@@ -86,10 +124,7 @@ export const Navbar = function (props: NavbarProps) {
             </button>
          </div>
          <nav className={navbarCSS}>
-           <a className="px-4 py-2 mt-2 text-sm font-semibold text-gray-900 bg-gray-200 rounded-lg dark-mode:bg-gray-700 dark-mode:hover:bg-gray-600 dark-mode:focus:bg-gray-600 dark-mode:focus:text-white dark-mode:hover:text-white dark-mode:text-gray-200 md:mt-0 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" href="#">Blog</a>
-           <a className="px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg dark-mode:bg-transparent dark-mode:hover:bg-gray-600 dark-mode:focus:bg-gray-600 dark-mode:focus:text-white dark-mode:hover:text-white dark-mode:text-gray-200 md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" href="#">Portfolio</a>
-           <a className="px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg dark-mode:bg-transparent dark-mode:hover:bg-gray-600 dark-mode:focus:bg-gray-600 dark-mode:focus:text-white dark-mode:hover:text-white dark-mode:text-gray-200 md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" href="#">About</a>
-           <a className="px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg dark-mode:bg-transparent dark-mode:hover:bg-gray-600 dark-mode:focus:bg-gray-600 dark-mode:focus:text-white dark-mode:hover:text-white dark-mode:text-gray-200 md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" href="#">Contact</a>
+           {mainMenuList}
            <div className="relative" x-data="{ open: false }">
              <button className="flex flex-row items-center w-full px-4 py-2 mt-2 text-sm font-semibold text-left bg-transparent rounded-lg dark-mode:bg-transparent dark-mode:focus:text-white dark-mode:hover:text-white dark-mode:focus:bg-gray-600 dark-mode:hover:bg-gray-600 md:w-auto md:inline md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
              onClick={() => setDropdownOpen(!dropdownOpen)}

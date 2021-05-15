@@ -5,7 +5,7 @@ import { Navbar, MenuType } from './components/Navbar';
 
 
 export interface HeaderProps {
-  mainMenu: MenuType[] | null
+  mainMenu?: MenuType[] | null
 }
 
 
@@ -14,7 +14,7 @@ export default function Header(props: HeaderProps)  {
 
   return (
     <React.Fragment>
-        <Navbar mainMenu={mainMenu}></Navbar>
+        <Navbar/>
     </React.Fragment>
   );
 }

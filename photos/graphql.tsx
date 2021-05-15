@@ -211,14 +211,14 @@ export type CategoryInput = {
 export type ComponentMenuConfigMenu = {
   __typename?: 'ComponentMenuConfigMenu';
   id: Scalars['ID'];
-  Name?: Maybe<Scalars['String']>;
-  Url?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+  url?: Maybe<Scalars['String']>;
   icon?: Maybe<Enum_Componentmenuconfigmenu_Icon>;
 };
 
 export type ComponentMenuConfigMenuInput = {
-  Name?: Maybe<Scalars['String']>;
-  Url?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+  url?: Maybe<Scalars['String']>;
   icon?: Maybe<Enum_Componentmenuconfigmenu_Icon>;
 };
 
@@ -241,27 +241,6 @@ export type FileInfoInput = {
   name?: Maybe<Scalars['String']>;
   alternativeText?: Maybe<Scalars['String']>;
   caption?: Maybe<Scalars['String']>;
-};
-
-export type FileInput = {
-  name: Scalars['String'];
-  alternativeText?: Maybe<Scalars['String']>;
-  caption?: Maybe<Scalars['String']>;
-  width?: Maybe<Scalars['Int']>;
-  height?: Maybe<Scalars['Int']>;
-  formats?: Maybe<Scalars['JSON']>;
-  hash: Scalars['String'];
-  ext?: Maybe<Scalars['String']>;
-  mime: Scalars['String'];
-  size: Scalars['Float'];
-  url: Scalars['String'];
-  path?: Maybe<Scalars['String']>;
-  previewUrl?: Maybe<Scalars['String']>;
-  provider: Scalars['String'];
-  provider_metadata?: Maybe<Scalars['JSON']>;
-  related?: Maybe<Array<Maybe<Scalars['ID']>>>;
-  created_by?: Maybe<Scalars['ID']>;
-  updated_by?: Maybe<Scalars['ID']>;
 };
 
 export type Gallery = {
@@ -410,24 +389,24 @@ export type Menu = {
   updated_at: Scalars['DateTime'];
   topMenu?: Maybe<Array<Maybe<ComponentMenuConfigMenu>>>;
   mainMenu?: Maybe<Array<Maybe<ComponentMenuConfigMenu>>>;
-  bottomMenu?: Maybe<Array<Maybe<ComponentMenuConfigMenu>>>;
   brand?: Maybe<UploadFile>;
   socialIcons?: Maybe<Array<Maybe<ComponentMenuConfigMenu>>>;
+  brandName?: Maybe<Scalars['String']>;
   published_at?: Maybe<Scalars['DateTime']>;
 };
 
 export type MenuInput = {
   topMenu?: Maybe<Array<Maybe<ComponentMenuConfigMenuInput>>>;
   mainMenu?: Maybe<Array<Maybe<ComponentMenuConfigMenuInput>>>;
-  bottomMenu?: Maybe<Array<Maybe<ComponentMenuConfigMenuInput>>>;
   brand?: Maybe<Scalars['ID']>;
   socialIcons?: Maybe<Array<Maybe<ComponentMenuConfigMenuInput>>>;
+  brandName?: Maybe<Scalars['String']>;
   published_at?: Maybe<Scalars['DateTime']>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
 };
 
-export type Morph = Image | UsersPermissionsMe | UsersPermissionsMeRole | UsersPermissionsLoginPayload | UserPermissionsPasswordPayload | Category | CategoryConnection | CategoryAggregator | CategoryGroupBy | CategoryConnectionId | CategoryConnectionCreated_At | CategoryConnectionUpdated_At | CategoryConnectionName | CategoryConnectionSlug | CategoryConnectionSlugOverride | CategoryConnectionPublic | CategoryConnectionPublicationDate | CategoryConnectionFile | CategoryConnectionImage | CategoryConnectionGallery | CategoryConnectionKeywords | CategoryConnectionDescription | CategoryConnectionNavigation | CreateCategoryPayload | UpdateCategoryPayload | DeleteCategoryPayload | Gallery | GalleryConnection | GalleryAggregator | GalleryGroupBy | GalleryConnectionId | GalleryConnectionCreated_At | GalleryConnectionUpdated_At | GalleryConnectionName | GalleryConnectionSlug | GalleryConnectionSlugOverride | GalleryConnectionPublic | GalleryConnectionKeywords | GalleryConnectionDescription | GalleryConnectionNavigation | CreateGalleryPayload | UpdateGalleryPayload | DeleteGalleryPayload | Menu | UpdateMenuPayload | DeleteMenuPayload | NavigationAudience | NavigationNavigation | NavigationNavigationitem | UploadFile | UploadFileConnection | UploadFileAggregator | UploadFileAggregatorSum | UploadFileAggregatorAvg | UploadFileAggregatorMin | UploadFileAggregatorMax | UploadFileGroupBy | UploadFileConnectionId | UploadFileConnectionCreated_At | UploadFileConnectionUpdated_At | UploadFileConnectionName | UploadFileConnectionAlternativeText | UploadFileConnectionCaption | UploadFileConnectionWidth | UploadFileConnectionHeight | UploadFileConnectionFormats | UploadFileConnectionHash | UploadFileConnectionExt | UploadFileConnectionMime | UploadFileConnectionSize | UploadFileConnectionUrl | UploadFileConnectionPreviewUrl | UploadFileConnectionProvider | UploadFileConnectionProvider_Metadata | DeleteFilePayload | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsRoleConnection | UsersPermissionsRoleAggregator | UsersPermissionsRoleGroupBy | UsersPermissionsRoleConnectionId | UsersPermissionsRoleConnectionName | UsersPermissionsRoleConnectionDescription | UsersPermissionsRoleConnectionType | CreateRolePayload | UpdateRolePayload | DeleteRolePayload | UsersPermissionsUser | UsersPermissionsUserConnection | UsersPermissionsUserAggregator | UsersPermissionsUserGroupBy | UsersPermissionsUserConnectionId | UsersPermissionsUserConnectionCreated_At | UsersPermissionsUserConnectionUpdated_At | UsersPermissionsUserConnectionUsername | UsersPermissionsUserConnectionEmail | UsersPermissionsUserConnectionProvider | UsersPermissionsUserConnectionConfirmed | UsersPermissionsUserConnectionBlocked | UsersPermissionsUserConnectionRole | CreateUserPayload | UpdateUserPayload | DeleteUserPayload | ComponentMenuConfigMenu;
+export type Morph = Image | UsersPermissionsMe | UsersPermissionsMeRole | UsersPermissionsLoginPayload | UserPermissionsPasswordPayload | Category | CategoryConnection | CategoryAggregator | CategoryGroupBy | CategoryConnectionId | CategoryConnectionCreated_At | CategoryConnectionUpdated_At | CategoryConnectionName | CategoryConnectionSlug | CategoryConnectionSlugOverride | CategoryConnectionPublic | CategoryConnectionPublicationDate | CategoryConnectionFile | CategoryConnectionImage | CategoryConnectionGallery | CategoryConnectionKeywords | CategoryConnectionDescription | CategoryConnectionNavigation | CreateCategoryPayload | UpdateCategoryPayload | DeleteCategoryPayload | Gallery | GalleryConnection | GalleryAggregator | GalleryGroupBy | GalleryConnectionId | GalleryConnectionCreated_At | GalleryConnectionUpdated_At | GalleryConnectionName | GalleryConnectionSlug | GalleryConnectionSlugOverride | GalleryConnectionPublic | GalleryConnectionKeywords | GalleryConnectionDescription | GalleryConnectionNavigation | CreateGalleryPayload | UpdateGalleryPayload | DeleteGalleryPayload | Menu | UpdateMenuPayload | DeleteMenuPayload | NavigationAudience | NavigationNavigation | NavigationNavigationitem | UploadFile | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsUser | CreateUserPayload | UpdateUserPayload | ComponentMenuConfigMenu;
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -439,28 +418,6 @@ export type Mutation = {
   deleteGallery?: Maybe<DeleteGalleryPayload>;
   updateMenu?: Maybe<UpdateMenuPayload>;
   deleteMenu?: Maybe<DeleteMenuPayload>;
-  /** Delete one file */
-  deleteFile?: Maybe<DeleteFilePayload>;
-  /** Create a new role */
-  createRole?: Maybe<CreateRolePayload>;
-  /** Update an existing role */
-  updateRole?: Maybe<UpdateRolePayload>;
-  /** Delete an existing role */
-  deleteRole?: Maybe<DeleteRolePayload>;
-  /** Create a new user */
-  createUser?: Maybe<CreateUserPayload>;
-  /** Update an existing user */
-  updateUser?: Maybe<UpdateUserPayload>;
-  /** Delete an existing user */
-  deleteUser?: Maybe<DeleteUserPayload>;
-  upload: UploadFile;
-  multipleUpload: Array<Maybe<UploadFile>>;
-  updateFileInfo: UploadFile;
-  login: UsersPermissionsLoginPayload;
-  register: UsersPermissionsLoginPayload;
-  forgotPassword?: Maybe<UserPermissionsPasswordPayload>;
-  resetPassword?: Maybe<UsersPermissionsLoginPayload>;
-  emailConfirmation?: Maybe<UsersPermissionsLoginPayload>;
 };
 
 
@@ -496,93 +453,6 @@ export type MutationDeleteGalleryArgs = {
 
 export type MutationUpdateMenuArgs = {
   input?: Maybe<UpdateMenuInput>;
-};
-
-
-export type MutationDeleteFileArgs = {
-  input?: Maybe<DeleteFileInput>;
-};
-
-
-export type MutationCreateRoleArgs = {
-  input?: Maybe<CreateRoleInput>;
-};
-
-
-export type MutationUpdateRoleArgs = {
-  input?: Maybe<UpdateRoleInput>;
-};
-
-
-export type MutationDeleteRoleArgs = {
-  input?: Maybe<DeleteRoleInput>;
-};
-
-
-export type MutationCreateUserArgs = {
-  input?: Maybe<CreateUserInput>;
-};
-
-
-export type MutationUpdateUserArgs = {
-  input?: Maybe<UpdateUserInput>;
-};
-
-
-export type MutationDeleteUserArgs = {
-  input?: Maybe<DeleteUserInput>;
-};
-
-
-export type MutationUploadArgs = {
-  refId?: Maybe<Scalars['ID']>;
-  ref?: Maybe<Scalars['String']>;
-  field?: Maybe<Scalars['String']>;
-  source?: Maybe<Scalars['String']>;
-  info?: Maybe<FileInfoInput>;
-  file: Scalars['Upload'];
-};
-
-
-export type MutationMultipleUploadArgs = {
-  refId?: Maybe<Scalars['ID']>;
-  ref?: Maybe<Scalars['String']>;
-  field?: Maybe<Scalars['String']>;
-  source?: Maybe<Scalars['String']>;
-  files: Array<Maybe<Scalars['Upload']>>;
-};
-
-
-export type MutationUpdateFileInfoArgs = {
-  id: Scalars['ID'];
-  info: FileInfoInput;
-};
-
-
-export type MutationLoginArgs = {
-  input: UsersPermissionsLoginInput;
-};
-
-
-export type MutationRegisterArgs = {
-  input: UsersPermissionsRegisterInput;
-};
-
-
-export type MutationForgotPasswordArgs = {
-  email: Scalars['String'];
-};
-
-
-export type MutationResetPasswordArgs = {
-  password: Scalars['String'];
-  passwordConfirmation: Scalars['String'];
-  code: Scalars['String'];
-};
-
-
-export type MutationEmailConfirmationArgs = {
-  confirmation: Scalars['String'];
 };
 
 export type NavigationAudience = {
@@ -684,16 +554,6 @@ export type Query = {
   galleries?: Maybe<Array<Maybe<Gallery>>>;
   galleriesConnection?: Maybe<GalleryConnection>;
   menu?: Maybe<Menu>;
-  files?: Maybe<Array<Maybe<UploadFile>>>;
-  filesConnection?: Maybe<UploadFileConnection>;
-  role?: Maybe<UsersPermissionsRole>;
-  /** Retrieve all the existing roles. You can't apply filters on this query. */
-  roles?: Maybe<Array<Maybe<UsersPermissionsRole>>>;
-  rolesConnection?: Maybe<UsersPermissionsRoleConnection>;
-  user?: Maybe<UsersPermissionsUser>;
-  users?: Maybe<Array<Maybe<UsersPermissionsUser>>>;
-  usersConnection?: Maybe<UsersPermissionsUserConnection>;
-  me?: Maybe<UsersPermissionsMe>;
 };
 
 
@@ -747,69 +607,6 @@ export type QueryMenuArgs = {
   publicationState?: Maybe<PublicationState>;
 };
 
-
-export type QueryFilesArgs = {
-  sort?: Maybe<Scalars['String']>;
-  limit?: Maybe<Scalars['Int']>;
-  start?: Maybe<Scalars['Int']>;
-  where?: Maybe<Scalars['JSON']>;
-  publicationState?: Maybe<PublicationState>;
-};
-
-
-export type QueryFilesConnectionArgs = {
-  sort?: Maybe<Scalars['String']>;
-  limit?: Maybe<Scalars['Int']>;
-  start?: Maybe<Scalars['Int']>;
-  where?: Maybe<Scalars['JSON']>;
-};
-
-
-export type QueryRoleArgs = {
-  id: Scalars['ID'];
-  publicationState?: Maybe<PublicationState>;
-};
-
-
-export type QueryRolesArgs = {
-  sort?: Maybe<Scalars['String']>;
-  limit?: Maybe<Scalars['Int']>;
-  start?: Maybe<Scalars['Int']>;
-  where?: Maybe<Scalars['JSON']>;
-  publicationState?: Maybe<PublicationState>;
-};
-
-
-export type QueryRolesConnectionArgs = {
-  sort?: Maybe<Scalars['String']>;
-  limit?: Maybe<Scalars['Int']>;
-  start?: Maybe<Scalars['Int']>;
-  where?: Maybe<Scalars['JSON']>;
-};
-
-
-export type QueryUserArgs = {
-  id: Scalars['ID'];
-  publicationState?: Maybe<PublicationState>;
-};
-
-
-export type QueryUsersArgs = {
-  sort?: Maybe<Scalars['String']>;
-  limit?: Maybe<Scalars['Int']>;
-  start?: Maybe<Scalars['Int']>;
-  where?: Maybe<Scalars['JSON']>;
-  publicationState?: Maybe<PublicationState>;
-};
-
-
-export type QueryUsersConnectionArgs = {
-  sort?: Maybe<Scalars['String']>;
-  limit?: Maybe<Scalars['Int']>;
-  start?: Maybe<Scalars['Int']>;
-  where?: Maybe<Scalars['JSON']>;
-};
-
 export type RoleInput = {
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
@@ -858,174 +655,6 @@ export type UploadFileRelatedArgs = {
 export type UploadFileThumbnailArgs = {
   width?: Maybe<Scalars['Int']>;
   webp?: Maybe<Scalars['Boolean']>;
-};
-
-export type UploadFileAggregator = {
-  __typename?: 'UploadFileAggregator';
-  count?: Maybe<Scalars['Int']>;
-  totalCount?: Maybe<Scalars['Int']>;
-  sum?: Maybe<UploadFileAggregatorSum>;
-  avg?: Maybe<UploadFileAggregatorAvg>;
-  min?: Maybe<UploadFileAggregatorMin>;
-  max?: Maybe<UploadFileAggregatorMax>;
-};
-
-export type UploadFileAggregatorAvg = {
-  __typename?: 'UploadFileAggregatorAvg';
-  width?: Maybe<Scalars['Float']>;
-  height?: Maybe<Scalars['Float']>;
-  size?: Maybe<Scalars['Float']>;
-};
-
-export type UploadFileAggregatorMax = {
-  __typename?: 'UploadFileAggregatorMax';
-  width?: Maybe<Scalars['Float']>;
-  height?: Maybe<Scalars['Float']>;
-  size?: Maybe<Scalars['Float']>;
-};
-
-export type UploadFileAggregatorMin = {
-  __typename?: 'UploadFileAggregatorMin';
-  width?: Maybe<Scalars['Float']>;
-  height?: Maybe<Scalars['Float']>;
-  size?: Maybe<Scalars['Float']>;
-};
-
-export type UploadFileAggregatorSum = {
-  __typename?: 'UploadFileAggregatorSum';
-  width?: Maybe<Scalars['Float']>;
-  height?: Maybe<Scalars['Float']>;
-  size?: Maybe<Scalars['Float']>;
-};
-
-export type UploadFileConnection = {
-  __typename?: 'UploadFileConnection';
-  values?: Maybe<Array<Maybe<UploadFile>>>;
-  groupBy?: Maybe<UploadFileGroupBy>;
-  aggregate?: Maybe<UploadFileAggregator>;
-};
-
-export type UploadFileConnectionAlternativeText = {
-  __typename?: 'UploadFileConnectionAlternativeText';
-  key?: Maybe<Scalars['String']>;
-  connection?: Maybe<UploadFileConnection>;
-};
-
-export type UploadFileConnectionCaption = {
-  __typename?: 'UploadFileConnectionCaption';
-  key?: Maybe<Scalars['String']>;
-  connection?: Maybe<UploadFileConnection>;
-};
-
-export type UploadFileConnectionCreated_At = {
-  __typename?: 'UploadFileConnectionCreated_at';
-  key?: Maybe<Scalars['DateTime']>;
-  connection?: Maybe<UploadFileConnection>;
-};
-
-export type UploadFileConnectionExt = {
-  __typename?: 'UploadFileConnectionExt';
-  key?: Maybe<Scalars['String']>;
-  connection?: Maybe<UploadFileConnection>;
-};
-
-export type UploadFileConnectionFormats = {
-  __typename?: 'UploadFileConnectionFormats';
-  key?: Maybe<Scalars['JSON']>;
-  connection?: Maybe<UploadFileConnection>;
-};
-
-export type UploadFileConnectionHash = {
-  __typename?: 'UploadFileConnectionHash';
-  key?: Maybe<Scalars['String']>;
-  connection?: Maybe<UploadFileConnection>;
-};
-
-export type UploadFileConnectionHeight = {
-  __typename?: 'UploadFileConnectionHeight';
-  key?: Maybe<Scalars['Int']>;
-  connection?: Maybe<UploadFileConnection>;
-};
-
-export type UploadFileConnectionId = {
-  __typename?: 'UploadFileConnectionId';
-  key?: Maybe<Scalars['ID']>;
-  connection?: Maybe<UploadFileConnection>;
-};
-
-export type UploadFileConnectionMime = {
-  __typename?: 'UploadFileConnectionMime';
-  key?: Maybe<Scalars['String']>;
-  connection?: Maybe<UploadFileConnection>;
-};
-
-export type UploadFileConnectionName = {
-  __typename?: 'UploadFileConnectionName';
-  key?: Maybe<Scalars['String']>;
-  connection?: Maybe<UploadFileConnection>;
-};
-
-export type UploadFileConnectionPreviewUrl = {
-  __typename?: 'UploadFileConnectionPreviewUrl';
-  key?: Maybe<Scalars['String']>;
-  connection?: Maybe<UploadFileConnection>;
-};
-
-export type UploadFileConnectionProvider = {
-  __typename?: 'UploadFileConnectionProvider';
-  key?: Maybe<Scalars['String']>;
-  connection?: Maybe<UploadFileConnection>;
-};
-
-export type UploadFileConnectionProvider_Metadata = {
-  __typename?: 'UploadFileConnectionProvider_metadata';
-  key?: Maybe<Scalars['JSON']>;
-  connection?: Maybe<UploadFileConnection>;
-};
-
-export type UploadFileConnectionSize = {
-  __typename?: 'UploadFileConnectionSize';
-  key?: Maybe<Scalars['Float']>;
-  connection?: Maybe<UploadFileConnection>;
-};
-
-export type UploadFileConnectionUpdated_At = {
-  __typename?: 'UploadFileConnectionUpdated_at';
-  key?: Maybe<Scalars['DateTime']>;
-  connection?: Maybe<UploadFileConnection>;
-};
-
-export type UploadFileConnectionUrl = {
-  __typename?: 'UploadFileConnectionUrl';
-  key?: Maybe<Scalars['String']>;
-  connection?: Maybe<UploadFileConnection>;
-};
-
-export type UploadFileConnectionWidth = {
-  __typename?: 'UploadFileConnectionWidth';
-  key?: Maybe<Scalars['Int']>;
-  connection?: Maybe<UploadFileConnection>;
-};
-
-export type UploadFileGroupBy = {
-  __typename?: 'UploadFileGroupBy';
-  id?: Maybe<Array<Maybe<UploadFileConnectionId>>>;
-  created_at?: Maybe<Array<Maybe<UploadFileConnectionCreated_At>>>;
-  updated_at?: Maybe<Array<Maybe<UploadFileConnectionUpdated_At>>>;
-  name?: Maybe<Array<Maybe<UploadFileConnectionName>>>;
-  alternativeText?: Maybe<Array<Maybe<UploadFileConnectionAlternativeText>>>;
-  caption?: Maybe<Array<Maybe<UploadFileConnectionCaption>>>;
-  width?: Maybe<Array<Maybe<UploadFileConnectionWidth>>>;
-  height?: Maybe<Array<Maybe<UploadFileConnectionHeight>>>;
-  formats?: Maybe<Array<Maybe<UploadFileConnectionFormats>>>;
-  hash?: Maybe<Array<Maybe<UploadFileConnectionHash>>>;
-  ext?: Maybe<Array<Maybe<UploadFileConnectionExt>>>;
-  mime?: Maybe<Array<Maybe<UploadFileConnectionMime>>>;
-  size?: Maybe<Array<Maybe<UploadFileConnectionSize>>>;
-  url?: Maybe<Array<Maybe<UploadFileConnectionUrl>>>;
-  previewUrl?: Maybe<Array<Maybe<UploadFileConnectionPreviewUrl>>>;
-  provider?: Maybe<Array<Maybe<UploadFileConnectionProvider>>>;
-  provider_metadata?: Maybe<Array<Maybe<UploadFileConnectionProvider_Metadata>>>;
 };
 
 export type UserInput = {
@@ -1120,51 +749,6 @@ export type UsersPermissionsRoleUsersArgs = {
   where?: Maybe<Scalars['JSON']>;
 };
 
-export type UsersPermissionsRoleAggregator = {
-  __typename?: 'UsersPermissionsRoleAggregator';
-  count?: Maybe<Scalars['Int']>;
-  totalCount?: Maybe<Scalars['Int']>;
-};
-
-export type UsersPermissionsRoleConnection = {
-  __typename?: 'UsersPermissionsRoleConnection';
-  values?: Maybe<Array<Maybe<UsersPermissionsRole>>>;
-  groupBy?: Maybe<UsersPermissionsRoleGroupBy>;
-  aggregate?: Maybe<UsersPermissionsRoleAggregator>;
-};
-
-export type UsersPermissionsRoleConnectionDescription = {
-  __typename?: 'UsersPermissionsRoleConnectionDescription';
-  key?: Maybe<Scalars['String']>;
-  connection?: Maybe<UsersPermissionsRoleConnection>;
-};
-
-export type UsersPermissionsRoleConnectionId = {
-  __typename?: 'UsersPermissionsRoleConnectionId';
-  key?: Maybe<Scalars['ID']>;
-  connection?: Maybe<UsersPermissionsRoleConnection>;
-};
-
-export type UsersPermissionsRoleConnectionName = {
-  __typename?: 'UsersPermissionsRoleConnectionName';
-  key?: Maybe<Scalars['String']>;
-  connection?: Maybe<UsersPermissionsRoleConnection>;
-};
-
-export type UsersPermissionsRoleConnectionType = {
-  __typename?: 'UsersPermissionsRoleConnectionType';
-  key?: Maybe<Scalars['String']>;
-  connection?: Maybe<UsersPermissionsRoleConnection>;
-};
-
-export type UsersPermissionsRoleGroupBy = {
-  __typename?: 'UsersPermissionsRoleGroupBy';
-  id?: Maybe<Array<Maybe<UsersPermissionsRoleConnectionId>>>;
-  name?: Maybe<Array<Maybe<UsersPermissionsRoleConnectionName>>>;
-  description?: Maybe<Array<Maybe<UsersPermissionsRoleConnectionDescription>>>;
-  type?: Maybe<Array<Maybe<UsersPermissionsRoleConnectionType>>>;
-};
-
 export type UsersPermissionsUser = {
   __typename?: 'UsersPermissionsUser';
   id: Scalars['ID'];
@@ -1187,86 +771,6 @@ export type UsersPermissionsUserCategoriesArgs = {
   where?: Maybe<Scalars['JSON']>;
 };
 
-export type UsersPermissionsUserAggregator = {
-  __typename?: 'UsersPermissionsUserAggregator';
-  count?: Maybe<Scalars['Int']>;
-  totalCount?: Maybe<Scalars['Int']>;
-};
-
-export type UsersPermissionsUserConnection = {
-  __typename?: 'UsersPermissionsUserConnection';
-  values?: Maybe<Array<Maybe<UsersPermissionsUser>>>;
-  groupBy?: Maybe<UsersPermissionsUserGroupBy>;
-  aggregate?: Maybe<UsersPermissionsUserAggregator>;
-};
-
-export type UsersPermissionsUserConnectionBlocked = {
-  __typename?: 'UsersPermissionsUserConnectionBlocked';
-  key?: Maybe<Scalars['Boolean']>;
-  connection?: Maybe<UsersPermissionsUserConnection>;
-};
-
-export type UsersPermissionsUserConnectionConfirmed = {
-  __typename?: 'UsersPermissionsUserConnectionConfirmed';
-  key?: Maybe<Scalars['Boolean']>;
-  connection?: Maybe<UsersPermissionsUserConnection>;
-};
-
-export type UsersPermissionsUserConnectionCreated_At = {
-  __typename?: 'UsersPermissionsUserConnectionCreated_at';
-  key?: Maybe<Scalars['DateTime']>;
-  connection?: Maybe<UsersPermissionsUserConnection>;
-};
-
-export type UsersPermissionsUserConnectionEmail = {
-  __typename?: 'UsersPermissionsUserConnectionEmail';
-  key?: Maybe<Scalars['String']>;
-  connection?: Maybe<UsersPermissionsUserConnection>;
-};
-
-export type UsersPermissionsUserConnectionId = {
-  __typename?: 'UsersPermissionsUserConnectionId';
-  key?: Maybe<Scalars['ID']>;
-  connection?: Maybe<UsersPermissionsUserConnection>;
-};
-
-export type UsersPermissionsUserConnectionProvider = {
-  __typename?: 'UsersPermissionsUserConnectionProvider';
-  key?: Maybe<Scalars['String']>;
-  connection?: Maybe<UsersPermissionsUserConnection>;
-};
-
-export type UsersPermissionsUserConnectionRole = {
-  __typename?: 'UsersPermissionsUserConnectionRole';
-  key?: Maybe<Scalars['ID']>;
-  connection?: Maybe<UsersPermissionsUserConnection>;
-};
-
-export type UsersPermissionsUserConnectionUpdated_At = {
-  __typename?: 'UsersPermissionsUserConnectionUpdated_at';
-  key?: Maybe<Scalars['DateTime']>;
-  connection?: Maybe<UsersPermissionsUserConnection>;
-};
-
-export type UsersPermissionsUserConnectionUsername = {
-  __typename?: 'UsersPermissionsUserConnectionUsername';
-  key?: Maybe<Scalars['String']>;
-  connection?: Maybe<UsersPermissionsUserConnection>;
-};
-
-export type UsersPermissionsUserGroupBy = {
-  __typename?: 'UsersPermissionsUserGroupBy';
-  id?: Maybe<Array<Maybe<UsersPermissionsUserConnectionId>>>;
-  created_at?: Maybe<Array<Maybe<UsersPermissionsUserConnectionCreated_At>>>;
-  updated_at?: Maybe<Array<Maybe<UsersPermissionsUserConnectionUpdated_At>>>;
-  username?: Maybe<Array<Maybe<UsersPermissionsUserConnectionUsername>>>;
-  email?: Maybe<Array<Maybe<UsersPermissionsUserConnectionEmail>>>;
-  provider?: Maybe<Array<Maybe<UsersPermissionsUserConnectionProvider>>>;
-  confirmed?: Maybe<Array<Maybe<UsersPermissionsUserConnectionConfirmed>>>;
-  blocked?: Maybe<Array<Maybe<UsersPermissionsUserConnectionBlocked>>>;
-  role?: Maybe<Array<Maybe<UsersPermissionsUserConnectionRole>>>;
-};
-
 export type CreateCategoryInput = {
   data?: Maybe<CategoryInput>;
 };
@@ -1283,15 +787,6 @@ export type CreateGalleryInput = {
 export type CreateGalleryPayload = {
   __typename?: 'createGalleryPayload';
   gallery?: Maybe<Gallery>;
-};
-
-export type CreateRoleInput = {
-  data?: Maybe<RoleInput>;
-};
-
-export type CreateRolePayload = {
-  __typename?: 'createRolePayload';
-  role?: Maybe<UsersPermissionsRole>;
 };
 
 export type CreateUserInput = {
@@ -1312,15 +807,6 @@ export type DeleteCategoryPayload = {
   category?: Maybe<Category>;
 };
 
-export type DeleteFileInput = {
-  where?: Maybe<InputId>;
-};
-
-export type DeleteFilePayload = {
-  __typename?: 'deleteFilePayload';
-  file?: Maybe<UploadFile>;
-};
-
 export type DeleteGalleryInput = {
   where?: Maybe<InputId>;
 };
@@ -1333,24 +819,6 @@ export type DeleteGalleryPayload = {
 export type DeleteMenuPayload = {
   __typename?: 'deleteMenuPayload';
   menu?: Maybe<Menu>;
-};
-
-export type DeleteRoleInput = {
-  where?: Maybe<InputId>;
-};
-
-export type DeleteRolePayload = {
-  __typename?: 'deleteRolePayload';
-  role?: Maybe<UsersPermissionsRole>;
-};
-
-export type DeleteUserInput = {
-  where?: Maybe<InputId>;
-};
-
-export type DeleteUserPayload = {
-  __typename?: 'deleteUserPayload';
-  user?: Maybe<UsersPermissionsUser>;
 };
 
 export type EditAudienceInput = {
@@ -1380,30 +848,9 @@ export type EditCategoryInput = {
 
 export type EditComponentMenuConfigMenuInput = {
   id?: Maybe<Scalars['ID']>;
-  Name?: Maybe<Scalars['String']>;
-  Url?: Maybe<Scalars['String']>;
-  icon?: Maybe<Enum_Componentmenuconfigmenu_Icon>;
-};
-
-export type EditFileInput = {
   name?: Maybe<Scalars['String']>;
-  alternativeText?: Maybe<Scalars['String']>;
-  caption?: Maybe<Scalars['String']>;
-  width?: Maybe<Scalars['Int']>;
-  height?: Maybe<Scalars['Int']>;
-  formats?: Maybe<Scalars['JSON']>;
-  hash?: Maybe<Scalars['String']>;
-  ext?: Maybe<Scalars['String']>;
-  mime?: Maybe<Scalars['String']>;
-  size?: Maybe<Scalars['Float']>;
   url?: Maybe<Scalars['String']>;
-  path?: Maybe<Scalars['String']>;
-  previewUrl?: Maybe<Scalars['String']>;
-  provider?: Maybe<Scalars['String']>;
-  provider_metadata?: Maybe<Scalars['JSON']>;
-  related?: Maybe<Array<Maybe<Scalars['ID']>>>;
-  created_by?: Maybe<Scalars['ID']>;
-  updated_by?: Maybe<Scalars['ID']>;
+  icon?: Maybe<Enum_Componentmenuconfigmenu_Icon>;
 };
 
 export type EditGalleryInput = {
@@ -1422,9 +869,9 @@ export type EditGalleryInput = {
 export type EditMenuInput = {
   topMenu?: Maybe<Array<Maybe<EditComponentMenuConfigMenuInput>>>;
   mainMenu?: Maybe<Array<Maybe<EditComponentMenuConfigMenuInput>>>;
-  bottomMenu?: Maybe<Array<Maybe<EditComponentMenuConfigMenuInput>>>;
   brand?: Maybe<Scalars['ID']>;
   socialIcons?: Maybe<Array<Maybe<EditComponentMenuConfigMenuInput>>>;
+  brandName?: Maybe<Scalars['String']>;
   published_at?: Maybe<Scalars['DateTime']>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
@@ -1506,16 +953,6 @@ export type UpdateMenuInput = {
 export type UpdateMenuPayload = {
   __typename?: 'updateMenuPayload';
   menu?: Maybe<Menu>;
-};
-
-export type UpdateRoleInput = {
-  where?: Maybe<InputId>;
-  data?: Maybe<EditRoleInput>;
-};
-
-export type UpdateRolePayload = {
-  __typename?: 'updateRolePayload';
-  role?: Maybe<UsersPermissionsRole>;
 };
 
 export type UpdateUserInput = {

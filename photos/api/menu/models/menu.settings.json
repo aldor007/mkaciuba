@@ -21,11 +21,6 @@
       "repeatable": true,
       "component": "menu-config.menu"
     },
-    "bottomMenu": {
-      "type": "component",
-      "repeatable": true,
-      "component": "menu-config.menu"
-    },
     "brand": {
       "model": "file",
       "via": "related",
@@ -41,6 +36,9 @@
       "type": "component",
       "repeatable": true,
       "component": "menu-config.menu"
+    },
+    "brandName": {
+      "type": "string"
     }
   }
 }

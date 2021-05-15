@@ -2,6 +2,7 @@ const { getStoragePath, base64Url } = require('../../../lib/index');
 const LRU = require("lru-cache");
 const lruCache = new LRU({ max: 30, maxAge: 1000 * 60 * 5 });
 const slugify = require('slugify');
+const { ApolloError, ForbiddenError } = require('apollo-server-errors');
 
 
 class Preset {
@@ -89,6 +90,9 @@ module.exports = {
     thumbnails: [Image]
     thumbnail(width: Int, webp: Boolean): Image
   }
+  extend type Query {
+    categoryBySlug(slug: String): Category
+  }
   `,
   resolver: {
     UploadFile: {
@@ -136,8 +140,21 @@ module.exports = {
         },
       },
     },
-    Category: {
-      
-    }
+    Query: {
+      category: false,
+      categoryBySlug: {
+        resolverOf: 'application::category.category.findOne',
+        resolver: async (obj, options, { context }) => {
+            const category = await strapi.services.category.findOne({ slug: options.slug})
+              if (!category.public) {
+                console.info("Not public");
+                context.response.status = 403;
+                context.status = 403;
+                return new ForbiddenError("not public");
+              }
+              return category;
+          }
+      }
+  }
   }
 };

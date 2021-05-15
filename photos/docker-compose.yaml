@@ -1,7 +1,7 @@
 version: '3'
 services:
   strapi:
-    image: strapi/strapi
+    image: strapi/strapi:3.6.2
     environment:
       DATABASE_CLIENT: mysql
       DATABASE_HOST: mysql
