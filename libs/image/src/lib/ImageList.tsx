@@ -1,4 +1,4 @@
-import React, { RefObject } from "react";
+import React, { RefObject, useState } from "react";
 import { gql, useQuery } from '@apollo/client';
 import { useWebPSupportCheck } from "react-use-webp-support-check";
 import {
@@ -8,6 +8,7 @@ import {
 // import 'photoswipe/dist/default-skin/default-skin.css'
 import MetaTags from 'react-meta-tags';
 import { Query } from '@mkaciuba/api';
+import useInfiniteScroll from 'react-infinite-scroll-hook';
 
 
 import { Image, ImageComponent } from './image';
@@ -17,7 +18,7 @@ import './loader.css';
 
 
 const GET_IMAGES = gql`
-  query categoryBySlug($categorySlug: String!) {
+  query categoryBySlug($categorySlug: String!, $start: Int!, $limit: Int) {
   categoryBySlug (
     slug: $categorySlug
   ) {
@@ -35,7 +36,7 @@ const GET_IMAGES = gql`
         height
      }
     }
-    medias {
+    medias(start: $start, limit: $limit) {
       id
      alternativeText
      caption
@@ -79,9 +80,36 @@ export const findImageForWidth = (images: Image[], width: number, webp: boolean)
 export const ImageList = ({ categorySlug }: ImageListProps) => {
   const webp = useWebPSupportCheck();
   const width = useWindowWidth();
-  const { loading, error, data } = useQuery<Query>(GET_IMAGES, {
-    variables: { categorySlug },
+  const [items, setItems] = useState([]);
+  const [hasNextPage, setHasNextPage] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [start, setStart] = useState(9)
+  const limit = 10;
+  const { loading, error, data, fetchMore } = useQuery<Query>(GET_IMAGES, {
+    variables: { categorySlug, limit, start },
   });
+
+  function handleLoadMore() {
+    setLoadingMore(true);
+    fetchMore({
+      variables: {
+         start: start,
+      },
+    }).then((fetchMoreResult) => {
+      setLoadingMore(false);
+      setStart(start + limit);
+      setItems([...items, ...fetchMoreResult.data.categoryBySlug.medias]);
+      setHasNextPage(fetchMoreResult.data.categoryBySlug.medias.length != 0)
+    });
+  }
+
+  const infiniteRef = useInfiniteScroll({
+    loading: loadingMore,
+    hasNextPage,
+    onLoadMore: handleLoadMore,
+    // threshold: 250,
+  }) as RefObject<HTMLDivElement>;
+
   if (error) {
     console.info(error)
      return <p>Error :(</p>
@@ -93,11 +121,14 @@ export const ImageList = ({ categorySlug }: ImageListProps) => {
      </div>
   );
    }
+
+
+
    if (!data.categoryBySlug) {
      return <p> Not found </p>
    }
+   const images = [...data.categoryBySlug.medias, ...items] ;
 
-   const images = data.categoryBySlug.medias;
    const category = data.categoryBySlug;
    const defaultImages = images.map((item) => findImageForWidth(item.thumbnails, width, webp));
    let seoImage = defaultImages;
@@ -105,7 +136,7 @@ export const ImageList = ({ categorySlug }: ImageListProps) => {
     seoImage = images.map((item) => findImageForWidth(category.image.thumbnails, 1024, false));
    }
    return (
-        <div className="flex flex-wrap -mx-1 overflow-hidden">
+        <div className="flex flex-wrap -mx-1 overflow-hidden" >
           <MetaTags>
             <title>{category.name}</title>
             <meta name="description" content={category.description} />

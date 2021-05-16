@@ -152,24 +152,25 @@ module.exports = {
       categoryBySlug: {
         resolverOf: 'application::category.category.findOne',
         resolver: async (obj, options, { context }) => {
-          const category = await strapi.services.category.findOne({ slug: options.slug});
+          const category = await strapi.services.category.findOne({ slug: options.slug, _limit: options.limit});
           if (!category) {
             return new UserInputError('unable to find gallery')
           }
 
           if (!category.public) {
-              const token = context.cookies.get('category_token')
-              if (!token) {
-                return new AuthenticationError('auth required')
-              }
-
-              try {
-                 jwt.verify(token, category.token);
-              } catch (e) {
-                return new ForbiddenError("invalid token");
-              }
+            const token = context.cookies.get('category_token')
+            if (!token) {
+              return new AuthenticationError('auth required')
             }
-            return category;
+
+            try {
+                jwt.verify(token, category.token);
+            } catch (e) {
+              return new ForbiddenError("invalid token");
+            }
+          }
+          category.medias = null;
+          return category;
         }
       }
     },
