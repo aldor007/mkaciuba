@@ -2,7 +2,6 @@ import React, { RefObject, useState  } from "react";
 import { gql, useQuery } from '@apollo/client';
 import { Link } from 'react-router-dom'
 import { generatePath } from "react-router";
-import { RoutesMap } from '../../routes';
 import { findImageForWidth, ImageComponent } from "@mkaciuba/image";
 import { useWebPSupportCheck } from "react-use-webp-support-check";
 import MetaTags from 'react-meta-tags';
@@ -11,6 +10,7 @@ import {
   useWindowWidth
 } from '@react-hook/window-size';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
+import { AppRoutes } from "../routes";
 
 
 const GET_CATEGORIES = gql`
@@ -111,7 +111,7 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
           </MetaTags>
       {!loading && categories.map(item => (
          <div className="my-1 px-1 w-1/1 overflow-hidden sm:w-1/1 md:w-1/2 lg:w-1/2 xl:w-1/3" key={item.slug}>
-          <Link to={generatePath('/gallery/:gallerySlug/:categorySlug', {
+          <Link to={generatePath(AppRoutes.photos.path, {
             gallerySlug: gallery.slug,
             categorySlug: item.slug,
           })}>

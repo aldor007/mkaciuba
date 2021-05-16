@@ -18,7 +18,7 @@
       "tags": [],
       "implicitDependencies": ["photos"]
     },
-    "api-interfaces": {
+    "api": {
       "tags": []
     },
     "image": {

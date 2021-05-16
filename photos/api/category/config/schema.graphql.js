@@ -2,8 +2,8 @@ const { getStoragePath, base64Url } = require('../../../lib/index');
 const LRU = require("lru-cache");
 const lruCache = new LRU({ max: 30, maxAge: 1000 * 60 * 5 });
 const slugify = require('slugify');
-const { ApolloError, ForbiddenError } = require('apollo-server-errors');
-
+const { AuthenticationError, ForbiddenError, UserInputError } = require('apollo-server-errors');
+const jwt = require('jsonwebtoken');
 
 class Preset {
   constructor(name, width, height, mediaQuery, type) {
@@ -86,12 +86,19 @@ module.exports = {
     type: String
     webp: Boolean!
   }
+  type ValidationToken {
+    valid: Boolean!
+    token: String
+  }
   extend type UploadFile {
     thumbnails: [Image]
     thumbnail(width: Int, webp: Boolean): Image
   }
   extend type Query {
     categoryBySlug(slug: String): Category
+  }
+  extend type Mutation {
+    validateTokenForCategory(token: String, categorySlug: String): ValidationToken
   }
   `,
   resolver: {
@@ -145,16 +152,51 @@ module.exports = {
       categoryBySlug: {
         resolverOf: 'application::category.category.findOne',
         resolver: async (obj, options, { context }) => {
-            const category = await strapi.services.category.findOne({ slug: options.slug})
-              if (!category.public) {
-                console.info("Not public");
-                context.response.status = 403;
-                context.status = 403;
-                return new ForbiddenError("not public");
-              }
-              return category;
+          const category = await strapi.services.category.findOne({ slug: options.slug});
+          if (!category) {
+            return new UserInputError('unable to find gallery')
           }
+
+          if (!category.public) {
+              const token = context.cookies.get('category_token')
+              if (!token) {
+                return new AuthenticationError('auth required')
+              }
+
+              try {
+                 jwt.verify(token, category.token);
+              } catch (e) {
+                return new ForbiddenError("invalid token");
+              }
+            }
+            return category;
+        }
       }
-  }
+    },
+    Mutation: {
+      validateTokenForCategory: {
+        resolverOf: 'application::category.category.findOne', // Will apply the same policy on the custom resolver as the controller's action `findByCategories`.
+        resolver: async (obj, options, { context }) => {
+          const category = await strapi.services.category.findOne({ slug: options.categorySlug})
+          if (!category) {
+            return new UserInputError('unable to find gallery')
+          }
+          if (options.token === category.token) {
+             const token = jwt.sign({
+                categorySlug: options.categorySlug
+              }, options.token,  { expiresIn: '4h' });
+            context.cookies.set('category_token', token)
+            return {
+              valid: true,
+              token
+            }
+          }
+
+          return {
+            valid: false
+          };
+        }
+      }
+    }
   }
 };

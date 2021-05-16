@@ -7,6 +7,7 @@ import {
 // import 'photoswipe/dist/photoswipe.css'
 // import 'photoswipe/dist/default-skin/default-skin.css'
 import MetaTags from 'react-meta-tags';
+import { Query } from '@mkaciuba/api';
 
 
 import { Image, ImageComponent } from './image';
@@ -16,10 +17,10 @@ import './loader.css';
 
 
 const GET_IMAGES = gql`
-  query categories($categorySlug: String!) {
-  categories (where: {
+  query categoryBySlug($categorySlug: String!) {
+  categoryBySlug (
     slug: $categorySlug
-  }) {
+  ) {
     id
     name
     description
@@ -78,7 +79,7 @@ export const findImageForWidth = (images: Image[], width: number, webp: boolean)
 export const ImageList = ({ categorySlug }: ImageListProps) => {
   const webp = useWebPSupportCheck();
   const width = useWindowWidth();
-  const { loading, error, data } = useQuery(GET_IMAGES, {
+  const { loading, error, data } = useQuery<Query>(GET_IMAGES, {
     variables: { categorySlug },
   });
   if (error) {
@@ -92,14 +93,17 @@ export const ImageList = ({ categorySlug }: ImageListProps) => {
      </div>
   );
    }
-   if (data.categories.length === 0 ) {
+   if (!data.categoryBySlug) {
      return <p> Not found </p>
    }
 
-   const images = data.categories[0].medias;
-   const category = data.categories[0];
+   const images = data.categoryBySlug.medias;
+   const category = data.categoryBySlug;
    const defaultImages = images.map((item) => findImageForWidth(item.thumbnails, width, webp));
-   const seoImage = images.map((item) => findImageForWidth(category.image.thumbnails, 1024, false));
+   let seoImage = defaultImages;
+   if (category.image) {
+    seoImage = images.map((item) => findImageForWidth(category.image.thumbnails, 1024, false));
+   }
    return (
         <div className="flex flex-wrap -mx-1 overflow-hidden">
           <MetaTags>

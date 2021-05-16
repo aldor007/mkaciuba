@@ -27,8 +27,8 @@
       "type": "boolean"
     },
     "categories": {
-      "collection": "category",
-      "via": "gallery"
+      "via": "gallery",
+      "collection": "category"
     },
     "keywords": {
       "type": "string"

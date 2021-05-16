@@ -32,13 +32,6 @@ export type AdminUser = {
   lastname: Scalars['String'];
 };
 
-export type AudienceInput = {
-  name: Scalars['String'];
-  key?: Maybe<Scalars['String']>;
-  created_by?: Maybe<Scalars['ID']>;
-  updated_by?: Maybe<Scalars['ID']>;
-};
-
 export type Category = {
   __typename?: 'Category';
   id: Scalars['ID'];
@@ -54,21 +47,11 @@ export type Category = {
   gallery?: Maybe<Gallery>;
   keywords?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  navigation?: Maybe<NavigationNavigationitem>;
   medias?: Maybe<Array<Maybe<UploadFile>>>;
-  users?: Maybe<Array<Maybe<UsersPermissionsUser>>>;
 };
 
 
 export type CategoryMediasArgs = {
-  sort?: Maybe<Scalars['String']>;
-  limit?: Maybe<Scalars['Int']>;
-  start?: Maybe<Scalars['Int']>;
-  where?: Maybe<Scalars['JSON']>;
-};
-
-
-export type CategoryUsersArgs = {
   sort?: Maybe<Scalars['String']>;
   limit?: Maybe<Scalars['Int']>;
   start?: Maybe<Scalars['Int']>;
@@ -136,12 +119,6 @@ export type CategoryConnectionName = {
   connection?: Maybe<CategoryConnection>;
 };
 
-export type CategoryConnectionNavigation = {
-  __typename?: 'CategoryConnectionNavigation';
-  key?: Maybe<Scalars['ID']>;
-  connection?: Maybe<CategoryConnection>;
-};
-
 export type CategoryConnectionPublic = {
   __typename?: 'CategoryConnectionPublic';
   key?: Maybe<Scalars['Boolean']>;
@@ -187,7 +164,6 @@ export type CategoryGroupBy = {
   gallery?: Maybe<Array<Maybe<CategoryConnectionGallery>>>;
   keywords?: Maybe<Array<Maybe<CategoryConnectionKeywords>>>;
   description?: Maybe<Array<Maybe<CategoryConnectionDescription>>>;
-  navigation?: Maybe<Array<Maybe<CategoryConnectionNavigation>>>;
 };
 
 export type CategoryInput = {
@@ -199,11 +175,10 @@ export type CategoryInput = {
   file?: Maybe<Scalars['ID']>;
   image?: Maybe<Scalars['ID']>;
   medias?: Maybe<Array<Maybe<Scalars['ID']>>>;
-  users?: Maybe<Array<Maybe<Scalars['ID']>>>;
   gallery?: Maybe<Scalars['ID']>;
   keywords?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  navigation?: Maybe<Scalars['ID']>;
+  token?: Maybe<Scalars['String']>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
 };
@@ -232,11 +207,6 @@ export enum Enum_Componentmenuconfigmenu_Icon {
   Linkedin = 'linkedin'
 }
 
-export enum Enum_Navigationnavigationitem_Type {
-  Internal = 'INTERNAL',
-  External = 'EXTERNAL'
-}
-
 export type FileInfoInput = {
   name?: Maybe<Scalars['String']>;
   alternativeText?: Maybe<Scalars['String']>;
@@ -254,7 +224,6 @@ export type Gallery = {
   public?: Maybe<Scalars['Boolean']>;
   keywords?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  navigation?: Maybe<NavigationNavigationitem>;
   categories?: Maybe<Array<Maybe<Category>>>;
 };
 
@@ -309,12 +278,6 @@ export type GalleryConnectionName = {
   connection?: Maybe<GalleryConnection>;
 };
 
-export type GalleryConnectionNavigation = {
-  __typename?: 'GalleryConnectionNavigation';
-  key?: Maybe<Scalars['ID']>;
-  connection?: Maybe<GalleryConnection>;
-};
-
 export type GalleryConnectionPublic = {
   __typename?: 'GalleryConnectionPublic';
   key?: Maybe<Scalars['Boolean']>;
@@ -350,7 +313,6 @@ export type GalleryGroupBy = {
   public?: Maybe<Array<Maybe<GalleryConnectionPublic>>>;
   keywords?: Maybe<Array<Maybe<GalleryConnectionKeywords>>>;
   description?: Maybe<Array<Maybe<GalleryConnectionDescription>>>;
-  navigation?: Maybe<Array<Maybe<GalleryConnectionNavigation>>>;
 };
 
 export type GalleryInput = {
@@ -361,7 +323,6 @@ export type GalleryInput = {
   categories?: Maybe<Array<Maybe<Scalars['ID']>>>;
   keywords?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  navigation?: Maybe<Scalars['ID']>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
 };
@@ -406,7 +367,7 @@ export type MenuInput = {
   updated_by?: Maybe<Scalars['ID']>;
 };
 
-export type Morph = Image | UsersPermissionsMe | UsersPermissionsMeRole | UsersPermissionsLoginPayload | UserPermissionsPasswordPayload | Category | CategoryConnection | CategoryAggregator | CategoryGroupBy | CategoryConnectionId | CategoryConnectionCreated_At | CategoryConnectionUpdated_At | CategoryConnectionName | CategoryConnectionSlug | CategoryConnectionSlugOverride | CategoryConnectionPublic | CategoryConnectionPublicationDate | CategoryConnectionFile | CategoryConnectionImage | CategoryConnectionGallery | CategoryConnectionKeywords | CategoryConnectionDescription | CategoryConnectionNavigation | CreateCategoryPayload | UpdateCategoryPayload | DeleteCategoryPayload | Gallery | GalleryConnection | GalleryAggregator | GalleryGroupBy | GalleryConnectionId | GalleryConnectionCreated_At | GalleryConnectionUpdated_At | GalleryConnectionName | GalleryConnectionSlug | GalleryConnectionSlugOverride | GalleryConnectionPublic | GalleryConnectionKeywords | GalleryConnectionDescription | GalleryConnectionNavigation | CreateGalleryPayload | UpdateGalleryPayload | DeleteGalleryPayload | Menu | UpdateMenuPayload | DeleteMenuPayload | NavigationAudience | NavigationNavigation | NavigationNavigationitem | UploadFile | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsUser | CreateUserPayload | UpdateUserPayload | ComponentMenuConfigMenu;
+export type Morph = UsersPermissionsMe | UsersPermissionsMeRole | UsersPermissionsLoginPayload | UserPermissionsPasswordPayload | Image | Category | CategoryConnection | CategoryAggregator | CategoryGroupBy | CategoryConnectionId | CategoryConnectionCreated_At | CategoryConnectionUpdated_At | CategoryConnectionName | CategoryConnectionSlug | CategoryConnectionSlugOverride | CategoryConnectionPublic | CategoryConnectionPublicationDate | CategoryConnectionFile | CategoryConnectionImage | CategoryConnectionGallery | CategoryConnectionKeywords | CategoryConnectionDescription | CreateCategoryPayload | UpdateCategoryPayload | DeleteCategoryPayload | Gallery | GalleryConnection | GalleryAggregator | GalleryGroupBy | GalleryConnectionId | GalleryConnectionCreated_At | GalleryConnectionUpdated_At | GalleryConnectionName | GalleryConnectionSlug | GalleryConnectionSlugOverride | GalleryConnectionPublic | GalleryConnectionKeywords | GalleryConnectionDescription | CreateGalleryPayload | UpdateGalleryPayload | DeleteGalleryPayload | Menu | UpdateMenuPayload | DeleteMenuPayload | UploadFile | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsUser | CreateUserPayload | UpdateUserPayload | ComponentMenuConfigMenu;
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -418,6 +379,7 @@ export type Mutation = {
   deleteGallery?: Maybe<DeleteGalleryPayload>;
   updateMenu?: Maybe<UpdateMenuPayload>;
   deleteMenu?: Maybe<DeleteMenuPayload>;
+  validateTokenForCategory?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -455,89 +417,10 @@ export type MutationUpdateMenuArgs = {
   input?: Maybe<UpdateMenuInput>;
 };
 
-export type NavigationAudience = {
-  __typename?: 'NavigationAudience';
-  id: Scalars['ID'];
-  name: Scalars['String'];
-  key?: Maybe<Scalars['String']>;
-};
 
-export type NavigationInput = {
-  name: Scalars['String'];
-  slug: Scalars['String'];
-  visible?: Maybe<Scalars['Boolean']>;
-  items?: Maybe<Array<Maybe<Scalars['ID']>>>;
-  created_by?: Maybe<Scalars['ID']>;
-  updated_by?: Maybe<Scalars['ID']>;
-};
-
-/** Navigation container */
-export type NavigationNavigation = {
-  __typename?: 'NavigationNavigation';
-  id: Scalars['ID'];
-  name: Scalars['String'];
-  slug: Scalars['String'];
-  visible?: Maybe<Scalars['Boolean']>;
-  items?: Maybe<Array<Maybe<NavigationNavigationitem>>>;
-};
-
-
-/** Navigation container */
-export type NavigationNavigationItemsArgs = {
-  sort?: Maybe<Scalars['String']>;
-  limit?: Maybe<Scalars['Int']>;
-  start?: Maybe<Scalars['Int']>;
-  where?: Maybe<Scalars['JSON']>;
-};
-
-export type NavigationNavigationitem = {
-  __typename?: 'NavigationNavigationitem';
-  id: Scalars['ID'];
-  created_at: Scalars['DateTime'];
-  updated_at: Scalars['DateTime'];
-  title: Scalars['String'];
-  type?: Maybe<Enum_Navigationnavigationitem_Type>;
-  path?: Maybe<Scalars['String']>;
-  externalPath?: Maybe<Scalars['String']>;
-  uiRouterKey?: Maybe<Scalars['String']>;
-  menuAttached?: Maybe<Scalars['Boolean']>;
-  order?: Maybe<Scalars['Int']>;
-  parent?: Maybe<NavigationNavigationitem>;
-  master?: Maybe<NavigationNavigation>;
-  related?: Maybe<Array<Maybe<Morph>>>;
-  audience?: Maybe<Array<Maybe<NavigationAudience>>>;
-};
-
-
-export type NavigationNavigationitemRelatedArgs = {
-  sort?: Maybe<Scalars['String']>;
-  limit?: Maybe<Scalars['Int']>;
-  start?: Maybe<Scalars['Int']>;
-  where?: Maybe<Scalars['JSON']>;
-};
-
-
-export type NavigationNavigationitemAudienceArgs = {
-  sort?: Maybe<Scalars['String']>;
-  limit?: Maybe<Scalars['Int']>;
-  start?: Maybe<Scalars['Int']>;
-  where?: Maybe<Scalars['JSON']>;
-};
-
-export type NavigationitemInput = {
-  title: Scalars['String'];
-  type?: Maybe<Enum_Navigationnavigationitem_Type>;
-  path?: Maybe<Scalars['String']>;
-  externalPath?: Maybe<Scalars['String']>;
-  uiRouterKey?: Maybe<Scalars['String']>;
-  menuAttached?: Maybe<Scalars['Boolean']>;
-  order?: Maybe<Scalars['Int']>;
-  related?: Maybe<Array<Maybe<Scalars['ID']>>>;
-  parent?: Maybe<Scalars['ID']>;
-  master?: Maybe<Scalars['ID']>;
-  audience?: Maybe<Array<Maybe<Scalars['ID']>>>;
-  created_by?: Maybe<Scalars['ID']>;
-  updated_by?: Maybe<Scalars['ID']>;
+export type MutationValidateTokenForCategoryArgs = {
+  token?: Maybe<Scalars['String']>;
+  categorySlug?: Maybe<Scalars['String']>;
 };
 
 export enum PublicationState {
@@ -547,19 +430,13 @@ export enum PublicationState {
 
 export type Query = {
   __typename?: 'Query';
-  category?: Maybe<Category>;
   categories?: Maybe<Array<Maybe<Category>>>;
   categoriesConnection?: Maybe<CategoryConnection>;
   gallery?: Maybe<Gallery>;
   galleries?: Maybe<Array<Maybe<Gallery>>>;
   galleriesConnection?: Maybe<GalleryConnection>;
   menu?: Maybe<Menu>;
-};
-
-
-export type QueryCategoryArgs = {
-  id: Scalars['ID'];
-  publicationState?: Maybe<PublicationState>;
+  categoryBySlug?: Maybe<Category>;
 };
 
 
@@ -605,6 +482,11 @@ export type QueryGalleriesConnectionArgs = {
 
 export type QueryMenuArgs = {
   publicationState?: Maybe<PublicationState>;
+};
+
+
+export type QueryCategoryBySlugArgs = {
+  slug?: Maybe<Scalars['String']>;
 };
 
 export type RoleInput = {
@@ -666,7 +548,6 @@ export type UserInput = {
   confirmed?: Maybe<Scalars['Boolean']>;
   blocked?: Maybe<Scalars['Boolean']>;
   role?: Maybe<Scalars['ID']>;
-  categories?: Maybe<Array<Maybe<Scalars['ID']>>>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
 };
@@ -760,15 +641,6 @@ export type UsersPermissionsUser = {
   confirmed?: Maybe<Scalars['Boolean']>;
   blocked?: Maybe<Scalars['Boolean']>;
   role?: Maybe<UsersPermissionsRole>;
-  categories?: Maybe<Array<Maybe<Category>>>;
-};
-
-
-export type UsersPermissionsUserCategoriesArgs = {
-  sort?: Maybe<Scalars['String']>;
-  limit?: Maybe<Scalars['Int']>;
-  start?: Maybe<Scalars['Int']>;
-  where?: Maybe<Scalars['JSON']>;
 };
 
 export type CreateCategoryInput = {
@@ -821,13 +693,6 @@ export type DeleteMenuPayload = {
   menu?: Maybe<Menu>;
 };
 
-export type EditAudienceInput = {
-  name?: Maybe<Scalars['String']>;
-  key?: Maybe<Scalars['String']>;
-  created_by?: Maybe<Scalars['ID']>;
-  updated_by?: Maybe<Scalars['ID']>;
-};
-
 export type EditCategoryInput = {
   name?: Maybe<Scalars['String']>;
   slug?: Maybe<Scalars['String']>;
@@ -837,11 +702,10 @@ export type EditCategoryInput = {
   file?: Maybe<Scalars['ID']>;
   image?: Maybe<Scalars['ID']>;
   medias?: Maybe<Array<Maybe<Scalars['ID']>>>;
-  users?: Maybe<Array<Maybe<Scalars['ID']>>>;
   gallery?: Maybe<Scalars['ID']>;
   keywords?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  navigation?: Maybe<Scalars['ID']>;
+  token?: Maybe<Scalars['String']>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
 };
@@ -861,7 +725,6 @@ export type EditGalleryInput = {
   categories?: Maybe<Array<Maybe<Scalars['ID']>>>;
   keywords?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  navigation?: Maybe<Scalars['ID']>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
 };
@@ -873,31 +736,6 @@ export type EditMenuInput = {
   socialIcons?: Maybe<Array<Maybe<EditComponentMenuConfigMenuInput>>>;
   brandName?: Maybe<Scalars['String']>;
   published_at?: Maybe<Scalars['DateTime']>;
-  created_by?: Maybe<Scalars['ID']>;
-  updated_by?: Maybe<Scalars['ID']>;
-};
-
-export type EditNavigationInput = {
-  name?: Maybe<Scalars['String']>;
-  slug?: Maybe<Scalars['String']>;
-  visible?: Maybe<Scalars['Boolean']>;
-  items?: Maybe<Array<Maybe<Scalars['ID']>>>;
-  created_by?: Maybe<Scalars['ID']>;
-  updated_by?: Maybe<Scalars['ID']>;
-};
-
-export type EditNavigationitemInput = {
-  title?: Maybe<Scalars['String']>;
-  type?: Maybe<Enum_Navigationnavigationitem_Type>;
-  path?: Maybe<Scalars['String']>;
-  externalPath?: Maybe<Scalars['String']>;
-  uiRouterKey?: Maybe<Scalars['String']>;
-  menuAttached?: Maybe<Scalars['Boolean']>;
-  order?: Maybe<Scalars['Int']>;
-  related?: Maybe<Array<Maybe<Scalars['ID']>>>;
-  parent?: Maybe<Scalars['ID']>;
-  master?: Maybe<Scalars['ID']>;
-  audience?: Maybe<Array<Maybe<Scalars['ID']>>>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
 };
@@ -921,7 +759,6 @@ export type EditUserInput = {
   confirmed?: Maybe<Scalars['Boolean']>;
   blocked?: Maybe<Scalars['Boolean']>;
   role?: Maybe<Scalars['ID']>;
-  categories?: Maybe<Array<Maybe<Scalars['ID']>>>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
 };

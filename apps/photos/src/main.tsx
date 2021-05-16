@@ -9,7 +9,6 @@ const reactMountFn = (mountElement.childElementCount === 0)
     ? ReactDOM.render
     : ReactDOM.hydrate;
 
-console.info('mount', mountElement.childElementCount)
 reactMountFn(
     <BrowserRouter>
         <App />

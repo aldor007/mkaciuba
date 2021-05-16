@@ -14,7 +14,7 @@ export default function Header(props: HeaderProps)  {
 
   return (
     <React.Fragment>
-        <Navbar/>
+        <Navbar additionalMainMenu={mainMenu}/>
     </React.Fragment>
   );
 }

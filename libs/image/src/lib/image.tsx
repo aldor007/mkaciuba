@@ -3,12 +3,12 @@ import React, { RefObject, useState} from 'react';
 
 export interface Image {
   url: string
-  mediaQuery: string
+  mediaQuery?: string
   webp: boolean
-  type: string
-  width: number
-  height: number
-  alt: string
+  type?: string
+  width?: number
+  height?: number
+  alt?: string
 }
 export interface ImageComponentProps {
   thumbnails: Image[]

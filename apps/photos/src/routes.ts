@@ -2,23 +2,20 @@ import { Home } from './app/pages/Home';
 import { Categories } from './app/pages/Categories';
 import { Photos } from './app/pages/Photos';
 import { IframePhotos } from './app/pages/IframePhotos';
-
+import { AppRoutes } from './app/routes';
 
 export const Routes = [
     {
         component: Photos,
-        path: '/gallery/:gallerySlug/:categorySlug',
-       name: 'photos'
+        path: AppRoutes.photos.path
     },
     {
         component: Categories,
-        path: '/gallery/:gallerySlug',
-        name: 'categoryList'
+        path: AppRoutes.categoryList.path
     },
     {
         component: IframePhotos,
-        path: '/iframe/:gallerySlug/:categorySlug',
-       name: 'iframe-photos'
+        path: AppRoutes.iframePhotos.path
     },
     {
         component: Home,
@@ -27,4 +24,3 @@ export const Routes = [
     },
 ]
 
-export const RoutesMap = Routes.reduce((acc, cur) => ({ ...acc, [cur.name]: cur }))

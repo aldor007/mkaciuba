@@ -1,22 +1,30 @@
 
 import { CategoriesList } from '../components/CategoriesList';
 import { Footer } from '../components/Footer';
-import { faFacebook, faGithub, faInstagram, faTwitch, faTwitter } from '@fortawesome/free-brands-svg-icons';
 import React, { useEffect, useState } from 'react';
 import  Header from '../Header';
 import { gql, useQuery } from '@apollo/client';
-import { useParams } from 'react-router-dom';
+import { generatePath, useParams } from 'react-router-dom';
+import { Query } from '@mkaciuba/api';
+import { AppRoutes } from '../routes';
+import { Gallery } from 'react-photoswipe-gallery';
 
 const GET_GALLERY = gql`
-query  galleries($gallerySlug: String!) {
-  galleries(where: {
+query  galleryMenu($gallerySlug: String!) {
+  galleryMenu(
     slug: $gallerySlug
-  }) {
-    id
-    name
-    slug
-    keywords
-    description
+  ) {
+    gallery {
+      id
+      name
+      slug
+      keywords
+      description
+    }
+    categories {
+      slug
+      name
+    }
   }
 }`;
 
@@ -31,14 +39,30 @@ export const Categories = () => {
     console.info(error)
      return <p>Error :(</p>
    };
-  const galleries = data.galleries;
-  if (galleries.length  == 0) {
+  const { gallery, categories } = data.galleryMenu;
+  if (!gallery) {
     return <p>Not found</p>
   }
+
+   const children  = categories.map((item) => {
+     return {
+      url: generatePath(AppRoutes.photos.path, {
+        gallerySlug,
+        categorySlug: item.slug
+      }),
+      name: item.name
+     }
+  })
+  const menu = [{
+    name: gallery.name,
+    url: '#',
+    children,
+  }]
+
   return  (
     <>
-    <Header/>
-    <CategoriesList gallery={galleries[0]}></CategoriesList>
+    <Header mainMenu={menu}/>
+    <CategoriesList gallery={gallery}></CategoriesList>
     <Footer></Footer>
     </>
   )

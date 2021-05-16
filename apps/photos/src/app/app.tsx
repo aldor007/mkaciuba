@@ -1,9 +1,7 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter, Route, Link, Switch, useLocation } from 'react-router-dom';
-import withStyles from 'isomorphic-style-loader/withStyles'
+import { useLocation } from 'react-router-dom';
 
 import '../assets/photos.css'
-import { Home } from './pages/Home'
 import { renderRoutes } from 'react-router-config';
 import { Routes } from '../routes';
 import { gql, useQuery, ApolloProvider, ApolloClient, InMemoryCache  } from '@apollo/client';
@@ -34,12 +32,12 @@ export const App = ({ client }: AppsProps) => {
   if (!client) {
     if (window.__APOLLO_STATE__ ) {
       client = new ApolloClient({
-        uri: 'http://localhost:1337/graphql',
+        uri: '/graphql',
         cache: new InMemoryCache().restore(window.__APOLLO_STATE__),
       });
     } else {
       client = new ApolloClient({
-        uri: 'http://localhost:1337/graphql',
+        uri: '/graphql',
         cache: new InMemoryCache()
       });
     }

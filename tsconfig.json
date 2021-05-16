@@ -17,7 +17,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@mkaciuba/api-interfaces": ["libs/api-interfaces/src/index.ts"],
+      "@mkaciuba/api": ["libs/api/src/index.ts"],
       "@mkaciuba/photos": ["apps/photos/src/index.ts"],
       "@mkaciuba/image": ["libs/image/src/index.ts"]
     }

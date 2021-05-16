@@ -1,11 +1,8 @@
 import React from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { gql, useQuery } from '@apollo/client';
-import { Menu, Enum_Componentmenuconfigmenu_Icon, Maybe } from '../api/graphql'
-// import Logo from '../../assets/logo_icon.png'
+import { Menu, Enum_Componentmenuconfigmenu_Icon, Maybe, Query, QueryMenuArgs } from '@mkaciuba/api'
 import { faFacebook, faGithub, faInstagram, faLinkedin, faTwitter } from '@fortawesome/free-brands-svg-icons';
-import { QueryMenuArgs } from "../api/graphql";
-import { Query } from "../api/graphql";
 
 const ICONS = {
   [Enum_Componentmenuconfigmenu_Icon.Facebook]: faFacebook,
@@ -47,6 +44,34 @@ export interface NavbarProps {
   additionalMainMenu?: MenuType[]
 }
 
+
+const createDropdown = ( additionalMainMenu, setDropdownOpen, dropdownOpen) => {
+  const dropDownItems = additionalMainMenu[0].children.map((item, id) => (
+    <a key={item.url} className="block px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg dark-mode:bg-transparent dark-mode:hover:bg-gray-600 dark-mode:focus:bg-gray-600 dark-mode:focus:text-white dark-mode:hover:text-white dark-mode:text-gray-200 md:mt-0 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" href={item.url}>
+      {item.name}
+     </a>
+  ))
+  const dropdownMenu = (
+    <div className="relative" x-data="{ open: false }">
+      <button className="flex flex-row items-center w-full px-4 py-2 mt-2 text-sm font-semibold text-left bg-transparent rounded-lg dark-mode:bg-transparent dark-mode:focus:text-white dark-mode:hover:text-white dark-mode:focus:bg-gray-600 dark-mode:hover:bg-gray-600 md:w-auto md:inline md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
+      onClick={() => setDropdownOpen(!dropdownOpen)}
+      >
+        <span>{additionalMainMenu[0].name}</span>
+            <svg fill="currentColor" viewBox="0 0 20 20" className="inline w-4 h-4 mt-1 ml-1 transition-transform duration-200 transform md:-mt-1"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
+      </button>
+      <div    x-show="open"    className="absolute right-0 w-full mt-2 origin-top-right rounded-md shadow-lg md:w-48">
+        {dropdownOpen &&
+      <div className="overflow-y-auto h-64 bg-white rounded-md shadow dark-mode:bg-gray-800">
+        {dropDownItems}
+      </div>
+        }
+    </div>
+    </div>
+  )
+
+  return dropdownMenu;
+}
+
 export const Navbar = function (props: NavbarProps) {
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const [navbarOpen, setNavbarOpen] = React.useState(false);
@@ -57,7 +82,6 @@ export const Navbar = function (props: NavbarProps) {
     console.info(error)
      return <p>Error :(</p>
    };
-   console.info(data)
   const social = data.menu.socialIcons;
   const { topMenu, mainMenu, brandName, brand } = data.menu;
   const socialIcons = social.map((icon, id) => (
@@ -81,11 +105,16 @@ export const Navbar = function (props: NavbarProps) {
       </a>
     </li>
   ))
-  const mainMenuList = mainMenu.map((item, id) => {
+  const mainMenuList = mainMenu.map((item, id) => (
      <a href={item.url} className="px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg dark-mode:bg-transparent dark-mode:hover:bg-gray-600 dark-mode:focus:bg-gray-600 dark-mode:focus:text-white dark-mode:hover:text-white dark-mode:text-gray-200 md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline">
        {item.name}
      </a>
-  })
+  ))
+
+  let dropdownMenu = null;
+  if (props.additionalMainMenu) {
+    dropdownMenu = createDropdown(props.additionalMainMenu, setDropdownOpen, dropdownOpen)
+  }
 
   let navbarCSS = '';
   if (navbarOpen) {
@@ -125,23 +154,7 @@ export const Navbar = function (props: NavbarProps) {
          </div>
          <nav className={navbarCSS}>
            {mainMenuList}
-           <div className="relative" x-data="{ open: false }">
-             <button className="flex flex-row items-center w-full px-4 py-2 mt-2 text-sm font-semibold text-left bg-transparent rounded-lg dark-mode:bg-transparent dark-mode:focus:text-white dark-mode:hover:text-white dark-mode:focus:bg-gray-600 dark-mode:hover:bg-gray-600 md:w-auto md:inline md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
-             onClick={() => setDropdownOpen(!dropdownOpen)}
-             >
-               <span>Dropdown</span>
-                   <svg fill="currentColor" viewBox="0 0 20 20" className="inline w-4 h-4 mt-1 ml-1 transition-transform duration-200 transform md:-mt-1"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
-              </button>
-             <div    x-show="open"    className="absolute right-0 w-full mt-2 origin-top-right rounded-md shadow-lg md:w-48">
-               {dropdownOpen &&
-              <div className="px-2 py-2 bg-white rounded-md shadow dark-mode:bg-gray-800">
-                <a className="block px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg dark-mode:bg-transparent dark-mode:hover:bg-gray-600 dark-mode:focus:bg-gray-600 dark-mode:focus:text-white dark-mode:hover:text-white dark-mode:text-gray-200 md:mt-0 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" href="#">Link #1</a>
-                <a className="block px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg dark-mode:bg-transparent dark-mode:hover:bg-gray-600 dark-mode:focus:bg-gray-600 dark-mode:focus:text-white dark-mode:hover:text-white dark-mode:text-gray-200 md:mt-0 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" href="#">Link #2</a>
-                <a className="block px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg dark-mode:bg-transparent dark-mode:hover:bg-gray-600 dark-mode:focus:bg-gray-600 dark-mode:focus:text-white dark-mode:hover:text-white dark-mode:text-gray-200 md:mt-0 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" href="#">Link #3</a>
-              </div>
-               }
-            </div>
-           </div>
+           {dropdownMenu &&dropdownMenu}
            <button className="block lg:hidden cursor-pointer ml-auto relative w-12 h-12 p-4">
             <svg className="fill-current text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"/></svg>
             <svg className="fill-current text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 8.586L2.929 1.515 1.515 2.929 8.586 10l-7.071 7.071 1.414 1.414L10 11.414l7.071 7.071 1.414-1.414L11.414 10l7.071-7.071-1.414-1.414L10 8.586z"/></svg>
