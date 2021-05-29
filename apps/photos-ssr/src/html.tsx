@@ -4,6 +4,7 @@ export function Html({ content, state, meta }) {
   return (
     <html>
       <head dangerouslySetInnerHTML={{ __html: meta}}>
+
       </head>
 
       <body>

@@ -127,7 +127,8 @@ export const Navbar = function (props: NavbarProps) {
   }
   return (
     <>
-      <nav className="relative flex flex-wrap items-center justify-between px-2 py-3 navbar-expand-lg bg-black mb-3">
+      <div className="w-full top-0 text-gray-700 bg-black  px-2 py-3 navbar-expand-lg dark-mode:text-gray-200 dark-mode:bg-gray-800">
+      <nav className="flex flex-col max-w-screen-xl px-4 mx-auto md:items-center md:justify-between md:flex-row md:px-6 lg:px-8">
         <div className="container px-4 mx-auto flex flex-wrap items-center justify-between">
           <div className="w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
             <ul className="flex flex-col lg:flex-row list-none lg:ml-auto">
@@ -141,6 +142,7 @@ export const Navbar = function (props: NavbarProps) {
           </div>
         </div>
       </nav>
+      </div>
       <div className="w-full sticky top-0 text-gray-700 bg-white dark-mode:text-gray-200 dark-mode:bg-gray-800">
         <div x-data="{ open: false }" className="flex flex-col max-w-screen-xl px-4 mx-auto md:items-center md:justify-between md:flex-row md:px-6 lg:px-8">
           <div className="p-4 flex flex-row items-center justify-between">

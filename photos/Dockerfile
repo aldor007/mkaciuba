@@ -11,6 +11,7 @@ ADD ./components /opt/app/components
 ADD ./config /opt/app/config
 ADD ./extensions /opt/app/extensions
 ADD ./lib /opt/app/lib
+ADD ./api /opt/app/api
 ENV NODE_ENV production
 RUN yarn build
 EXPOSE 1337

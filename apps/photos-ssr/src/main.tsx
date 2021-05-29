@@ -27,17 +27,15 @@ import {MetaTagsContext} from 'react-meta-tags';
 import { createPersistedQueryLink } from "@apollo/client/link/persisted-queries";
 import { sha256 } from 'crypto-hash';
 import { BatchHttpLink } from "@apollo/client/link/batch-http";
+import { environment } from './environments/environment';
 
 
 const app = express();
-console.log(__dirname)
 app.use('/assets',
     express.static(path.join(__dirname, '../photos'))
  );
 
 app.get('*', (req, res) => {
-  const params = req.params[0].split('/');
-  const id = params[2];
   const metaTagsInstance = MetaTagsServer();
 
   const persistedQueriesLink = createPersistedQueryLink({ sha256 });
@@ -45,7 +43,7 @@ app.get('*', (req, res) => {
   const client = new ApolloClient({
     ssrMode: true,
     link: persistedQueriesLink.concat(new BatchHttpLink({
-      uri: 'http://localhost:1337/graphql',
+      uri:  environment.apiUrl,
       credentials: 'same-origin',
       headers: {
         cookie: req.header('Cookie'),
@@ -71,12 +69,12 @@ app.get('*', (req, res) => {
     return;
   }
 
-  console.info('Before getDataFromTree', routes)
   getDataFromTree(staticApp).then((content) => {
     // Extract the entirety of the Apollo Client cache's current state
     const initialState = client.extract();
     const meta =    `<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet"/>
       <link href="/assets/assets/main.css" rel="stylesheet"/>
+      <meta charset="utf-8">
       <link href="/assets/assets/default-skin.css" rel="stylesheet"/>
       <link href="/assets/assets/photos.css" rel="stylesheet"/>${metaTagsInstance.renderToString()}`
 

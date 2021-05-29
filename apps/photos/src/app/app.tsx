@@ -6,7 +6,8 @@ import { renderRoutes } from 'react-router-config';
 import { Routes } from '../routes';
 import { gql, useQuery, ApolloProvider, ApolloClient, InMemoryCache  } from '@apollo/client';
 import '../assets/main.css'
-
+import { BatchHttpLink } from "@apollo/client/link/batch-http";
+import { environment } from '../environments/environment';
 
 export function ScrollToTop() {
   const { pathname } = useLocation();
@@ -30,14 +31,20 @@ declare global {
 
 export const App = ({ client }: AppsProps) => {
   if (!client) {
+      const link = new BatchHttpLink({
+        uri: environment.apiUrl,
+        batchMax: 12, // No more than 5 operations per batch
+        batchInterval: 50, // Wait no more than 20ms after first batched operation
+        useGETForQueries: true
+      });
     if (window.__APOLLO_STATE__ ) {
       client = new ApolloClient({
-        uri: '/graphql',
+        link,
         cache: new InMemoryCache().restore(window.__APOLLO_STATE__),
       });
     } else {
       client = new ApolloClient({
-        uri: '/graphql',
+        link,
         cache: new InMemoryCache()
       });
     }

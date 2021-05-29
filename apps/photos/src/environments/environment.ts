@@ -2,5 +2,7 @@
 // When building for production, this file is replaced with `environment.prod.ts`.
 
 export const environment = {
-  production: false
+  production: false,
+  // apiUrl: 'http://strapi.k8s.m39/graphql',
+  apiUrl: 'http://localhost:1337/graphql',
 };

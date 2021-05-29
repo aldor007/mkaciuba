@@ -1,6 +1,6 @@
 const { getStoragePath, base64Url } = require('../../../lib/index');
 const LRU = require("lru-cache");
-const lruCache = new LRU({ max: 30, maxAge: 1000 * 60 * 5 });
+const lruCache = new LRU({ max: 300, maxAge: 1000 * 60 * 5 });
 const slugify = require('slugify');
 const { AuthenticationError, ForbiddenError, UserInputError } = require('apollo-server-errors');
 const jwt = require('jsonwebtoken');
@@ -96,6 +96,10 @@ module.exports = {
   }
   extend type Query {
     categoryBySlug(slug: String): Category
+    recentImages(limit: Int): [UploadFile]
+  }
+  extend type Category {
+    randomImage: UploadFile
   }
   extend type Mutation {
     validateTokenForCategory(token: String, categorySlug: String): ValidationToken
@@ -147,8 +151,36 @@ module.exports = {
         },
       },
     },
+    Category: {
+      randomImage: {
+        resolverOf: 'application::category.category.findOne',
+        resolver: async (obj, options, { context }) => {
+          return obj.medias[Math.floor(Math.random() * obj.medias.length) - 1];
+        }
+      }
+    },
     Query: {
       category: false,
+      categories: {
+        resolverOf: 'application::category.category.find',
+        resolver: async (obj, options, { context }) => {
+          const search = options.where || {};
+          search._limit =  options.limit;
+          search._start = options.start || 1;
+          search._sort = options.sort;
+          search.public = true;
+          search.gallery_null = false;
+          const key = JSON.stringify(search);
+          let categories = lruCache.get(key)
+          if (categories) {
+            return categories;
+          }
+          categories = await strapi.services.category.find(search);
+          lruCache.set(key, categories);
+
+          return categories;
+        }
+      },
       categoryBySlug: {
         resolverOf: 'application::category.category.findOne',
         resolver: async (obj, options, { context }) => {
@@ -169,8 +201,25 @@ module.exports = {
               return new ForbiddenError("invalid token");
             }
           }
-          category.medias = null;
           return category;
+        }
+      },
+      recentImages: {
+        resolverOf: 'application::category.category.findOne',
+        resolver: async (obj, options, { context }) => {
+          if (options.limit > 9) {
+            return new UserInputError('Has to be less than 9')
+          }
+          const key = 'recentImages-' + options.limit + obj.slug;
+          let images = lruCache.get(key);
+          if (images) {
+            return images;
+          }
+          images = category.map((c) => {
+            return c.medias[Math.floor(Math.random() * c.medias.length) - 1];
+          });
+          lruCache.set(key, images )
+          return images;
         }
       }
     },

@@ -25,6 +25,7 @@ const GET_IMAGES = gql`
     id
     name
     description
+    slug
     keywords
     image {
      thumbnails {
@@ -144,7 +145,7 @@ export const ImageList = ({ categorySlug }: ImageListProps) => {
             <meta name="twitter:image" content={seoImage[0].url} />
             <meta property="og:image" content={seoImage[0].url} />
           </MetaTags>
-          <Gallery shareButton={false}>
+          <Gallery shareButton={false} id={category.slug}>
             {images.map( (item, index) => (
             <Item
               original={defaultImages[index].url}
@@ -158,7 +159,7 @@ export const ImageList = ({ categorySlug }: ImageListProps) => {
             {({ ref, open }) => (
                 <div className="my-1 px-1 w-1/1 overflow-hidden sm:w-1/1 md:w-1/2 lg:w-1/2 xl:w-1/3">
                <ImageComponent ref={ref as RefObject<HTMLImageElement>} onClick={open} thumbnails={item.thumbnails} defaultImage={defaultImages[index]} />
-                  <div className="my-1 px-1 w-1/2 overflow-hidden sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/3">
+                  <div className="hidden overflow-hidden">
                     <div className="text-white text-lg">{item.alternativeText}</div>
                   </div>
                 </div>
