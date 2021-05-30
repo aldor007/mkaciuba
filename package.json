@@ -65,10 +65,10 @@
     "react-router-dom": "5.2.0",
     "react-use-webp-support-check": "^1.0.11",
     "reflect-metadata": "^0.1.13",
+    "@apollo/client": "^3.3.10",
     "tailwind": "^4.0.0"
   },
   "devDependencies": {
-    "@apollo/client": "^3.3.10",
     "@nrwl/cli": "12.3.5",
     "@nrwl/cypress": "12.3.5",
     "@nrwl/eslint-plugin-nx": "12.3.5",

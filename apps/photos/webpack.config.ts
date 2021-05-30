@@ -50,7 +50,7 @@ module.exports = config => {
         use: css,
       }
   );
-  config.plugins.push(    new BundleAnalyzerPlugin())
+//   config.plugins.push(    new BundleAnalyzerPlugin())
   if (process.env.NODE_ENV == 'production') {
     config.optimization = {
         minimize: true,

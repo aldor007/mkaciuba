@@ -1,6 +1,5 @@
 import React from "react";
-import { FacebookProvider } from 'react-facebook/dist/FacebookProvider';
-import { Page } from 'react-facebook/dist/Page';
+import { FacebookProvider, Page } from 'react-facebook';
 import { gql, useQuery } from '@apollo/client';
 import { useWebPSupportCheck } from "react-use-webp-support-check";
 import { Query } from '@mkaciuba/api';

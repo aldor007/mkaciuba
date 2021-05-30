@@ -42,6 +42,10 @@ app.use('/assets',
     })
  );
 
+app.get('/_health', (req, res) => {
+  res.send(200)
+});
+
 app.get('*', (req, res) => {
   const metaTagsInstance = MetaTagsServer();
 
@@ -98,6 +102,8 @@ app.get('*', (req, res) => {
     // res.end();
   }).catch((e) => {
     console.error('Error reading', e)
+    res.status(503);
+    res.send(e.message);
   });
 
 
