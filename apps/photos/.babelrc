@@ -2,5 +2,12 @@
   "presets": [
     "@nrwl/react/babel"
   ],
-  "plugins": []
+  "plugins": [
+    ["transform-imports", {
+      "lodash": {
+        "transform": "lodash/${member}",
+        "preventFullImport": true
+      }
+    }]
+  ]
 }

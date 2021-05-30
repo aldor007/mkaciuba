@@ -28,11 +28,18 @@ import { createPersistedQueryLink } from "@apollo/client/link/persisted-queries"
 import { sha256 } from 'crypto-hash';
 import { BatchHttpLink } from "@apollo/client/link/batch-http";
 import { environment } from './environments/environment';
-
+import cookeParser from 'cookie-parser';
+import proxy from 'express-http-proxy';
 
 const app = express();
+app.use(cookeParser())
+
+app.use('/graphql', proxy(process.env.STRAPI_URL || environment.strapiUrl));
+
 app.use('/assets',
-    express.static(path.join(__dirname, '../photos'))
+    express.static(path.join(__dirname, '../photos'), {
+      maxAge: '7d',
+    })
  );
 
 app.get('*', (req, res) => {
@@ -43,7 +50,7 @@ app.get('*', (req, res) => {
   const client = new ApolloClient({
     ssrMode: true,
     link: persistedQueriesLink.concat(new BatchHttpLink({
-      uri:  environment.apiUrl,
+      uri:  process.env.API_URL || environment.apiUrl,
       credentials: 'same-origin',
       headers: {
         cookie: req.header('Cookie'),
@@ -64,8 +71,7 @@ app.get('*', (req, res) => {
           </StaticRouter>
   )
   if (routes.length === 0) {
-    res.status(404);
-    res.send();
+    res.sendStatus(404);
     return;
   }
 
@@ -81,6 +87,10 @@ app.get('*', (req, res) => {
 
     // Add both the page content and the cache state to a top-level component
     const html = <Html content={content} state={initialState} meta={meta} />;
+    if (!req.cookies.category_token) {
+      res.setHeader('cache-control', 'public, max-age=120')
+      res.setHeader('x-browser-cache-control', 'public, max-age=60');
+    }
 
     // Render the component to static markup and return it
     // res.status(200);
@@ -96,6 +106,6 @@ app.get('*', (req, res) => {
 
 const port = process.env.port || 3333;
 const server = app.listen(port, () => {
-  console.log(`Listening at http://localhost:${port}`);
+  console.log(`Listening at http://0.0.0.0:${port}`);
 });
 server.on('error', console.error);

@@ -1,4 +1,5 @@
 export const environment = {
     production: true,
-    apiUrl: 'http://mkaciuba-strapi/graphql'
+    strapiUrl: 'http://mkaciuba-strapi/graphql',
+    apiUrl: 'https://beta.mkaciuba.pl/graphql'
 };

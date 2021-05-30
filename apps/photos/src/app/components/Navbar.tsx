@@ -2,13 +2,17 @@ import React from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { gql, useQuery } from '@apollo/client';
 import {  Enum_Componentmenuconfigmenu_Icon, Maybe, Query, QueryMenuArgs } from '@mkaciuba/api'
-import { faFacebook, faGithub, faInstagram, faLinkedin, faTwitter } from '@fortawesome/free-brands-svg-icons';
+import { faFacebook } from '@fortawesome/free-brands-svg-icons/faFacebook';
+import { faInstagram } from '@fortawesome/free-brands-svg-icons/faInstagram';
+import { faGithub } from '@fortawesome/free-brands-svg-icons/faGithub';
+import { faLinkedinIn } from '@fortawesome/free-brands-svg-icons/faLinkedinIn';
+import { faTwitter } from '@fortawesome/free-brands-svg-icons/faTwitter';
 
 const ICONS = {
   [Enum_Componentmenuconfigmenu_Icon.Facebook]: faFacebook,
   [Enum_Componentmenuconfigmenu_Icon.Instagram]: faInstagram,
   [Enum_Componentmenuconfigmenu_Icon.Github]: faGithub,
-  [Enum_Componentmenuconfigmenu_Icon.Linkedin]: faLinkedin
+  [Enum_Componentmenuconfigmenu_Icon.Linkedin]: faLinkedinIn
 }
 
 export interface MenuType {

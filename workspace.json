@@ -22,7 +22,8 @@
             "styles": [],
             "scripts": [],
             "webpackConfig": "apps/photos/webpack.config.ts",
-            "buildLibsFromSource": true
+            "buildLibsFromSource": true,
+            "statsJson": true
           },
           "configurations": {
             "production": {

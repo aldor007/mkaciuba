@@ -1,8 +1,5 @@
 import React from 'react';
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { Navbar, MenuType } from './components/Navbar';
-
-
 
 export interface HeaderProps {
   mainMenu?: MenuType[] | null

@@ -21,11 +21,20 @@ module.exports = (config, context) => {
           {
             loader: 'postcss-loader',
             options: {
-              ident: 'postcss',
-              plugins: [
-                require('tailwindcss'),
-                require('autoprefixer'),
-              ],
+              postcssOptions: {
+                plugins: [
+                  ['tailwindcss', {
+                    purge: [
+                      './src/**/*.html',
+                      './src/**/*.jsx',
+                    ],
+                    theme: {},
+                    variants: {},
+                    plugins: [],
+                  }],
+                  require('autoprefixer'),
+                ],
+              },
             },
           },
         ],

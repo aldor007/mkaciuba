@@ -1,6 +1,6 @@
 
 import { Footer } from '../components/Footer';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import  Header from '../Header';
 import { generatePath, useParams } from 'react-router-dom';
 import { ImageList } from '@mkaciuba/image';
@@ -41,7 +41,7 @@ const GET_PHOTOS = gql`
 
 
 export const Photos = () => {
-  const { categorySlug, gallerySlug } = useParams();
+  const { categorySlug, gallerySlug } = useParams<{gallerySlug: string, categorySlug: string}>();
   const [loggedIn, setLogin] = React.useState(false);
 
   const { loading, error, data } = useQuery<Query>(GET_PHOTOS, {

@@ -7,7 +7,6 @@ import { gql, useQuery } from '@apollo/client';
 import { generatePath, useParams } from 'react-router-dom';
 import { Query } from '@mkaciuba/api';
 import { AppRoutes } from '../routes';
-import { Gallery } from 'react-photoswipe-gallery';
 
 const GET_GALLERY = gql`
 query  galleryMenu($gallerySlug: String!) {
@@ -30,7 +29,7 @@ query  galleryMenu($gallerySlug: String!) {
 
 
 export const Categories = () => {
-  const { gallerySlug } = useParams();
+  const { gallerySlug } = useParams<{gallerySlug: string}>();
   const { loading, error, data } = useQuery<Query>(GET_GALLERY, {
     variables: { gallerySlug },
   });
