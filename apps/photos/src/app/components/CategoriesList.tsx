@@ -5,6 +5,7 @@ import { generatePath } from "react-router";
 import { findImageForWidth, ImageComponent } from "@mkaciuba/image";
 import { useWebPSupportCheck } from "react-use-webp-support-check";
 import MetaTags from 'react-meta-tags';
+import { Gallery } from '@mkaciuba/api';
 
 import {
   useWindowWidth
@@ -34,14 +35,6 @@ const GET_CATEGORIES = gql`
  }
 }
 `;
-export interface Gallery {
-  id: number
-  name: string
-  slug: string
-  description: string
-  keywords: string
-}
-
 export interface CategoriesListProps {
   gallery: Gallery
 }

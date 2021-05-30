@@ -8,8 +8,8 @@ module.exports = config => {
             options: {
               ident: 'postcss',
               plugins: [
-                require('tailwindcss'),
-                require('autoprefixer'),
+                // require('tailwindcss'),
+                // require('autoprefixer'),
               ],
             },
           };
@@ -24,7 +24,7 @@ module.exports = config => {
   const css = [];
   // if (process.env.SSR) {
     css.push(MiniCssExtractPlugin.loader)
-    css.push(ssrConfig);
+    // css.push(ssrConfig);
   // } else {
   //   // css.push('css-loader', 'style-loader');
   // }

@@ -155,7 +155,11 @@ module.exports = {
       randomImage: {
         resolverOf: 'application::category.category.findOne',
         resolver: async (obj, options, { context }) => {
-          return obj.medias[Math.floor(Math.random() * obj.medias.length) - 1];
+          let image = obj.medias[Math.floor(Math.random() * (obj.medias.length - 1))];
+          if (!image) {
+            image = obj.medias[0];
+          }
+          return image;
         }
       }
     },

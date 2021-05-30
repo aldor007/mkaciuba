@@ -1,4 +1,5 @@
 
+import { UploadFile } from '@mkaciuba/api';
 import React, { RefObject, useState} from 'react';
 
 export interface Image {
@@ -9,6 +10,28 @@ export interface Image {
   width?: number
   height?: number
   alt?: string
+}
+
+
+export const toImage = (upload: UploadFile) =>  {
+  const image: Image = {
+    url: upload.url,
+    webp: false,
+    type: upload.mime,
+    alt: upload.caption,
+  }
+  if (upload.thumbnail) {
+    image.webp = upload.thumbnail.webp;
+    image.width = upload.thumbnail.width;
+    image.height = upload.thumbnail.height;
+    image.url = upload.thumbnail.url;
+  }
+
+  if (upload.thumbnails) {
+    console.warn('Multi images!')
+  }
+
+  return image;
 }
 export interface ImageComponentProps {
   thumbnails: Image[]

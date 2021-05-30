@@ -31,7 +31,7 @@ query  galleryMenu($gallerySlug: String!) {
 
 export const Categories = () => {
   const { gallerySlug } = useParams();
-  const { loading, error, data } = useQuery(GET_GALLERY, {
+  const { loading, error, data } = useQuery<Query>(GET_GALLERY, {
     variables: { gallerySlug },
   });
   if (loading) return <p>Loading...</p>;

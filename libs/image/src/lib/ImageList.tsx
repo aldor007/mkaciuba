@@ -38,7 +38,7 @@ const GET_IMAGES = gql`
      }
     }
     medias(start: $start, limit: $limit) {
-      id
+     id
      alternativeText
      caption
      thumbnails {

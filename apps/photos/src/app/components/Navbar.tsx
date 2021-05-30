@@ -1,7 +1,7 @@
 import React from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { gql, useQuery } from '@apollo/client';
-import { Menu, Enum_Componentmenuconfigmenu_Icon, Maybe, Query, QueryMenuArgs } from '@mkaciuba/api'
+import {  Enum_Componentmenuconfigmenu_Icon, Maybe, Query, QueryMenuArgs } from '@mkaciuba/api'
 import { faFacebook, faGithub, faInstagram, faLinkedin, faTwitter } from '@fortawesome/free-brands-svg-icons';
 
 const ICONS = {

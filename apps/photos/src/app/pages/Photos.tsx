@@ -1,5 +1,4 @@
 
-import { CategoriesList } from '../components/CategoriesList';
 import { Footer } from '../components/Footer';
 import React, { useEffect, useState } from 'react';
 import  Header from '../Header';
@@ -10,8 +9,8 @@ import  { LoginForm } from '../components/LoginForm'
 import { Query } from '@mkaciuba/api';
 import { AppRoutes } from '../routes';
 
-const GET_CATEGORY = gql`
-  query categoryBySlug($categorySlug: String!) {
+const GET_PHOTOS = gql`
+  query ($categorySlug: String!, $gallerySlug: String!) {
   categoryBySlug (
     slug: $categorySlug
   ) {
@@ -22,11 +21,6 @@ const GET_CATEGORY = gql`
     keywords
 
   }
-}
-`;
-
-const GET_GALLERY = gql`
-query  galleryMenu($gallerySlug: String!) {
   galleryMenu(
     slug: $gallerySlug
   ) {
@@ -42,23 +36,25 @@ query  galleryMenu($gallerySlug: String!) {
       name
     }
   }
-}`;
+}
+`;
+
 
 export const Photos = () => {
   const { categorySlug, gallerySlug } = useParams();
   const [loggedIn, setLogin] = React.useState(false);
 
-  const { loading, error , data } = useQuery<Query>(GET_CATEGORY, {
-    variables: { categorySlug},
+  const { loading, error, data } = useQuery<Query>(GET_PHOTOS, {
+    variables: { categorySlug, gallerySlug},
   });
-  const { data:galleryData, loading: loadingGallery } = useQuery(GET_GALLERY, {
-    variables: { gallerySlug },
-  });
-  if (loading || loadingGallery) return <p>Loading...</p>;
+  if (loading) return <p>Loading...</p>;
 
   if (error && (error as any).extensions && (error as any).extensions.code != 'UNAUTHENTICATED') {
      return <p>Error :(</p>
    };
+  if (!data || !data.categoryBySlug || !data.galleryMenu) {
+    return <p>Not found</p>
+  }
   let authRequired = error ||  !loggedIn && data && !data.categoryBySlug.public
   if (!error) {
     authRequired = false;
@@ -67,7 +63,7 @@ export const Photos = () => {
   if (loggedIn) {
     authRequired = false;
   }
-  const { categories, gallery } = galleryData.galleryMenu;
+  const { categories, gallery } = data.galleryMenu;
   const children  = categories.map((item) => {
     return {
      url: generatePath(AppRoutes.photos.path, {

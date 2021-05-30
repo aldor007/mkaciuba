@@ -1,0 +1,19 @@
+{
+  "kind": "singleType",
+  "collectionName": "footers",
+  "info": {
+    "name": "Footer"
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "FeaturedCategories": {
+      "type": "component",
+      "repeatable": true,
+      "component": "menu-config.menu"
+    }
+  }
+}
