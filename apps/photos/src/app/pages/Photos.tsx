@@ -4,7 +4,8 @@ import React from 'react';
 import  Header from '../Header';
 import { generatePath, useParams } from 'react-router-dom';
 import { ImageList } from '@mkaciuba/image';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
+import gql from  'graphql-tag';
 import  { LoginForm } from '../components/LoginForm'
 import { Query } from '@mkaciuba/api';
 import { AppRoutes } from '../routes';

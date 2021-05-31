@@ -1,11 +1,14 @@
 import React, { RefObject, useState  } from "react";
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
+import gql from  'graphql-tag';
+
 import { Link } from 'react-router-dom'
 import { generatePath } from "react-router";
 import { findImageForWidth, ImageComponent } from "@mkaciuba/image";
 import { useWebPSupportCheck } from "react-use-webp-support-check";
 import MetaTags from 'react-meta-tags';
 import { Gallery } from '@mkaciuba/api';
+import '../../assets/category.css';
 
 import {
   useWindowWidth
@@ -65,12 +68,12 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
     });
   }
 
-  const infiniteRef = useInfiniteScroll({
+  const [sentryRef, { rootRef }]= useInfiniteScroll({
     loading: loadingMore,
     hasNextPage,
     onLoadMore: handleLoadMore,
     // threshold: 250,
-  }) as RefObject<HTMLDivElement>;
+  })
 
   if (error) {
     console.info(error)
@@ -96,7 +99,7 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
   }, {})
 
     return (
-     <div className="flex flex-wrap -mx-1 overflow-hidden" ref={infiniteRef}>
+     <div className="flex flex-wrap -mx-1 overflow-hidden" ref={rootRef}>
        <MetaTags>
             <title>{gallery.name}</title>
             <meta name="description" content={gallery.description} />

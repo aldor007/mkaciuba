@@ -1,6 +1,7 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { useMutation, gql } from "@apollo/client";
+import { useMutation} from '@apollo/client/react';
+import gql from  'graphql-tag';
 import  { Redirect } from 'react-router-dom'
 
 

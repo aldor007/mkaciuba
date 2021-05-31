@@ -10,6 +10,8 @@ ADD ./nx.json /opt/app/nx.json
 ADD ./tsconfig.base.json /opt/app/tsconfig.base.json
 ADD ./workspace.json /opt/app/workspace.json
 ADD ./babel.config.json /opt/app/babel.config.json
+ADD ./tailwind.config.js /opt/app/tailwind.config.js
+ADD ./postcss.config.js /opt/app/postcss.config.js
 ENV NODE_ENV production
 RUN yarn nx build photos --production
 RUN yarn nx build photos-ssr --production

@@ -1,6 +1,10 @@
 import React from 'react';
 
-export function Html({ content, state, meta }) {
+export function Html({ content, state, meta, scripts }) {
+  const scriptSrc = scripts.map(s => (
+     <script key={s} src={s} defer></script>
+  ))
+
   return (
     <html>
       <head dangerouslySetInnerHTML={{ __html: meta}}>
@@ -12,10 +16,8 @@ export function Html({ content, state, meta }) {
         <script dangerouslySetInnerHTML={{
           __html: `window.__APOLLO_STATE__=${JSON.stringify(state).replace(/</g, '\\u003c')};`,
         }} />
-        <script src="/assets/runtime.js" defer></script>
-        <script src="/assets/polyfills.js" defer></script>
-        <script src="/assets/vendor.js" defer></script>
-        <script src="/assets/main.js" defer></script></body>
+        {scriptSrc}
+        </body>
 
     </html>
   );

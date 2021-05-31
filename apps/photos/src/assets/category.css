@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+
 .category-heading {
     margin-top: -60px;
     text-align: center;

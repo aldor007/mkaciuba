@@ -6,7 +6,9 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 
 
 module.exports = config => {
-  config.plugins.push(new MiniCssExtractPlugin())
+  config.plugins.push( new MiniCssExtractPlugin({
+      filename: '[name].css',
+    }));
     const postCssLoader = {
             loader: 'postcss-loader',
             options: {
@@ -14,13 +16,8 @@ module.exports = config => {
                 plugins: [
                    require('postcss-import'),
 
-                  ['tailwindcss', {
-                    purge: [
-                      './src/**/*.html',
-                      './src/**/*.jsx',
-                    ]
-                  }],
-                  // require('tailwindcss'),
+                  require('tailwindcss')('./tailwind.config.js'),
+
                   require('autoprefixer'),
                 ],
               },
@@ -35,13 +32,13 @@ module.exports = config => {
           };
 
   const css = [];
-    // css.push(ssrConfig);
   // if (process.env.SSR) {
-    // css.push(MiniCssExtractPlugin.loader)
     // css.push('style-loader', ssrConfig);
   // } else {
   // }
 
+    css.push(MiniCssExtractPlugin.loader)
+    css.push(ssrConfig);
   css.push(postCssLoader);
 
   config.module.rules.push(
@@ -53,10 +50,14 @@ module.exports = config => {
 //   config.plugins.push(    new BundleAnalyzerPlugin())
   if (process.env.NODE_ENV == 'production') {
     config.optimization = {
+      splitChunks: {
+        chunks: 'all',
+      },
         minimize: true,
         minimizer: [
         // For webpack@5 you can use the `...` syntax to extend existing minimizers (i.e. `terser-webpack-plugin`), uncomment the next line
         // `...`,
+        // new CssMinimizerPlugin(),
         new TerserPlugin(),
         ],
     };

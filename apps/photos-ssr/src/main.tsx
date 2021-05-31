@@ -79,18 +79,34 @@ app.get('*', (req, res) => {
     return;
   }
 
+  let scripts = [];
+  if (process.env.NODE_ENV == 'production') {
+    scripts = [
+      '/assets/main.js',
+      '/assets/polyfills.js',
+      '/assets/vendors~main.js',
+      '/assets/vendors~polyfils.js',
+    ]
+  } else {
+    scripts = [
+      '/assets/main.js',
+      '/assets/polyfills.js',
+      '/assets/vendor.js',
+      '/assets/runtime.js',
+    ]
+  }
   getDataFromTree(staticApp).then((content) => {
     // Extract the entirety of the Apollo Client cache's current state
     const initialState = client.extract();
-    const meta =    `<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet"/>
-      <link href="/assets/assets/main.css" rel="stylesheet"/>
+    const meta =    `
+      <link href="/assets/main.css" rel="stylesheet"/>
       <meta charset="utf-8">
       <link href="/assets/assets/default-skin.css" rel="stylesheet"/>
       <link href="/assets/assets/photos.css" rel="stylesheet"/>${metaTagsInstance.renderToString()}`
 
 
     // Add both the page content and the cache state to a top-level component
-    const html = <Html content={content} state={initialState} meta={meta} />;
+    const html = <Html content={content} state={initialState} meta={meta} scripts={scripts}/>;
     if (!req.cookies.category_token) {
       res.setHeader('cache-control', 'public, max-age=120')
       res.setHeader('x-browser-cache-control', 'public, max-age=60');

@@ -155,13 +155,38 @@ module.exports = {
       randomImage: {
         resolverOf: 'application::category.category.findOne',
         resolver: async (obj, options, { context }) => {
-          let image = obj.medias[Math.floor(Math.random() * (obj.medias.length - 1))];
+          const images = obj.medias.filter(o => o.id)
+          let image = images[Math.floor(Math.random() * (obj.medias.length - 1))];
           if (!image) {
-            image = obj.medias[0];
+            image = images[0];
           }
           return image;
         }
-      }
+      },
+      medias: {
+        resolverOf: 'application::category.category.findOne',
+        resolver: async (obj, options, { context }) => {
+          const search = options.where || {};
+          search._limit =  options.limit;
+          search._start = options.start || 1;
+          if (options._sort) {
+            search._sort = options.sort;
+          }
+          search.id_in= obj.medias.map(o => o.id).filter(o => o)
+          const key = 'medias' + JSON.stringify(search);
+          let images = lruCache.get(key);
+          if (images) {
+            // obj.medias = images;
+            return images;
+          }
+
+          images = await strapi.plugins.upload.services.upload.fetchAll(search)
+          // obj.medias = images;
+          // lruCache.set(key, images);
+          return images;
+
+       }
+     }
     },
     Query: {
       category: false,
@@ -171,7 +196,7 @@ module.exports = {
           const search = options.where || {};
           search._limit =  options.limit;
           search._start = options.start || 1;
-          search._sort = options.sort;
+          search._sort = options.sort || 'id:desc'
           search.public = true;
           search.gallery_null = false;
           const key = JSON.stringify(search);
@@ -180,7 +205,7 @@ module.exports = {
             return categories;
           }
           categories = await strapi.services.category.find(search);
-          lruCache.set(key, categories);
+          // lruCache.set(key, categories);
 
           return categories;
         }

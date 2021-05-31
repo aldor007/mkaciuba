@@ -37,7 +37,7 @@ const GET_IMAGES = gql`
         height
      }
     }
-    medias(start: $start, limit: $limit) {
+    medias(start: $start, limit: $limit, sort: "id:desc") {
      id
      alternativeText
      caption
@@ -85,7 +85,7 @@ export const ImageList = ({ categorySlug }: ImageListProps) => {
   const [hasNextPage, setHasNextPage] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [start, setStart] = useState(9)
-  const limit = 10;
+  const limit = 12;
   const { loading, error, data, fetchMore } = useQuery<Query>(GET_IMAGES, {
     variables: { categorySlug, limit, start },
   });
@@ -103,18 +103,18 @@ export const ImageList = ({ categorySlug }: ImageListProps) => {
       setHasNextPage(fetchMoreResult.data.categoryBySlug.medias.length != 0)
     });
   }
-
-  const infiniteRef = useInfiniteScroll({
+  const  [sentryRef, { rootRef }]  = useInfiniteScroll({
     loading: loadingMore,
     hasNextPage,
     onLoadMore: handleLoadMore,
     // threshold: 250,
-  }) as RefObject<HTMLDivElement>;
+  });
 
   if (error) {
     console.info(error)
      return <p>Error :(</p>
    };
+console.info("start", start, "loading", loading, "loadingMore", loadingMore, "hasNextPage", hasNextPage, "itesm", items.length, 'imagfes')
   if (loading) {
    return (
      <div className="flex justify-center">
@@ -128,7 +128,7 @@ export const ImageList = ({ categorySlug }: ImageListProps) => {
    if (!data.categoryBySlug) {
      return <p> Not found </p>
    }
-   const images = [...data.categoryBySlug.medias, ...items] ;
+   const images = [...items, ...data.categoryBySlug.medias] ;
 
    const category = data.categoryBySlug;
    const defaultImages = images.map((item) => findImageForWidth(item.thumbnails, width, webp));
@@ -137,7 +137,7 @@ export const ImageList = ({ categorySlug }: ImageListProps) => {
     seoImage = images.map((item) => findImageForWidth(category.image.thumbnails, 1024, false));
    }
    return (
-        <div className="flex flex-wrap -mx-1 overflow-hidden" >
+        <div className="flex flex-wrap -mx-1 overflow-hidden" ref={rootRef}>
           <MetaTags>
             <title>{category.name}</title>
             <meta name="description" content={category.description} />
@@ -157,7 +157,7 @@ export const ImageList = ({ categorySlug }: ImageListProps) => {
               title={item.caption}
             >
             {({ ref, open }) => (
-                <div className="my-1 px-1 w-1/1 overflow-hidden sm:w-1/1 md:w-1/2 lg:w-1/2 xl:w-1/3">
+                <div className="my-1 px-1 w-1/1 overflow-hidden sm:w-1/1 md:w-1/2 lg:w-1/3 xl:w-1/4">
                <ImageComponent ref={ref as RefObject<HTMLImageElement>} onClick={open} thumbnails={item.thumbnails} defaultImage={defaultImages[index]} />
                   <div className="hidden overflow-hidden">
                     <div className="text-white text-lg">{item.alternativeText}</div>
@@ -167,6 +167,7 @@ export const ImageList = ({ categorySlug }: ImageListProps) => {
       </Item>
       ))}
       </Gallery>
+      {(loading || hasNextPage) && (<div ref={sentryRef}>Load More</div>)}
 </div>
   )
 };

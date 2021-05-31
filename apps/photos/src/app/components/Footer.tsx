@@ -1,6 +1,7 @@
 import React from "react";
 import { FacebookProvider, Page } from 'react-facebook';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
+import gql from  'graphql-tag';
 import { useWebPSupportCheck } from "react-use-webp-support-check";
 import { Query } from '@mkaciuba/api';
 import { toImage } from "@mkaciuba/image";

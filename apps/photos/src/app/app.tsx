@@ -4,8 +4,8 @@ import { useLocation } from 'react-router-dom';
 import '../assets/photos.css'
 import { renderRoutes } from 'react-router-config';
 import { Routes } from '../routes';
-import { gql, useQuery, ApolloProvider, ApolloClient, InMemoryCache  } from '@apollo/client';
-import '../assets/main.css'
+import { ApolloProvider } from '@apollo/client/react';
+import {  ApolloClient, InMemoryCache  } from '@apollo/client/core';
 import { BatchHttpLink } from "@apollo/client/link/batch-http";
 import { environment } from '../environments/environment';
 
