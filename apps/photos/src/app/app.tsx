@@ -8,6 +8,7 @@ import { ApolloProvider } from '@apollo/client/react';
 import {  ApolloClient, InMemoryCache  } from '@apollo/client/core';
 import { BatchHttpLink } from "@apollo/client/link/batch-http";
 import { environment } from '../environments/environment';
+import { startLimitPagination } from './apollo';
 
 export function ScrollToTop() {
   const { pathname } = useLocation();
@@ -37,15 +38,29 @@ export const App = ({ client }: AppsProps) => {
         batchInterval: 50, // Wait no more than 20ms after first batched operation
         useGETForQueries: true
       });
+      const cache = new InMemoryCache({
+        typePolicies: {
+          Category: {
+            fields: {
+              medias:  startLimitPagination()
+            }
+          },
+          Query: {
+            fields: {
+              categories: startLimitPagination()
+            }
+          }
+        }
+      })
     if (window.__APOLLO_STATE__ ) {
       client = new ApolloClient({
         link,
-        cache: new InMemoryCache().restore(window.__APOLLO_STATE__),
+        cache: cache.restore(window.__APOLLO_STATE__),
       });
     } else {
       client = new ApolloClient({
         link,
-        cache: new InMemoryCache()
+        cache,
       });
     }
   }

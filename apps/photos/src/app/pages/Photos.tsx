@@ -9,6 +9,7 @@ import gql from  'graphql-tag';
 import  { LoginForm } from '../components/LoginForm'
 import { Query } from '@mkaciuba/api';
 import { AppRoutes } from '../routes';
+import { Loading } from '@mkaciuba/ui-kit'
 
 const GET_PHOTOS = gql`
   query ($categorySlug: String!, $gallerySlug: String!) {
@@ -48,7 +49,7 @@ export const Photos = () => {
   const { loading, error, data } = useQuery<Query>(GET_PHOTOS, {
     variables: { categorySlug, gallerySlug},
   });
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Loading/>;
 
   if (error && (error as any).extensions && (error as any).extensions.code != 'UNAUTHENTICATED') {
      return <p>Error :(</p>

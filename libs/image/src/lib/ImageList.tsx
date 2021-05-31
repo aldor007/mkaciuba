@@ -1,4 +1,4 @@
-import React, { RefObject, useState } from "react";
+import React, { RefObject, useCallback, useState } from "react";
 import { gql, useQuery } from '@apollo/client';
 import { useWebPSupportCheck } from "react-use-webp-support-check";
 import {
@@ -9,12 +9,12 @@ import {
 import MetaTags from 'react-meta-tags';
 import { Query } from '@mkaciuba/api';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
+import { Loading } from '@mkaciuba/ui-kit'
 
 
 import { Image, ImageComponent } from './image';
 
 import { Gallery, Item } from 'react-photoswipe-gallery'
-import './loader.css';
 
 
 const GET_IMAGES = gql`
@@ -27,6 +27,7 @@ const GET_IMAGES = gql`
     description
     slug
     keywords
+    mediasCount
     image {
      thumbnails {
         url
@@ -81,55 +82,49 @@ export const findImageForWidth = (images: Image[], width: number, webp: boolean)
 export const ImageList = ({ categorySlug }: ImageListProps) => {
   const webp = useWebPSupportCheck();
   const width = useWindowWidth();
-  const [items, setItems] = useState([]);
   const [hasNextPage, setHasNextPage] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [start, setStart] = useState(9)
   const limit = 12;
+  const [start, setStart] = useState(limit)
   const { loading, error, data, fetchMore } = useQuery<Query>(GET_IMAGES, {
-    variables: { categorySlug, limit, start },
+    variables: { categorySlug, limit, start: 0 },
+    notifyOnNetworkStatusChange: true,
+
   });
 
-  function handleLoadMore() {
-    setLoadingMore(true);
+  const handleLoadMore = useCallback(
+    () => {
+      setStart(start + limit)
     fetchMore({
       variables: {
-         start: start,
-      },
-    }).then((fetchMoreResult) => {
-      setLoadingMore(false);
-      setStart(start + limit);
-      setItems([...items, ...fetchMoreResult.data.categoryBySlug.medias]);
-      setHasNextPage(fetchMoreResult.data.categoryBySlug.medias.length != 0)
-    });
-  }
+         start,
+         limit
+      }});
+    }, [fetchMore, start, limit]);
+
   const  [sentryRef, { rootRef }]  = useInfiniteScroll({
     loading: loadingMore,
     hasNextPage,
     onLoadMore: handleLoadMore,
-    // threshold: 250,
+    delayInMs: 250,
   });
 
   if (error) {
     console.info(error)
      return <p>Error :(</p>
    };
-console.info("start", start, "loading", loading, "loadingMore", loadingMore, "hasNextPage", hasNextPage, "itesm", items.length, 'imagfes')
   if (loading) {
    return (
-     <div className="flex justify-center">
-     <div className="loader center ease-linear rounded-full border-8 border-t-8 border-gray-200 h-64 w-64"></div>
-     </div>
-  );
-   }
-
+     <Loading/>
+   );
+  }
 
 
    if (!data.categoryBySlug) {
      return <p> Not found </p>
    }
-   const images = [...items, ...data.categoryBySlug.medias] ;
-
+   console.info(data.categoryBySlug.medias.length, data.categoryBySlug.mediasCount, data.categoryBySlug.medias)
+   const images = data.categoryBySlug.medias ;
    const category = data.categoryBySlug;
    const defaultImages = images.map((item) => findImageForWidth(item.thumbnails, width, webp));
    let seoImage = defaultImages;
@@ -137,7 +132,8 @@ console.info("start", start, "loading", loading, "loadingMore", loadingMore, "ha
     seoImage = images.map((item) => findImageForWidth(category.image.thumbnails, 1024, false));
    }
    return (
-        <div className="flex flex-wrap -mx-1 overflow-hidden" ref={rootRef}>
+     <>
+        <div className="flex flex-wrap -mx-1 overflow-hidden" >
           <MetaTags>
             <title>{category.name}</title>
             <meta name="description" content={category.description} />
@@ -167,7 +163,12 @@ console.info("start", start, "loading", loading, "loadingMore", loadingMore, "ha
       </Item>
       ))}
       </Gallery>
-      {(loading || hasNextPage) && (<div ref={sentryRef}>Load More</div>)}
 </div>
+
+      {/* {(hasNextPage) && (<div className="bg-black" ref={sentryRef}>Load More</div>)} */}
+      {(data.categoryBySlug.medias.length < data.categoryBySlug.mediasCount) &&      (<button onClick={handleLoadMore} className="bg-white hover:bg-gray-100 text-gray-800 font-semibold border border-gray-400 rounded shadow">
+  Load More
+</button>)}
+      </>
   )
 };

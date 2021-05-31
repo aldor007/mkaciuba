@@ -8,6 +8,7 @@ import { faInstagram } from '@fortawesome/free-brands-svg-icons/faInstagram';
 import { faGithub } from '@fortawesome/free-brands-svg-icons/faGithub';
 import { faLinkedinIn } from '@fortawesome/free-brands-svg-icons/faLinkedinIn';
 import { faTwitter } from '@fortawesome/free-brands-svg-icons/faTwitter';
+import { Loading } from "@mkaciuba/ui-kit";
 
 const ICONS = {
   [Enum_Componentmenuconfigmenu_Icon.Facebook]: faFacebook,
@@ -85,7 +86,7 @@ export const Navbar = function (props: NavbarProps) {
   const [navbarOpen, setNavbarOpen] = React.useState(false);
   const { loading, error, data } = useQuery<Query,QueryMenuArgs>(GET_MENU, {
   });
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Loading/>;
   if (error) {
     console.info(error)
      return <p>Error :(</p>

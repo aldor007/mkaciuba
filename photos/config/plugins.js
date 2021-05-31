@@ -12,7 +12,7 @@ module.exports = ({ env }) => ({
     },
   },
   graphql: {
-    amountLimit: 10
+    amountLimit: 16
   },
   // ...
 });

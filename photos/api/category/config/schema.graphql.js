@@ -97,9 +97,11 @@ module.exports = {
   extend type Query {
     categoryBySlug(slug: String): Category
     recentImages(limit: Int): [UploadFile]
+    categoriesCount(where: JSON): Int!
   }
   extend type Category {
     randomImage: UploadFile
+    mediasCount: Int!
   }
   extend type Mutation {
     validateTokenForCategory(token: String, categorySlug: String): ValidationToken
@@ -152,6 +154,12 @@ module.exports = {
       },
     },
     Category: {
+      mediasCount: {
+        resolverOf: 'application::category.category.findOne',
+        resolver: async (obj, options, { context }) => {
+          return obj.medias.length;
+        }
+      },
       randomImage: {
         resolverOf: 'application::category.category.findOne',
         resolver: async (obj, options, { context }) => {
@@ -176,13 +184,13 @@ module.exports = {
           const key = 'medias' + JSON.stringify(search);
           let images = lruCache.get(key);
           if (images) {
-            // obj.medias = images;
+            obj.medias = images;
             return images;
           }
 
           images = await strapi.plugins.upload.services.upload.fetchAll(search)
           // obj.medias = images;
-          // lruCache.set(key, images);
+          lruCache.set(key, images);
           return images;
 
        }
@@ -190,6 +198,17 @@ module.exports = {
     },
     Query: {
       category: false,
+      categoriesCount: {
+        resolverOf: 'application::category.category.find',
+        resolver: async (obj, options, { context }) => {
+          const key = JSON.stringify(options);
+          let categories = lruCache.get(key)
+          if (categories) {
+            return categories.length;
+          }
+           return await strapi.services.category.count(options.where || {});
+        }
+      },
       categories: {
         resolverOf: 'application::category.category.find',
         resolver: async (obj, options, { context }) => {

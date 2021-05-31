@@ -17,7 +17,9 @@
     },
     "photos-e2e": {
       "tags": [],
-      "implicitDependencies": ["photos"]
+      "implicitDependencies": [
+        "photos"
+      ]
     },
     "api": {
       "tags": []
@@ -27,7 +29,9 @@
     },
     "photos-ssr": {
       "tags": [],
-      "implicitDependencies": ["photos"]
+      "implicitDependencies": [
+        "photos"
+      ]
     },
     "images": {
       "tags": []
@@ -37,14 +41,24 @@
     },
     "photos-embed-e2e": {
       "tags": [],
-      "implicitDependencies": ["photos-embed"]
+      "implicitDependencies": [
+        "photos-embed"
+      ]
+    },
+    "ui-kit": {
+      "tags": []
     }
   },
   "tasksRunnerOptions": {
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": ["build", "lint", "test", "e2e"]
+        "cacheableOperations": [
+          "build",
+          "lint",
+          "test",
+          "e2e"
+        ]
       }
     }
   },

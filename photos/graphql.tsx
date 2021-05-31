@@ -49,6 +49,7 @@ export type Category = {
   description?: Maybe<Scalars['String']>;
   medias?: Maybe<Array<Maybe<UploadFile>>>;
   randomImage?: Maybe<UploadFile>;
+  mediasCount: Scalars['Int'];
 };
 
 
@@ -386,6 +387,7 @@ export type Query = {
   menu?: Maybe<Menu>;
   categoryBySlug?: Maybe<Category>;
   recentImages?: Maybe<Array<Maybe<UploadFile>>>;
+  categoriesCount: Scalars['Int'];
   galleryBySlug?: Maybe<Gallery>;
   galleryMenu?: Maybe<GalleryCategories>;
 };
@@ -425,6 +427,11 @@ export type QueryCategoryBySlugArgs = {
 
 export type QueryRecentImagesArgs = {
   limit?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryCategoriesCountArgs = {
+  where?: Maybe<Scalars['JSON']>;
 };
 
 

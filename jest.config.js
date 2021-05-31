@@ -5,6 +5,6 @@ module.exports = {
     "<rootDir>/libs/image",
     "<rootDir>/apps/photos-ssr",
     "<rootDir>/libs/images",
-    "<rootDir>/apps/photos-embed",
+    "<rootDir>/apps/photos-embed","<rootDir>/libs/ui-kit"
   ],
 };

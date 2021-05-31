@@ -1,4 +1,4 @@
-import React, { RefObject, useState  } from "react";
+import React, { RefObject, useCallback, useState  } from "react";
 import { useQuery } from '@apollo/client/react';
 import gql from  'graphql-tag';
 
@@ -7,7 +7,7 @@ import { generatePath } from "react-router";
 import { findImageForWidth, ImageComponent } from "@mkaciuba/image";
 import { useWebPSupportCheck } from "react-use-webp-support-check";
 import MetaTags from 'react-meta-tags';
-import { Gallery } from '@mkaciuba/api';
+import { Gallery, Query } from '@mkaciuba/api';
 import '../../assets/category.css';
 
 import {
@@ -15,6 +15,7 @@ import {
 } from '@react-hook/window-size';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { AppRoutes } from "../routes";
+import { Loading } from "@mkaciuba/ui-kit";
 
 
 const GET_CATEGORIES = gql`
@@ -36,6 +37,9 @@ const GET_CATEGORIES = gql`
       }
     }
  }
+  categoriesCount(where: {
+    gallery: $galleryId
+  })
 }
 `;
 export interface CategoriesListProps {
@@ -47,28 +51,22 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
   const width = useWindowWidth();
   const [hasNextPage, setHasNextPage] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [start, setStart] = useState(9)
+  const [start, setStart] = useState(0)
   const limit = 9
-  const {loading, error, data, fetchMore } = useQuery(GET_CATEGORIES, {
+  const {loading, error, data, fetchMore } = useQuery<Query>(GET_CATEGORIES, {
     variables: { galleryId: gallery.id, start: 0, limit},
   });
-  const [items, setItems] = useState([]);
 
-  function handleLoadMore() {
-    setLoadingMore(true);
+  const handleLoadMore = useCallback(() => {
+      setStart(start + limit)
     fetchMore({
       variables: {
-         start: start,
-      },
-    }).then((fetchMoreResult) => {
-      setLoadingMore(false);
-      setStart(start + limit);
-      setItems([...items, ...fetchMoreResult.data.categories]);
-      setHasNextPage(fetchMoreResult.data.categories.length != 0)
-    });
-  }
+         start,
+         limit
+      }});
+    }, [fetchMore, start, limit]);
 
-  const [sentryRef, { rootRef }]= useInfiniteScroll({
+  const [sentryRef ]= useInfiniteScroll({
     loading: loadingMore,
     hasNextPage,
     onLoadMore: handleLoadMore,
@@ -82,12 +80,10 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
 
    if (loading) {
     return (
-      <div className="flex justify-center">
-      <div className="loader center ease-linear rounded-full border-8 border-t-8 border-gray-200 h-64 w-64"></div>
-      </div>
+      <Loading/>
     );
   }
-  const categories = [...data.categories, ...items] ;
+  const { categories } =  data;
   // setStart(stagccrt + limit)
   const defaultImages = categories.reduce((acc, cur) => {
     if (!cur.image) {
@@ -97,9 +93,10 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
     acc[cur.id] = findImageForWidth(cur.image.thumbnails, width, webp)
     return acc;
   }, {})
-
+    console.info(data.categories.length, data.categoriesCount)
     return (
-     <div className="flex flex-wrap -mx-1 overflow-hidden" ref={rootRef}>
+      <>
+     <div className="flex flex-wrap -mx-1 overflow-hidden">
        <MetaTags>
             <title>{gallery.name}</title>
             <meta name="description" content={gallery.description} />
@@ -119,5 +116,13 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
         </div>
       ))}
     </div>
+    <div className="loader">
+      {(loading || categories.length < data.categoriesCount) && (
+          <div ref={sentryRef}>
+            <Loading />
+          </div>
+        )}
+    </div>
+    </>
   )
 };

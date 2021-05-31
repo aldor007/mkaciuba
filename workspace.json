@@ -396,6 +396,31 @@
           }
         }
       }
+    },
+    "ui-kit": {
+      "root": "libs/ui-kit",
+      "sourceRoot": "libs/ui-kit/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/ui-kit/**/*.ts"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": [
+            "coverage/libs/ui-kit"
+          ],
+          "options": {
+            "jestConfig": "libs/ui-kit/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

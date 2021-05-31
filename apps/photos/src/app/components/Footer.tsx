@@ -7,6 +7,7 @@ import { Query } from '@mkaciuba/api';
 import { toImage } from "@mkaciuba/image";
 import { generatePath, Link} from 'react-router-dom';
 import { AppRoutes } from '../routes';
+import { Loading } from "@mkaciuba/ui-kit";
 
 const GET_FOOTER = gql`
   query($webp: Boolean!) {
@@ -40,12 +41,13 @@ export const Footer = () => {
   const {loading, error, data} = useQuery<Query>(GET_FOOTER, {
     variables: { webp }
   });
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Loading/>;
   if (error) {
     console.info(error)
      return <p>Error :(</p>
    };
 
+   console.info('----------------', data)
   const recentPhotos = data.categories.map(c => {
       let imagePath = generatePath(AppRoutes.photos.path, {
             gallerySlug: c.gallery.slug,

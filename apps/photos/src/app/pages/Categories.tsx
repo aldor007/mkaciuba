@@ -8,6 +8,7 @@ import gql from  'graphql-tag';
 import { generatePath, useParams } from 'react-router-dom';
 import { Query } from '@mkaciuba/api';
 import { AppRoutes } from '../routes';
+import { Loading } from "@mkaciuba/ui-kit";
 
 const GET_GALLERY = gql`
 query  galleryMenu($gallerySlug: String!) {
@@ -34,7 +35,7 @@ export const Categories = () => {
   const { loading, error, data } = useQuery<Query>(GET_GALLERY, {
     variables: { gallerySlug },
   });
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Loading/>;
   if (error) {
     console.info(error)
      return <p>Error :(</p>
