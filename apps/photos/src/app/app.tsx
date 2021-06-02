@@ -42,12 +42,12 @@ export const App = ({ client }: AppsProps) => {
         typePolicies: {
           Category: {
             fields: {
-              medias:  startLimitPagination()
+              medias:  startLimitPagination(['where'])
             }
           },
           Query: {
             fields: {
-              categories: startLimitPagination()
+              categories: startLimitPagination(['where', 'limit'])
             }
           }
         }

@@ -13,18 +13,27 @@ import {
   ): FieldPolicy<T[]> {
     return {
       keyArgs,
-      merge(existing, incoming, {args}) {
-        // if  (!args || !args.hasOwnProperty('start') && !args.limit) {
-          console.info('skip')
+      merge(existing: any[], incoming: any[], {args, readField}) {
+        if  (!args || !args.hasOwnProperty('start')) {
           return incoming;
-        // }
-        const merged = existing ? existing.slice(0) : [];
-        const start = args ? args.start : merged.length;
-        const end = start + incoming.length;
-        for (let i = start; i < end; ++i) {
-          merged[i] = incoming[i - start];
         }
-          console.info('meeerge, args', args, existing, incoming, 'result', merged)
+        const merged = existing ? existing.slice(0) : [];
+        // Obtain a Set of all existing task IDs.
+        const existingIdSet = new Set(
+          merged.map(task => readField("id", task)));
+        // Remove incoming tasks already present in the existing data.
+        incoming = incoming.filter(
+          task => !existingIdSet.has(readField("id", task)));
+        // Find the index of the task just before the incoming page of tasks.
+        const afterIndex = merged.findIndex(
+          task => args.afterId === readField("id", task));
+        if (afterIndex >= 0) {
+          // If we found afterIndex, insert incoming after that index.
+          merged.splice(afterIndex + 1, 0, ...incoming);
+        } else {
+          // Otherwise insert incoming at the end of the existing data.
+          merged.push(...incoming);
+        }
         return merged;
       },
     };

@@ -47,7 +47,6 @@ export const Footer = () => {
      return <p>Error :(</p>
    };
 
-   console.info('----------------', data)
   const recentPhotos = data.categories.map(c => {
       let imagePath = generatePath(AppRoutes.photos.path, {
             gallerySlug: c.gallery.slug,
@@ -75,38 +74,29 @@ export const Footer = () => {
 
 return (
 
-<div className="bg-gray-100 text-black	">
-    <div className="flex flex-wrap container mx-auto pt-8 pb-4 ">
+  <div className="w-full top-0 text-gray-700 bg-white dark-mode:text-gray-200 dark-mode:bg-gray-800">
+    <div className="flex flex-col max-w-screen-xl px-4 mx-auto  md:flex-row md:px-6 lg:px-8">
+    <div className="flex-coll overflow-hidden sm:my-1 sm:px-1 sm:w-1/2 md:my-px md:px-px md:w-1/2 lg:my-2 lg:px-2 lg:w-1/3 xl:my-2 xl:px-2 xl:w-1/3 pb-6">
+      <h4 className="uppercase px-1 my-1">Facebook</h4>
+      <FacebookProvider appId="1724717534454966">
+        <Page href="https://www.facebook.com/mkaciubapl" tabs="timeline" />
+      </FacebookProvider>
+     </div>
 
-                   <div className="flex-coll overflow-hidden sm:my-1 sm:px-1 sm:w-1/2 md:my-px md:px-px md:w-1/2 lg:my-2 lg:px-2 lg:w-1/2 xl:my-2 xl:px-2 xl:w-1/2 pb-6">
-                <h4 className="uppercase px-1 my-1">Facebook</h4>
-                <FacebookProvider appId="1724717534454966">
-                  <Page href="https://www.facebook.com/mkaciubapl" tabs="timeline" />
-                </FacebookProvider>
+    <div className="flex-coll overflow-hidden sm:my-1 sm:px-1 sm:w-1/2 md:my-px md:px-px md:w-1/2 lg:my-2 lg:px-2 lg:w-1/3 xl:my-2 xl:px-2 xl:w-1/3 pb-6">
+      <h4 className="uppercase px-1 my-1">Wyróżnione kategorie</h4>
+      <ul className="">
+        {featuredCategories}
+      </ul>
+    </div>
 
-            </div>
-
-            <div className="flex-coll overflow-hidden sm:my-1 sm:px-1 sm:w-1/2 md:my-px md:px-px md:w-1/2 lg:my-2 lg:px-2 lg:w-1/4 xl:my-2 xl:px-2 xl:w-1/4 pb-6">
-                <h4 className="uppercase px-1 my-1">Wyróżnione kategorie</h4>
-                <ul className="">
-                  {featuredCategories}
-                </ul>
-            </div>
-
-            <div className="flex-coll overflow-hidden sm:my-1 sm:px-1 sm:w-1/2 md:my-px md:px-px md:w-1/2 lg:my-2 lg:px-2 lg:w-1/4 xl:my-2 xl:px-2 xl:w-1/4 pb-6">
-                <h4 className="uppercase px-1 my-1">Ostatnie zdjęcia</h4>
-                <div className="grid grid-cols-3 gap-4">
-                  {recentPhotos}
-                </div>
-            </div>
-
-
-        </div>
-
-  <hr/>
-
-        <div className="pt-4 md:flex md:items-center md:justify-center ">
-            </div>
-        </div>
+    <div className="flex-coll overflow-hidden sm:my-1 sm:px-1 sm:w-1/2 md:my-px md:px-px md:w-1/2 lg:my-2 lg:px-2 lg:w-1/3 xl:my-2 xl:px-2 xl:w-1/3 pb-6">
+      <h4 className="uppercase px-1 my-1">Ostatnie zdjęcia</h4>
+      <div className="grid grid-cols-3 gap-4">
+        {recentPhotos}
+      </div>
+    </div>
+  </div>
+  </div>
 );
 }

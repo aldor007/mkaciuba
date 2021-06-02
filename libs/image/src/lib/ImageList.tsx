@@ -9,7 +9,7 @@ import {
 import MetaTags from 'react-meta-tags';
 import { Query } from '@mkaciuba/api';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
-import { Loading } from '@mkaciuba/ui-kit'
+import { Loading, LoadingMore } from '@mkaciuba/ui-kit'
 
 
 import { Image, ImageComponent } from './image';
@@ -82,7 +82,6 @@ export const findImageForWidth = (images: Image[], width: number, webp: boolean)
 export const ImageList = ({ categorySlug }: ImageListProps) => {
   const webp = useWebPSupportCheck();
   const width = useWindowWidth();
-  const [hasNextPage, setHasNextPage] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const limit = 12;
   const [start, setStart] = useState(limit)
@@ -91,6 +90,23 @@ export const ImageList = ({ categorySlug }: ImageListProps) => {
     notifyOnNetworkStatusChange: true,
 
   });
+  
+  const hasNextPage = () => {
+    if (!data) {
+      return true;
+    }
+
+    if (data.categoryBySlug.medias.length < limit) {
+      return false;
+    }
+
+    console.info('---?has nextPage', data.categoryBySlug.medias.length, data.categoryBySlug.mediasCount)
+    if (data.categoryBySlug.medias.length == data.categoryBySlug.mediasCount - 1) {
+      return false;
+    }
+
+    return true;
+  }
 
   const handleLoadMore = useCallback(
     () => {
@@ -104,7 +120,7 @@ export const ImageList = ({ categorySlug }: ImageListProps) => {
 
   const  [sentryRef, { rootRef }]  = useInfiniteScroll({
     loading: loadingMore,
-    hasNextPage,
+    hasNextPage: hasNextPage(),
     onLoadMore: handleLoadMore,
     delayInMs: 250,
   });
@@ -113,7 +129,8 @@ export const ImageList = ({ categorySlug }: ImageListProps) => {
     console.info(error)
      return <p>Error :(</p>
    };
-  if (loading) {
+
+  if (loading && !data) {
    return (
      <Loading/>
    );
@@ -123,7 +140,6 @@ export const ImageList = ({ categorySlug }: ImageListProps) => {
    if (!data.categoryBySlug) {
      return <p> Not found </p>
    }
-   console.info(data.categoryBySlug.medias.length, data.categoryBySlug.mediasCount, data.categoryBySlug.medias)
    const images = data.categoryBySlug.medias ;
    const category = data.categoryBySlug;
    const defaultImages = images.map((item) => findImageForWidth(item.thumbnails, width, webp));
@@ -165,10 +181,13 @@ export const ImageList = ({ categorySlug }: ImageListProps) => {
       </Gallery>
 </div>
 
-      {/* {(hasNextPage) && (<div className="bg-black" ref={sentryRef}>Load More</div>)} */}
-      {(data.categoryBySlug.medias.length < data.categoryBySlug.mediasCount) &&      (<button onClick={handleLoadMore} className="bg-white hover:bg-gray-100 text-gray-800 font-semibold border border-gray-400 rounded shadow">
-  Load More
-</button>)}
+    <div className="loader">
+    {(( loading && hasNextPage()) && <LoadingMore /> )}
+      {( hasNextPage()) && (
+          <div ref={sentryRef}>
+          </div>
+        )}
+    </div>
       </>
   )
 };

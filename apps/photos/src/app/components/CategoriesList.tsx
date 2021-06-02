@@ -15,7 +15,7 @@ import {
 } from '@react-hook/window-size';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { AppRoutes } from "../routes";
-import { Loading } from "@mkaciuba/ui-kit";
+import { Loading, LoadingMore } from "@mkaciuba/ui-kit";
 
 
 const GET_CATEGORIES = gql`
@@ -49,28 +49,44 @@ export interface CategoriesListProps {
 export const CategoriesList = ({ gallery}: CategoriesListProps) => {
   const webp = useWebPSupportCheck();
   const width = useWindowWidth();
-  const [hasNextPage, setHasNextPage] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [start, setStart] = useState(0)
   const limit = 9
   const {loading, error, data, fetchMore } = useQuery<Query>(GET_CATEGORIES, {
     variables: { galleryId: gallery.id, start: 0, limit},
+    notifyOnNetworkStatusChange: true
   });
 
+  const hasNextPage = () => {
+    if (!data) {
+      return true;
+    }
+
+    if (data.categories.length < limit) {
+      return false;
+    }
+
+    if (data.categories.length == data.categoriesCount - 1) {
+      return false;
+    }
+
+    return true;
+  }
+
   const handleLoadMore = useCallback(() => {
-      setStart(start + limit)
+    setStart(start + limit)
     fetchMore({
       variables: {
          start,
          limit
       }});
-    }, [fetchMore, start, limit]);
+    }, [fetchMore, start, limit ]);
 
   const [sentryRef ]= useInfiniteScroll({
     loading: loadingMore,
-    hasNextPage,
+    hasNextPage: hasNextPage(),
     onLoadMore: handleLoadMore,
-    // threshold: 250,
+    delayInMs: 250,
   })
 
   if (error) {
@@ -78,7 +94,7 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
      return <p>Error :(</p>
    };
 
-   if (loading) {
+   if (loading && !data) {
     return (
       <Loading/>
     );
@@ -93,7 +109,6 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
     acc[cur.id] = findImageForWidth(cur.image.thumbnails, width, webp)
     return acc;
   }, {})
-    console.info(data.categories.length, data.categoriesCount)
     return (
       <>
      <div className="flex flex-wrap -mx-1 overflow-hidden">
@@ -102,7 +117,7 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
             <meta name="description" content={gallery.description} />
             <meta property="og:title" content={gallery.name} />
           </MetaTags>
-      {!loading && categories.map(item => (
+      {categories && categories.map(item => (
          <div className="my-1 px-1 w-1/1 overflow-hidden sm:w-1/1 md:w-1/2 lg:w-1/2 xl:w-1/3" key={item.slug}>
           <Link to={generatePath(AppRoutes.photos.path, {
             gallerySlug: gallery.slug,
@@ -117,9 +132,9 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
       ))}
     </div>
     <div className="loader">
-      {(loading || categories.length < data.categoriesCount) && (
+    {((loadingMore || loading) && <LoadingMore /> )}
+      {( hasNextPage()) && (
           <div ref={sentryRef}>
-            <Loading />
           </div>
         )}
     </div>
