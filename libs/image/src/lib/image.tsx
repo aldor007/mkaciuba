@@ -44,7 +44,7 @@ export const ImageComponent = React.forwardRef(({thumbnails, defaultImage, onCli
   const [loading, setLoading] = useState(true)
   let classes = 'bg-gray-300';
   if (loading) {
-    classes += ' animate-pulse animate-spin bg-opacity-15	'
+    classes += ' animate-pulse bg-opacity-15	'
   }
   return (
     <picture  ref={ref}>

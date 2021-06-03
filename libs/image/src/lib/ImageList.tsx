@@ -9,7 +9,7 @@ import {
 import MetaTags from 'react-meta-tags';
 import { Query } from '@mkaciuba/api';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
-import { Loading, LoadingMore } from '@mkaciuba/ui-kit'
+import { Loading, LoadingMore, ErrorPage } from '@mkaciuba/ui-kit'
 
 
 import { Image, ImageComponent } from './image';
@@ -100,7 +100,6 @@ export const ImageList = ({ categorySlug }: ImageListProps) => {
       return false;
     }
 
-    console.info('---?has nextPage', data.categoryBySlug.medias.length, data.categoryBySlug.mediasCount)
     if (data.categoryBySlug.medias.length == data.categoryBySlug.mediasCount - 1) {
       return false;
     }
@@ -126,8 +125,8 @@ export const ImageList = ({ categorySlug }: ImageListProps) => {
   });
 
   if (error) {
-    console.info(error)
-     return <p>Error :(</p>
+    console.error(error)
+    return (<ErrorPage code={500} message={error.message}/>)
    };
 
   if (loading && !data) {

@@ -15,7 +15,7 @@ import {
 } from '@react-hook/window-size';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { AppRoutes } from "../routes";
-import { Loading, LoadingMore } from "@mkaciuba/ui-kit";
+import { ErrorPage, Loading, LoadingMore } from "@mkaciuba/ui-kit";
 
 
 const GET_CATEGORIES = gql`
@@ -90,8 +90,8 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
   })
 
   if (error) {
-    console.info(error)
-     return <p>Error :(</p>
+    console.error(error)
+    return <ErrorPage code={500} message={error.message} /> 
    };
 
    if (loading && !data) {

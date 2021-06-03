@@ -41,10 +41,12 @@ class Preset {
 }
 
 const presetList = [
+  new Preset('icon', 35, null, '(max-width: 75px)', 'jpeg'),
   new Preset('bigwebp', 700, null, '(max-width: 1000px)', 'webp'),
   new Preset('big1000webp', 1000, null, '(max-width: 1300px)', 'webp'),
   new Preset('big1300webp', 1300, null, '(max-width: 1600px)', 'webp'),
   new Preset('big', 700, null, '(max-width: 1000px)', 'jpeg'),
+  new Preset('small', 150, null, '(max-width: 400px)', 'jpeg'),
   new Preset('big1000', 1000, null, '(max-width: 1300px)', 'jpeg'),
   new Preset('big1300', 1300, null, '(max-width: 1600px)', 'jpeg'),
 ]
@@ -118,16 +120,26 @@ module.exports = {
               return p;
             }
           });
+          let image = lruCache.get(obj.id)
+          if (!image) {
+            image = await strapi
+            .query('File', 'upload')
+            .model.query(qb => {
+              qb.where('id', obj.id);
+            })
+            .fetch();
+            lruCache.set(obj.id, image);
+          }
           let minIndex = 0;
-          let minValue = options.width - filterPresets[0].width;
+          let minValue = Math.abs(options.width - filterPresets[0].width);
           filterPresets.forEach((p, index) => {
-            const tmpValue = options.width - p.width;
-            if (tmpValue > 0 && tmpValue < minValue) {
+            const tmpValue = Math.abs(options.width - p.width);
+            if (tmpValue < minValue) {
               minIndex = index;
               minValue = tmpValue;
             }
           });
-          return getImage(obj, filterPresets[minIndex]);
+          return getImage(image.attributes, filterPresets[minIndex]);
         },
       },
       thumbnails: {

@@ -8,7 +8,7 @@ import { faInstagram } from '@fortawesome/free-brands-svg-icons/faInstagram';
 import { faGithub } from '@fortawesome/free-brands-svg-icons/faGithub';
 import { faLinkedinIn } from '@fortawesome/free-brands-svg-icons/faLinkedinIn';
 import { faTwitter } from '@fortawesome/free-brands-svg-icons/faTwitter';
-import { Loading } from "@mkaciuba/ui-kit";
+import { Loading, ErrorPage } from "@mkaciuba/ui-kit";
 
 const ICONS = {
   [Enum_Componentmenuconfigmenu_Icon.Facebook]: faFacebook,
@@ -40,7 +40,11 @@ const GET_MENU = gql`
       icon
     }
     brand {
-      url
+      thumbnail(width: 35, webp: false) {
+        url
+        width
+        height
+      } 
     }
  }
 }
@@ -51,7 +55,7 @@ export interface NavbarProps {
 }
 
 
-const createDropdown = ( additionalMainMenu, setDropdownOpen, dropdownOpen) => {
+const createDropdown = (additionalMainMenu, setDropdownOpen, dropdownOpen) => {
   const generateIdKey = (item) => (
     `${item.id}-${item.url}`
   )
@@ -88,8 +92,8 @@ export const Navbar = function (props: NavbarProps) {
   });
   if (loading) return <Loading/>;
   if (error) {
-    console.info(error)
-     return <p>Error :(</p>
+    console.error(error)
+    return <ErrorPage code={500} message={error.message} /> 
    };
   const social = data.menu.socialIcons;
   const { topMenu, mainMenu, brandName, brand } = data.menu;
@@ -153,7 +157,7 @@ export const Navbar = function (props: NavbarProps) {
         <div x-data="{ open: false }" className="flex flex-col max-w-screen-xl px-4 mx-auto md:items-center md:justify-between md:flex-row md:px-6 lg:px-8">
           <div className="p-4 flex flex-row items-center justify-between">
             <a href="#" className="flex flex-wrap -mx-1 overflow-hidden text-lg font-semibold tracking-widest text-gray-900 rounded-lg dark-mode:text-white focus:outline-none focus:shadow-outline">
-              <img  className="py-2" width="35px" height="35px" src={brand.url}/>
+              <img  className="py-2" width="35px" height="35px" src={brand.thumbnail.url}/>
               <span className="px-2 py-2 mt-2">{brandName}</span>
               </a>
             <button className="md:hidden rounded-lg focus:outline-none focus:shadow-outline" onClick={() => setNavbarOpen(!navbarOpen)}>

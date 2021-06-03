@@ -2,7 +2,6 @@ import React from 'react';
 import './loading.css';
 
 export const Loading = () => {
-    let circleCommonClasses = 'h-2.5 w-2.5 bg-current   rounded-full';
 
     return (
         <div className="w-full h-screen z-50 overflow-hidden flex flex-col items-center justify-center">

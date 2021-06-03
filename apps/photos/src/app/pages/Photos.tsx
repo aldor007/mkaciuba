@@ -4,12 +4,13 @@ import React from 'react';
 import  Header from '../Header';
 import { generatePath, useParams } from 'react-router-dom';
 import { ImageList } from '@mkaciuba/image';
-import { useQuery } from '@apollo/client/react';
+import { ApolloError  } from '@apollo/client';
+import { useQuery,  } from '@apollo/client/react';
 import gql from  'graphql-tag';
 import  { LoginForm } from '../components/LoginForm'
 import { Query } from '@mkaciuba/api';
 import { AppRoutes } from '../routes';
-import { Loading } from '@mkaciuba/ui-kit'
+import { Loading, ErrorPage } from '@mkaciuba/ui-kit'
 
 const GET_PHOTOS = gql`
   query ($categorySlug: String!, $gallerySlug: String!) {
@@ -50,17 +51,15 @@ export const Photos = () => {
     variables: { categorySlug, gallerySlug},
   });
   if (loading) return <Loading/>;
-
-  if (error && (error as any).extensions && (error as any).extensions.code != 'UNAUTHENTICATED') {
-     return <p>Error :(</p>
-   };
-  if (!data || !data.categoryBySlug || !data.galleryMenu) {
-    return <p>Not found</p>
+  let authRequired = false;
+  if (error && error.graphQLErrors.some(g => g.extensions?.code == 'UNAUTHENTICATED')) {
+    authRequired = true;
+  } else if (error) {
+    console.info('instace of ', error.name)
+    console.error(error)
+    return (<ErrorPage code={500} message={error.message} />)
   }
-  let authRequired = error ||  !loggedIn && data && !data.categoryBySlug.public
-  if (!error) {
-    authRequired = false;
-  }
+  authRequired = authRequired ||  !loggedIn && data && !data.categoryBySlug.public
 
   if (loggedIn) {
     authRequired = false;

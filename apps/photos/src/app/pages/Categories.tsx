@@ -8,7 +8,7 @@ import gql from  'graphql-tag';
 import { generatePath, useParams } from 'react-router-dom';
 import { Query } from '@mkaciuba/api';
 import { AppRoutes } from '../routes';
-import { Loading } from "@mkaciuba/ui-kit";
+import { Loading, ErrorPage } from "@mkaciuba/ui-kit";
 
 const GET_GALLERY = gql`
 query  galleryMenu($gallerySlug: String!) {
@@ -37,12 +37,12 @@ export const Categories = () => {
   });
   if (loading) return <Loading/>;
   if (error) {
-    console.info(error)
-     return <p>Error :(</p>
+    console.error(error)
+    return <ErrorPage code={500} message={error.message} /> 
    };
   const { gallery, categories } = data.galleryMenu;
   if (!gallery) {
-    return <p>Not found</p>
+    return <ErrorPage code={404} message={'Gallery no found'} /> 
   }
 
    const children  = categories.map((item) => {
