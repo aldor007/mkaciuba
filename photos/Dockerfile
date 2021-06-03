@@ -6,12 +6,13 @@ RUN apk add vips-dev --repository=http://dl-cdn.alpinelinux.org/alpine/edge/comm
 COPY ./package.json /opt/app/
 ADD ./yarn.lock /opt/app/
 ADD ./providers /opt/app/providers
-RUN yarn install
+RUN yarn install --network-timeout 100000
 ADD ./components /opt/app/components
 ADD ./config /opt/app/config
 ADD ./extensions /opt/app/extensions
 ADD ./lib /opt/app/lib
 ADD ./api /opt/app/api
+ADD ./hooks /opt/app/hooks
 ENV NODE_ENV production
 RUN yarn build
 EXPOSE 1337

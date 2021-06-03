@@ -10,6 +10,8 @@ services:
       DATABASE_USERNAME: strapi
       DATABASE_PASSWORD: strapi
       DATABASE_SSL: 'false'
+      REDIS_HOST: redis
+      REDIS_DB: 0
       # NODE_ENV: 'production'
     volumes:
       - .:/srv/app
@@ -17,6 +19,10 @@ services:
       - '1337:1337'
     depends_on:
       - mysql
+      - redis 
+
+  redis:
+    image: redis
 
   mysql:
     image: mysql

@@ -67,10 +67,10 @@ export const findImageForWidth = (images: Image[], width: number, webp: boolean)
     }
   });
   let minIndex = 0;
-  let minValue = width - filterPresets[0].width;
+  let minValue = Math.abs(width - filterPresets[0].width);
   filterPresets.forEach((p, index) => {
-    const tmpValue = width - p.width;
-    if (tmpValue > 0 && tmpValue < minValue) {
+    const tmpValue = Math.abs(width - p.width);
+    if (tmpValue < minValue) {
       minIndex = index;
       minValue = tmpValue;
     }
@@ -81,7 +81,9 @@ export const findImageForWidth = (images: Image[], width: number, webp: boolean)
 
 export const ImageList = ({ categorySlug }: ImageListProps) => {
   const webp = useWebPSupportCheck();
-  const width = useWindowWidth();
+  const width = useWindowWidth({
+    initialWidth: 1000
+  });
   const [loadingMore, setLoadingMore] = useState(false);
   const limit = 12;
   const [start, setStart] = useState(limit)
@@ -95,14 +97,15 @@ export const ImageList = ({ categorySlug }: ImageListProps) => {
     if (!data) {
       return true;
     }
-
+    
     if (data.categoryBySlug.medias.length < limit) {
       return false;
     }
 
-    if (data.categoryBySlug.medias.length == data.categoryBySlug.mediasCount - 1) {
+    if (data.categoryBySlug.medias.length == data.categoryBySlug.mediasCount) {
       return false;
     }
+
 
     return true;
   }

@@ -1,6 +1,4 @@
 const { getStoragePath, base64Url } = require('../../../lib/index');
-const LRU = require("lru-cache");
-const lruCache = new LRU({ max: 300, maxAge: 1000 * 60 * 5 });
 const slugify = require('slugify');
 const { AuthenticationError, ForbiddenError, UserInputError } = require('apollo-server-errors');
 const jwt = require('jsonwebtoken');
@@ -78,6 +76,19 @@ const getImageUrl = (obj, preset) => {
   caption = slugify(caption);
   return `https://mort.mkaciuba.com/images/transform/${parent}/photo_${caption}_${preset}${obj.ext}`
 }
+
+const getCacheKey = (prefix, options = {}, obj = {}) => {
+  if (options.where) {
+    prefix += JSON.stringify(options.where);
+  }
+  if (options.id_in) {
+    prefix += JSON.stringify(options.id_in)
+  }
+  if (options.slug) {
+    prefix += options.slug; 
+  }
+  return `${prefix}:${options.limit}:${options.sort}:${obj.id}`;
+}
 module.exports = {
     definition: `
   type Image {
@@ -120,16 +131,19 @@ module.exports = {
               return p;
             }
           });
-          let image = lruCache.get(obj.id)
-          if (!image) {
-            image = await strapi
-            .query('File', 'upload')
-            .model.query(qb => {
-              qb.where('id', obj.id);
-            })
-            .fetch();
-            lruCache.set(obj.id, image);
-          }
+          const key = 'image' + obj.id;
+          // let image = await strapi.services.cache.get(key)
+          // if (!image) {
+          //   image = await strapi
+          //   .query('File', 'upload')
+          //   .model.query(qb => {
+          //     qb.where('id', obj.id);
+          //   })
+          //   .fetch();
+          //   strapi.services.cache.set(key, image, 600);
+          // }
+          // console.info('----------->', image, obj)
+          const image = obj;
           let minIndex = 0;
           let minValue = Math.abs(options.width - filterPresets[0].width);
           filterPresets.forEach((p, index) => {
@@ -139,27 +153,16 @@ module.exports = {
               minValue = tmpValue;
             }
           });
-          return getImage(image.attributes, filterPresets[minIndex]);
+          return getImage(image, filterPresets[minIndex]);
         },
       },
       thumbnails: {
         resolverOf: 'application::category.category.findOne',
         resolver: async (obj, options, ctx) => {
 
-          let image = lruCache.get(obj.id)
-          if (!image) {
-            image = await strapi
-            .query('File', 'upload')
-            .model.query(qb => {
-              qb.where('id', obj.id);
-            })
-            .fetch();
-            lruCache.set(obj.id, image);
-          }
-
           const result = [];
           for (const p of presetList) {
-            result.push(getImage(image.attributes, p))
+            result.push(getImage(obj, p))
           }
           return result;
         },
@@ -192,17 +195,19 @@ module.exports = {
           if (options._sort) {
             search._sort = options.sort;
           }
-          search.id_in= obj.medias.map(o => o.id).filter(o => o)
-          const key = 'medias' + JSON.stringify(search);
-          let images = lruCache.get(key);
+          return obj.medias.sort((a, b) => a - b).slice(options.start, options.start + options.limit);
+          search.id_in =  obj.medias.map(o => o.id).filter(o => o)
+          options.id_in = search.id_in;
+          const key = getCacheKey('medias', options);
+          let images = await strapi.services.cache.get(key);
           if (images) {
-            obj.medias = images;
+            // obj.medias = images;
             return images;
           }
 
           images = await strapi.plugins.upload.services.upload.fetchAll(search)
           // obj.medias = images;
-          lruCache.set(key, images);
+          strapi.services.cache.set(key, images, 600);
           return images;
 
        }
@@ -213,12 +218,18 @@ module.exports = {
       categoriesCount: {
         resolverOf: 'application::category.category.find',
         resolver: async (obj, options, { context }) => {
-          const key = JSON.stringify(options);
-          let categories = lruCache.get(key)
+          const search = options.where || {};
+          search._limit =  options.limit;
+          search._start = options.start || 1;
+          search._sort = options.sort || 'id:desc'
+          search.public = true;
+          search.gallery_null = false;
+          const key = getCacheKey('categories', options);
+          let categories = await strapi.services.cache.get(key)
           if (categories) {
             return categories.length;
           }
-           return await strapi.services.category.count(options.where || {});
+           return await strapi.services.category.count(search || {});
         }
       },
       categories: {
@@ -230,13 +241,13 @@ module.exports = {
           search._sort = options.sort || 'id:desc'
           search.public = true;
           search.gallery_null = false;
-          const key = JSON.stringify(search);
-          let categories = lruCache.get(key)
+          const key = getCacheKey('categories', options);
+          let categories = await strapi.services.cache.get(key)
           if (categories) {
             return categories;
           }
           categories = await strapi.services.category.find(search);
-          // lruCache.set(key, categories);
+          strapi.services.cache.set(key, categories, 60*60);
 
           return categories;
         }
@@ -244,7 +255,13 @@ module.exports = {
       categoryBySlug: {
         resolverOf: 'application::category.category.findOne',
         resolver: async (obj, options, { context }) => {
-          const category = await strapi.services.category.findOne({ slug: options.slug, _limit: options.limit});
+          const key = getCacheKey('category', options)
+          let category = await strapi.services.cache.get(key);
+          if (!category) {
+            category = await strapi.services.category.findOne({ slug: options.slug, _limit: options.limit});
+            strapi.services.cache.set(key, category, 600);
+          } 
+
           if (!category) {
             return new UserInputError('unable to find gallery')
           }
@@ -270,15 +287,15 @@ module.exports = {
           if (options.limit > 9) {
             return new UserInputError('Has to be less than 9')
           }
-          const key = 'recentImages-' + options.limit + obj.slug;
-          let images = lruCache.get(key);
+          const key = getCacheKey('recentImages-', options);
+          let images = await strapi.services.cache.get(key);
           if (images) {
             return images;
           }
           images = category.map((c) => {
             return c.medias[Math.floor(Math.random() * c.medias.length) - 1];
           });
-          lruCache.set(key, images )
+          strapi.services.cache.set(key, images, 600)
           return images;
         }
       }

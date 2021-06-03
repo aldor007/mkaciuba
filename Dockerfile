@@ -3,7 +3,7 @@ WORKDIR /opt/app
 COPY ./package.json /opt/app/
 ADD ./yarn.lock /opt/app/
 ADD ./decorate-angular-cli.js /opt/app/
-RUN yarn install
+RUN yarn install --network-timeout 100000
 ADD ./apps /opt/app/apps
 ADD ./libs /opt/app/libs
 ADD ./nx.json /opt/app/nx.json
@@ -12,8 +12,8 @@ ADD ./workspace.json /opt/app/workspace.json
 ADD ./babel.config.json /opt/app/babel.config.json
 ADD ./tailwind.config.js /opt/app/tailwind.config.js
 ADD ./postcss.config.js /opt/app/postcss.config.js
-ENV NODE_ENV production
-RUN yarn nx build photos --production
-RUN yarn nx build photos-ssr --production
-RUN yarn
+ENV NODE_ENV=production
+RUN yarn nx build photos --production --optimization --nocache 
+RUN yarn nx build photos-ssr --production --optimization --nocache 
+RUN rm -rf node_modules && yarn --network-timeout 100000
 CMD ["node", "dist/apps/photos-ssr/main.js"]

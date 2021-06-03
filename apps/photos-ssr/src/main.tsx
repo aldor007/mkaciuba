@@ -30,6 +30,10 @@ import { BatchHttpLink } from "@apollo/client/link/batch-http";
 import { environment } from './environments/environment';
 import cookeParser from 'cookie-parser';
 import proxy from 'express-http-proxy';
+import fs from 'fs';
+
+let scripts = [];
+const assetsPath = path.join(__dirname, '../photos');
 
 const app = express();
 app.use(cookeParser())
@@ -37,20 +41,19 @@ app.use(cookeParser())
 app.use('/graphql', proxy(process.env.STRAPI_URL || environment.strapiUrl));
 
 app.use('/assets',
-    express.static(path.join(__dirname, '../photos'), {
+    express.static(assetsPath, {
       maxAge: '7d',
     })
  );
 
 app.get('/_health', (req, res) => {
-  res.send(200)
+  res.sendStatus(200)
 });
 
 app.get('*', (req, res) => {
   const metaTagsInstance = MetaTagsServer();
 
   const persistedQueriesLink = createPersistedQueryLink({ sha256 });
-
   const client = new ApolloClient({
     ssrMode: true,
     link: persistedQueriesLink.concat(new BatchHttpLink({
@@ -79,22 +82,6 @@ app.get('*', (req, res) => {
     return;
   }
 
-  let scripts = [];
-  if (process.env.NODE_ENV == 'production') {
-    scripts = [
-      '/assets/main.js',
-      '/assets/polyfills.js',
-      '/assets/vendors~main.js',
-      '/assets/vendors~polyfils.js',
-    ]
-  } else {
-    scripts = [
-      '/assets/main.js',
-      '/assets/polyfills.js',
-      '/assets/vendor.js',
-      '/assets/runtime.js',
-    ]
-  }
   getDataFromTree(staticApp).then((content) => {
     // Extract the entirety of the Apollo Client cache's current state
     const initialState = client.extract();
@@ -124,7 +111,13 @@ app.get('*', (req, res) => {
 
 
 });
-
+fs.readdirSync(assetsPath).forEach(file => {
+  if (file.split('.').pop() == 'js') {
+    scripts.push(`/assets/${file}`);
+  }
+});
+console.info('Scripts', scripts, process.env.NODE_ENV) 
+console.info('Apollo url' , process.env.API_URL || environment.apiUrl);
 
 const port = process.env.port || 3333;
 const server = app.listen(port, () => {
