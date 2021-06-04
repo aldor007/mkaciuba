@@ -66,7 +66,7 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
       return false;
     }
 
-    if (data.categories.length == data.categoriesCount - 1) {
+    if (data.categories.length == data.categoriesCount) {
       return false;
     }
 

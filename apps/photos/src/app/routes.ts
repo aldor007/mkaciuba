@@ -1,4 +1,7 @@
 export const AppRoutes = {
+  'login': {
+        path: '/gallery-login',
+    },
     'photos' : {
         path: '/gallery/:gallerySlug/:categorySlug',
     },

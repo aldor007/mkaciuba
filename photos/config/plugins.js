@@ -14,7 +14,7 @@ module.exports = ({ env }) => ({
   graphql: {
     amountLimit: 16,
     apolloServer: {
-      tracing: true
+      tracing: false 
     }
   },
   // ...

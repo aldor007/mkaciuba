@@ -1,9 +1,9 @@
 import React from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useMutation} from '@apollo/client/react';
 import gql from  'graphql-tag';
 import  { Redirect } from 'react-router-dom'
-
+import { Mutation } from '@mkaciuba/api';
+import useToken from '../useToken';
 
 const VALIDATE_TOKEN = gql`
   mutation validateTokenForCategory($token: String!, $categorySlug: String!) {
@@ -17,33 +17,30 @@ const VALIDATE_TOKEN = gql`
 export interface LoginFormProps {
     categorySlug: string
     gallerySlug: string
-    onSuccess : () => void
 }
 
 export function LoginForm(props: LoginFormProps) {
-  const [validateTokenForCategory, { loading: mutationLoading, error: mutationError, data }] = useMutation(VALIDATE_TOKEN)
-  let setFormikStatus;
-  const handleSubmit = (values, { setSubmitting, setStatus }) => {
-      setSubmitting(mutationLoading);
-      validateTokenForCategory({
-          variables: {
-              token: values.password,
-              categorySlug: props.categorySlug
-          }
-      })
-        if (mutationError) {
-            console.error(mutationError);
-            setStatus('Error')
-        }
-        setFormikStatus = setStatus;
+  const passwordRef = React.useRef<HTMLInputElement>();
+  const {setToken } = useToken();
+  const [validateTokenForCategory, { loading: mutationLoading, error: mutationError, data }] = useMutation<Mutation>(VALIDATE_TOKEN)
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    validateTokenForCategory({
+      variables: {
+        token: passwordRef.current.value,
+        categorySlug: props.categorySlug
+    }
+    })
+    if (mutationError) {
+        console.error(mutationError);
+    }
   };
 
 
   let info = null;
   if (data && data.validateTokenForCategory.valid) {
       const redirectUrl = `/gallery/${props.gallerySlug}/${props.categorySlug}`
-      localStorage.setItem(`categorySlug:${props.categorySlug}`, data.validateTokenForCategory.token);
-      props.onSuccess()
+      setToken(data.validateTokenForCategory.token)
     return (
       <Redirect to={redirectUrl}  />
    )
@@ -60,30 +57,20 @@ export function LoginForm(props: LoginFormProps) {
             {info && info}
         <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6 mb-4">
             {mutationError && <div>Error: {mutationError}</div>}
-            </div>
-                    <Formik
-                    initialValues={{ email: "", password: "" }}
-                    onSubmit={handleSubmit}
-                    >
-                    {({ isSubmitting, status }) => {
-                        return (
-                            <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6 mb-4">
-                        <Form className="w-full max-w-sm">
-                            <label className="md:w-2/3 block text-gray-500 font-bol">
-                            Password:
-                            <Field className="mr-2 leading-tight bg-gray-200" type="password" name="password" />
-                            <ErrorMessage name="password" component="div" />
-                            </label>
-                            <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"  disabled={isSubmitting}>
-                            Submit
-                            </button>
-                            {status && <div className="text-success">{status}</div>}
+        </div>
+        <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6 mb-4">
+          <form className="w-full max-w-sm" onSubmit={handleSubmit}>
+            <label className="md:w-2/3 block text-gray-500 font-bol">
+            Password:
+              <input ref={passwordRef} className="mr-2 leading-tight bg-gray-200" type="password" name="password" />
+            </label>
+            <button type="submit"  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            Submit
+            </button>
+            {status && <div className="text-success">{status}</div>}
 
-                        </Form>
-                        </div>
-                        );
-                    }}
-                    </Formik>
+          </form>
+      </div>
     </div>
     );
 }

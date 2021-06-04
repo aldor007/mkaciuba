@@ -72,7 +72,7 @@ const getImage = (obj, preset) => {
 const getImageUrl = (obj, preset) => {
   const parent = base64Url(obj.path);
   let caption = obj.caption || obj.alternativeText || obj.name;
-  caption = caption.replace(/_/g, '-').replace(/\./g, '-').replace(/ /g, '-').replace(':', '').replace(')', '')
+  caption = caption.replace(/_/g, '-').replace(/\./g, '-').replace(/ /g, '-').replace(':', '').replace(')', '').replace('(', '')
   caption = slugify(caption);
   return `https://mort.mkaciuba.com/images/transform/${parent}/photo_${caption}_${preset}${obj.ext}`
 }
@@ -131,18 +131,6 @@ module.exports = {
               return p;
             }
           });
-          const key = 'image' + obj.id;
-          // let image = await strapi.services.cache.get(key)
-          // if (!image) {
-          //   image = await strapi
-          //   .query('File', 'upload')
-          //   .model.query(qb => {
-          //     qb.where('id', obj.id);
-          //   })
-          //   .fetch();
-          //   strapi.services.cache.set(key, image, 600);
-          // }
-          // console.info('----------->', image, obj)
           const image = obj;
           let minIndex = 0;
           let minValue = Math.abs(options.width - filterPresets[0].width);
@@ -220,11 +208,11 @@ module.exports = {
         resolver: async (obj, options, { context }) => {
           const search = options.where || {};
           search._limit =  options.limit;
-          search._start = options.start || 1;
+          search._start = options.start || 0;
           search._sort = options.sort || 'id:desc'
-          search.public = true;
           search.gallery_null = false;
-          const key = getCacheKey('categories', options);
+          search.publicationDate_lt = new Date();
+          const key = getCacheKey('categories' + search.publicationDate_lt, options);
           let categories = await strapi.services.cache.get(key)
           if (categories) {
             return categories.length;
@@ -237,11 +225,11 @@ module.exports = {
         resolver: async (obj, options, { context }) => {
           const search = options.where || {};
           search._limit =  options.limit;
-          search._start = options.start || 1;
+          search._start = options.start || 0;
           search._sort = options.sort || 'id:desc'
-          search.public = true;
+          search.publicationDate_lt = new Date();
           search.gallery_null = false;
-          const key = getCacheKey('categories', options);
+          const key = getCacheKey('categories' + search.publicationDate_lt, options);
           let categories = await strapi.services.cache.get(key)
           if (categories) {
             return categories;
@@ -258,8 +246,10 @@ module.exports = {
           const key = getCacheKey('category', options)
           let category = await strapi.services.cache.get(key);
           if (!category) {
-            category = await strapi.services.category.findOne({ slug: options.slug, _limit: options.limit});
-            strapi.services.cache.set(key, category, 600);
+            category = await strapi.services.category.findOne({ slug: options.slug });
+            if (category) {
+              strapi.services.cache.set(key, category, 600);
+            }
           } 
 
           if (!category) {
@@ -267,7 +257,7 @@ module.exports = {
           }
 
           if (!category.public) {
-            const token = context.cookies.get('category_token')
+            const token = context.request.headers['x-gallery-token'];
             if (!token) {
               return new AuthenticationError('auth required')
             }
@@ -275,7 +265,8 @@ module.exports = {
             try {
                 jwt.verify(token, category.token);
             } catch (e) {
-              return new ForbiddenError("invalid token");
+              console.error('error ', e)
+              return new ForbiddenError("invalid token parse");
             }
           }
           return category;

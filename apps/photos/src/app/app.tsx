@@ -5,10 +5,14 @@ import '../assets/photos.css'
 import { renderRoutes } from 'react-router-config';
 import { Routes } from '../routes';
 import { ApolloProvider } from '@apollo/client/react';
-import {  ApolloClient, InMemoryCache  } from '@apollo/client/core';
+import {  ApolloClient, InMemoryCache, HttpLink  } from '@apollo/client/core';
 import { BatchHttpLink } from "@apollo/client/link/batch-http";
 import { environment } from '../environments/environment';
 import { startLimitPagination } from './apollo';
+import { createPersistedQueryLink } from "@apollo/client/link/persisted-queries";
+import { sha256 } from 'crypto-hash';
+import { setContext } from '@apollo/client/link/context';
+
 
 export function ScrollToTop() {
   const { pathname } = useLocation();
@@ -28,16 +32,28 @@ declare global {
     __APOLLO_STATE__: any;
   }
 }
+const authLink = setContext((_, { headers }) => {
+  // get the authentication token from local storage if it exists
 
+  const token = sessionStorage.getItem('token');
+  console.info('---? token', token)
+  // return the headers to the context so httpLink can read them
+  return {
+    headers: {
+      ...headers,
+      'x-gallery-token': token ? token : "",
+    }
+  }
+});
 
 export const App = ({ client }: AppsProps) => {
   if (!client) {
-      const link = new BatchHttpLink({
+      const link = createPersistedQueryLink({ sha256, useGETForHashedQueries: true }).concat(authLink).concat(new HttpLink({
         uri: environment.apiUrl,
-        batchMax: 12, // No more than 5 operations per batch
-        batchInterval: 50, // Wait no more than 20ms after first batched operation
+        // batchMax: 12, // No more than 5 operations per batch
+        // batchInterval: 50, // Wait no more than 20ms after first batched operation
         useGETForQueries: true
-      });
+      }));
       const cache = new InMemoryCache({
         typePolicies: {
           Category: {

@@ -2,7 +2,7 @@
 import { Footer } from '../components/Footer';
 import React from 'react';
 import  Header from '../Header';
-import { generatePath, useParams } from 'react-router-dom';
+import { generatePath, Redirect, useParams } from 'react-router-dom';
 import { ImageList } from '@mkaciuba/image';
 import { ApolloError  } from '@apollo/client';
 import { useQuery,  } from '@apollo/client/react';
@@ -11,6 +11,7 @@ import  { LoginForm } from '../components/LoginForm'
 import { Query } from '@mkaciuba/api';
 import { AppRoutes } from '../routes';
 import { Loading, ErrorPage } from '@mkaciuba/ui-kit'
+import useToken from '../useToken';
 
 const GET_PHOTOS = gql`
   query ($categorySlug: String!, $gallerySlug: String!) {
@@ -45,7 +46,7 @@ const GET_PHOTOS = gql`
 
 export const Photos = () => {
   const { categorySlug, gallerySlug } = useParams<{gallerySlug: string, categorySlug: string}>();
-  const [loggedIn, setLogin] = React.useState(false);
+  // const {token } = useToken()
 
   const { loading, error, data } = useQuery<Query>(GET_PHOTOS, {
     variables: { categorySlug, gallerySlug},
@@ -54,16 +55,19 @@ export const Photos = () => {
   let authRequired = false;
   if (error && error.graphQLErrors.some(g => g.extensions?.code == 'UNAUTHENTICATED')) {
     authRequired = true;
+  } else if (error && error.graphQLErrors.some(g => g.extensions?.code == 'FORBIDDEN')) {
+    authRequired = true;
   } else if (error) {
-    console.info('instace of ', error.name)
     console.error(error)
     return (<ErrorPage code={500} message={error.message} />)
   }
-  authRequired = authRequired ||  !loggedIn && data && !data.categoryBySlug.public
 
-  if (loggedIn) {
-    authRequired = false;
+  if (authRequired) {
+    return  (
+      <Redirect to={`${generatePath(AppRoutes.login.path)}?gallery=${gallerySlug}&category=${categorySlug}`} />
+    )
   }
+
   const { categories, gallery } = data.galleryMenu;
   const children  = categories.map((item) => {
     return {
@@ -83,11 +87,7 @@ export const Photos = () => {
   return  (
     <>
     <Header mainMenu={menu}/>
-    { !authRequired  && <ImageList categorySlug={categorySlug}/> }
-    { authRequired  && <LoginForm categorySlug={categorySlug} gallerySlug={gallerySlug}   onSuccess={() => {
-     setLogin(true)
-    }} /> }
-
+    <ImageList categorySlug={categorySlug}/> 
     <Footer></Footer>
     </>
   )

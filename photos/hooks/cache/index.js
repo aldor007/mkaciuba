@@ -46,7 +46,7 @@ module.exports = function(strapi) {
           min: 3,
           max: 10,
         },
-        logger: strapi.log
+        // logger: strapi.log
       })
       strapi.services.cache = new Cache();
     },

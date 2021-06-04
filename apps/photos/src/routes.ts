@@ -1,6 +1,7 @@
 import { Home } from './app/pages/Home';
 import { Categories } from './app/pages/Categories';
 import { Photos } from './app/pages/Photos';
+import { Login } from './app/pages/Login';
 import { IframePhotos } from './app/pages/IframePhotos';
 import { AppRoutes } from './app/routes';
 
@@ -16,6 +17,10 @@ export const Routes = [
     {
         component: IframePhotos,
         path: AppRoutes.iframePhotos.path
+    },
+    {
+        component: Login,
+        path: AppRoutes.login.path
     },
     {
         component: Home,
