@@ -165,8 +165,9 @@ module.exports = {
       },
       randomImage: {
         resolverOf: 'application::category.category.findOne',
-        resolver: async (obj, options, { context }) => {
+        resolver: async (obj, options, { context }, info) => {
           const images = obj.medias.filter(o => o.id)
+          info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
           let image = images[Math.floor(Math.random() * (obj.medias.length - 1))];
           if (!image) {
             image = images[0];
@@ -176,28 +177,15 @@ module.exports = {
       },
       medias: {
         resolverOf: 'application::category.category.findOne',
-        resolver: async (obj, options, { context }) => {
+        resolver: async (obj, options, { context }, info) => {
           const search = options.where || {};
           search._limit =  options.limit;
           search._start = options.start || 1;
           if (options._sort) {
             search._sort = options.sort;
           }
+          info.cacheControl.setCacheHint({ maxAge: 62, scope: 'PUBLIC' });
           return obj.medias.sort((a, b) => a - b).slice(options.start, options.start + options.limit);
-          search.id_in =  obj.medias.map(o => o.id).filter(o => o)
-          options.id_in = search.id_in;
-          const key = getCacheKey('medias', options);
-          let images = await strapi.services.cache.get(key);
-          if (images) {
-            // obj.medias = images;
-            return images;
-          }
-
-          images = await strapi.plugins.upload.services.upload.fetchAll(search)
-          // obj.medias = images;
-          strapi.services.cache.set(key, images, 600);
-          return images;
-
        }
      }
     },
@@ -205,8 +193,9 @@ module.exports = {
       category: false,
       categoriesCount: {
         resolverOf: 'application::category.category.find',
-        resolver: async (obj, options, { context }) => {
+        resolver: async (obj, options, { context }, info) => {
           const search = options.where || {};
+          info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
           search._limit =  options.limit;
           search._start = options.start || 0;
           search._sort = options.sort || 'id:desc'
@@ -222,7 +211,7 @@ module.exports = {
       },
       categories: {
         resolverOf: 'application::category.category.find',
-        resolver: async (obj, options, { context }) => {
+        resolver: async (obj, options, { context }, info) => {
           const search = options.where || {};
           search._limit =  options.limit;
           search._start = options.start || 0;
@@ -231,6 +220,7 @@ module.exports = {
           search.gallery_null = false;
           const key = getCacheKey('categories' + search.publicationDate_lt, options);
           let categories = await strapi.services.cache.get(key)
+          info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
           if (categories) {
             return categories;
           }
@@ -242,8 +232,8 @@ module.exports = {
       },
       categoryBySlug: {
         resolverOf: 'application::category.category.findOne',
-        resolver: async (obj, options, { context }) => {
-          const key = getCacheKey('category', options)
+        resolver: async (obj, options, { context }, info) => {
+          const key = getCacheKey('categoryv2', options)
           let category = await strapi.services.cache.get(key);
           if (!category) {
             category = await strapi.services.category.findOne({ slug: options.slug });
@@ -253,11 +243,12 @@ module.exports = {
           } 
 
           if (!category) {
-            return new UserInputError('unable to find gallery')
+            return new UserInputError('unable to find category ')
           }
 
           if (!category.public) {
             const token = context.request.headers['x-gallery-token'];
+            info.cacheControl.setCacheHint({ maxAge: 120, scope: 'PRIVATE' });
             if (!token) {
               return new AuthenticationError('auth required')
             }
@@ -268,16 +259,19 @@ module.exports = {
               console.error('error ', e)
               return new ForbiddenError("invalid token parse");
             }
+          } else {
+            info.cacheControl.setCacheHint({ maxAge: 120, scope: 'PUBLIC' });
           }
           return category;
         }
       },
       recentImages: {
         resolverOf: 'application::category.category.findOne',
-        resolver: async (obj, options, { context }) => {
+        resolver: async (obj, options, { context }, info) => {
           if (options.limit > 9) {
             return new UserInputError('Has to be less than 9')
           }
+          info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
           const key = getCacheKey('recentImages-', options);
           let images = await strapi.services.cache.get(key);
           if (images) {

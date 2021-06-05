@@ -26,6 +26,7 @@ import MetaTagsServer from 'react-meta-tags/server';
 import {MetaTagsContext} from 'react-meta-tags';
 import { createPersistedQueryLink } from "@apollo/client/link/persisted-queries";
 import { sha256 } from 'crypto-hash';
+import { HttpLink } from "@apollo/client/core";
 import { BatchHttpLink } from "@apollo/client/link/batch-http";
 import { environment } from './environments/environment';
 import cookeParser from 'cookie-parser';
@@ -53,7 +54,7 @@ app.get('/_health', (req, res) => {
 app.get('*', (req, res) => {
   const metaTagsInstance = MetaTagsServer();
 
-  const persistedQueriesLink = createPersistedQueryLink({ sha256 });
+  const persistedQueriesLink = createPersistedQueryLink({ sha256});
   const client = new ApolloClient({
     ssrMode: true,
     link: persistedQueriesLink.concat(new BatchHttpLink({
@@ -116,6 +117,24 @@ fs.readdirSync(assetsPath).forEach(file => {
     scripts.push(`/assets/${file}`);
   }
 });
+
+scripts.sort((a:string, b:string) => {
+  if (a.includes('main')) {
+    return -1;
+  }
+  
+  if (a.includes('polyfil')) {
+    return 0;
+  }
+  
+  if (a.includes('vendor')) {
+    return 1;
+  }
+
+  return 0;
+
+})
+
 console.info('Scripts', scripts, process.env.NODE_ENV) 
 console.info('Apollo url' , process.env.API_URL || environment.apiUrl);
 

@@ -36,8 +36,9 @@ module.exports = {
       },
       galleryMenu: {
         resolverOf: 'application::gallery.gallery.findOne',
-        resolver: async (obj, options, { context }) => {
-          const key = "galleryMenu:" + options.slug;
+        resolver: async (obj, options, { context }, info) => {
+          const key = "galleryMenu:v2" + options.slug;
+          info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
           let result = await strapi.services.cache.get(key)
            if (result) {
              return result;
@@ -48,7 +49,7 @@ module.exports = {
             return new UserInputError('unable to find gallery')
           }
 
-          const categories = await strapi.services.category.find({ 'gallery.id': gallery.id, _sort: 'id:desc', _limit: 100});
+          const categories = await strapi.services.category.find({ 'gallery.id': gallery.id, _sort: 'id:desc', _limit: 100, publicationDate_lt: new Date()});
           strapi.services.cache.set(key, {
             gallery,
             categories

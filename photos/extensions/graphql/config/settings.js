@@ -27,7 +27,6 @@ module.exports = {
      return
    }
    const token = parts[1];
-    console.info('------------>') 
    // Add the user to the context
    return { token};
  },
@@ -71,17 +70,12 @@ function injectCacheControl() {
   return {
     requestDidStart(requestContext) {
       const { context } = requestContext;
-      if (context.context.request.headers['x-gallery-token']) {
-        requestContext.overallCachePolicy = {
-          scope: 'PRIVATE',
-          maxAge: MAX_AGE,
-        }
-      } else {
-        requestContext.overallCachePolicy = {
-          scope: 'PUBLIC', // or 'PRIVATE'
-          maxAge: MAX_AGE,
-        }
-      }
+      // if (!context.context.request.headers['x-gallery-token']) {
+      //   requestContext.overallCachePolicy = {
+      //     scope: 'PUBLIC',
+      //     maxAge: MAX_AGE,
+      //   }
+      // } 
     }
   }
 }
