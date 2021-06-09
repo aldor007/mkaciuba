@@ -32,9 +32,20 @@ import { environment } from './environments/environment';
 import cookeParser from 'cookie-parser';
 import proxy from 'express-http-proxy';
 import fs from 'fs';
+import pkgJson from  '../../../package.json';
 
-let scripts = [];
 const assetsPath = path.join(__dirname, '../photos');
+const manifest = JSON.parse(fs.readFileSync(path.join(assetsPath, 'manifest.json'), 'utf-8'));
+
+const getAssetPath = (name) => {
+  return path.join(process.env.ASSETS_URL, manifest[name]);
+}
+
+const scripts = [
+  getAssetPath('main.js'),
+  getAssetPath('polyfills.js'),
+  getAssetPath('vendor.js'),
+];
 
 const app = express();
 app.use(cookeParser())
@@ -87,10 +98,10 @@ app.get('*', (req, res) => {
     // Extract the entirety of the Apollo Client cache's current state
     const initialState = client.extract();
     const meta =    `
-      <link href="/assets/main.css" rel="stylesheet"/>
+      <link href="${getAssetPath('main.css')} rel="stylesheet"/>
       <meta charset="utf-8">
-      <link href="/assets/assets/default-skin.css" rel="stylesheet"/>
-      <link href="/assets/assets/photos.css" rel="stylesheet"/>${metaTagsInstance.renderToString()}`
+      <link href="${getAssetPath('assets/default-skin.css')}" rel="stylesheet"/>
+      <link href="${getAssetPath('assets/photos.css')}" rel="stylesheet"/>${metaTagsInstance.renderToString()}`
 
 
     // Add both the page content and the cache state to a top-level component
@@ -112,28 +123,6 @@ app.get('*', (req, res) => {
 
 
 });
-fs.readdirSync(assetsPath).forEach(file => {
-  if (file.split('.').pop() == 'js') {
-    scripts.push(`/assets/${file}`);
-  }
-});
-
-scripts.sort((a:string, b:string) => {
-  if (a.includes('main')) {
-    return -1;
-  }
-  
-  if (a.includes('polyfil')) {
-    return 0;
-  }
-  
-  if (a.includes('vendor')) {
-    return 1;
-  }
-
-  return 0;
-
-})
 
 console.info('Scripts', scripts, process.env.NODE_ENV) 
 console.info('Apollo url' , process.env.API_URL || environment.apiUrl);

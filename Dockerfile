@@ -1,4 +1,10 @@
 FROM node:14-alpine
+ARG AWS_BUCKET
+ARG AWS_REGION
+ARG AWS_ACCESS_KEY_ID 
+ARG AWS_SECRET_ACCESS_KEY
+ARG AWS_BASE_PATH
+
 WORKDIR /opt/app
 COPY ./package.json /opt/app/
 ADD ./yarn.lock /opt/app/
@@ -13,7 +19,7 @@ ADD ./babel.config.json /opt/app/babel.config.json
 ADD ./tailwind.config.js /opt/app/tailwind.config.js
 ADD ./postcss.config.js /opt/app/postcss.config.js
 ENV NODE_ENV=production
-RUN yarn nx build photos --production --optimization --nocache 
+RUN yarn nx build photos --production --optimization --nocache  --outputHashing=all
 RUN yarn nx build photos-ssr --production --optimization --nocache 
 RUN rm -rf node_modules && yarn --network-timeout 100000
 CMD ["node", "dist/apps/photos-ssr/main.js"]
