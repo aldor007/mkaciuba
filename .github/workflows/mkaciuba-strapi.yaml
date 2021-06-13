@@ -1,9 +1,9 @@
 name: strapi
-  
+
 on:
   push:
     tags:
-      - "strapi-[0-9]+.[0-9]+.[0-9]+"
+      - "strapi-[0-9]+.[0-9]+.[0-9]+.*"
 
 jobs:
   multi:
@@ -32,7 +32,7 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: photos. 
+          context: photos.
           file: photos/Dockerfile
           platforms: linux/arm64,linux/amd64
           push: true
