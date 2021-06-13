@@ -23,6 +23,7 @@ module.exports = {
               Key: storagePath,
               Body: Buffer.from(file.buffer, 'binary'),
               ACL: 'private',
+              StorageClass: config.storageClass,
               ContentType: file.mime,
               ...customParams,
             },

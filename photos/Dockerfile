@@ -12,7 +12,7 @@ ADD ./config /opt/app/config
 ADD ./extensions /opt/app/extensions
 ADD ./lib /opt/app/lib
 ADD ./api /opt/app/api
-ADD ./hooks /opt/app/hooks
+COPY ./hooks /opt/app/hooks
 ENV NODE_ENV production
 RUN yarn build
 EXPOSE 1337
