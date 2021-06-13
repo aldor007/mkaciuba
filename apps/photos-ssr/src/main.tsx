@@ -39,14 +39,22 @@ const manifest = JSON.parse(fs.readFileSync(path.join(assetsPath, 'manifest.json
 
 const getAssetPath = (name) => {
   console.info('DEBUG ', name, process.env.ASSETS_URL, manifest[name])
-  return path.join(process.env.ASSETS_URL, manifest[name]);
+  if (manifest[name]) {
+    return path.join(process.env.ASSETS_URL, manifest[name]);
+  }
 };
 
 const scripts = [
   getAssetPath('main.js'),
   getAssetPath('polyfills.js'),
-  getAssetPath('vendor.js'),
 ];
+const vendorsPath = getAssetPath('vendor.js');
+if (!vendorsPath) {
+  scripts.push(getAssetPath("vendors~main.js"))
+  scripts.push(getAssetPath("vendors~polyfills.js"))
+} else {
+  scripts.push(vendorsPath);
+}
 
 const app = express();
 app.use(cookeParser())

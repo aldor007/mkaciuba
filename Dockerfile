@@ -14,7 +14,7 @@ ADD ./babel.config.json /opt/app/babel.config.json
 ADD ./tailwind.config.js /opt/app/tailwind.config.js
 ADD ./postcss.config.js /opt/app/postcss.config.js
 ENV NODE_ENV=production
-RUN yarn nx build photos --production --optimization --nocache  --outputHashing=all
-RUN yarn nx build photos-ssr --production --optimization --nocache
+RUN yarn nx build photos --prod --optimization --nocache  --outputHashing=bundles
+RUN yarn nx build photos-ssr --prod --optimization --nocache
 RUN rm -rf node_modules && yarn --network-timeout 100000
 CMD ["node", "dist/apps/photos-ssr/main.js"]
