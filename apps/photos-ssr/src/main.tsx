@@ -38,8 +38,9 @@ const assetsPath = path.join(__dirname, '../photos');
 const manifest = JSON.parse(fs.readFileSync(path.join(assetsPath, 'manifest.json'), 'utf-8'));
 
 const getAssetPath = (name) => {
+  console.info('DEBUG ', name, process.env.ASSETS_URL, manifest[name])
   return path.join(process.env.ASSETS_URL, manifest[name]);
-}
+};
 
 const scripts = [
   getAssetPath('main.js'),
@@ -124,7 +125,7 @@ app.get('*', (req, res) => {
 
 });
 
-console.info('Scripts', scripts, process.env.NODE_ENV) 
+console.info('Scripts', scripts, process.env.NODE_ENV)
 console.info('Apollo url' , process.env.API_URL || environment.apiUrl);
 
 const port = process.env.port || 3333;
