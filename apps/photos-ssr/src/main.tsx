@@ -108,7 +108,7 @@ app.get('*', (req, res) => {
     // Extract the entirety of the Apollo Client cache's current state
     const initialState = client.extract();
     const meta =    `
-      <link href="${getAssetPath('main.css')} rel="stylesheet"/>
+      <link href="${getAssetPath('main.css')}" rel="stylesheet"/>
       <meta charset="utf-8">
       <link href="${getAssetPath('assets/default-skin.css')}" rel="stylesheet"/>
       <link href="${getAssetPath('assets/photos.css')}" rel="stylesheet"/>${metaTagsInstance.renderToString()}`
