@@ -75,16 +75,15 @@ app.get('/_health', (req, res) => {
 app.get('*', (req, res) => {
   const metaTagsInstance = MetaTagsServer();
 
-  const persistedQueriesLink = createPersistedQueryLink({ sha256});
   const client = new ApolloClient({
     ssrMode: true,
-    link: persistedQueriesLink.concat(new BatchHttpLink({
+    link: new BatchHttpLink({
       uri:  process.env.API_URL || environment.apiUrl,
       credentials: 'same-origin',
       headers: {
         cookie: req.header('Cookie'),
       },
-    })),
+    }),
     cache: new InMemoryCache(),
   });
 
