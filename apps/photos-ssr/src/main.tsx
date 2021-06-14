@@ -40,13 +40,12 @@ const manifest = JSON.parse(fs.readFileSync(path.join(assetsPath, 'manifest.json
 const getAssetPath = (name) => {
   console.info('DEBUG ', name, process.env.ASSETS_URL, manifest[name])
   if (manifest[name]) {
-    return path.join(process.env.ASSETS_URL, manifest[name]);
+    return process.env.ASSETS_URL + '/' + manifest[name];
   }
 };
 
 const scripts = [
   getAssetPath('main.js'),
-  getAssetPath('polyfills.js'),
 ];
 const vendorsPath = getAssetPath('vendor.js');
 if (!vendorsPath) {
@@ -54,6 +53,8 @@ if (!vendorsPath) {
   scripts.push(getAssetPath("vendors~polyfills.js"))
 } else {
   scripts.push(vendorsPath);
+  scripts.push(getAssetPath('polyfills.js'))
+
 }
 
 const app = express();
