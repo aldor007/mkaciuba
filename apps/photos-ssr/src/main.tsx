@@ -54,6 +54,7 @@ if (!vendorsPath) {
   scripts.push(getAssetPath('polyfills.js'))
 }
 
+scripts.push(getAssetPath('runtime.js'))
 scripts.push(getAssetPath('main.js'))
 
 const app = express();
