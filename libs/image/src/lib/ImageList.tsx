@@ -92,12 +92,12 @@ export const ImageList = ({ categorySlug }: ImageListProps) => {
     notifyOnNetworkStatusChange: true,
 
   });
-  
+
   const hasNextPage = () => {
     if (!data) {
       return true;
     }
-    
+
     if (data.categoryBySlug.medias.length < limit) {
       return false;
     }
@@ -139,7 +139,7 @@ export const ImageList = ({ categorySlug }: ImageListProps) => {
   }
 
 
-   if (!data.categoryBySlug) {
+   if (!data || !data.categoryBySlug) {
      return <p> Not found </p>
    }
    const images = data.categoryBySlug.medias ;

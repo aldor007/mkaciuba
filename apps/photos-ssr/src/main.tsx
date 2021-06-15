@@ -87,8 +87,9 @@ app.get('*', (req, res) => {
     cache: new InMemoryCache(),
   });
 
-    const context = {};
+  const context = {};
 
+  console.info('Request ', req.path, req.url)
   // Checks the given path, matches with component and returns array of items about to be rendered
   const routes = matchRoutes(Routes, req.path);
   const staticApp = (
