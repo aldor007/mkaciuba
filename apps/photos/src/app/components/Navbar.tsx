@@ -44,7 +44,7 @@ const GET_MENU = gql`
         url
         width
         height
-      } 
+      }
     }
  }
 }
@@ -92,8 +92,8 @@ export const Navbar = function (props: NavbarProps) {
   });
   if (loading) return <Loading/>;
   if (error) {
-    console.error(error)
-    return <ErrorPage code={500} message={error.message} /> 
+    console.error('NavBar', error)
+    return <ErrorPage code={500} message={error.message} />
    };
   const social = data.menu.socialIcons;
   const { topMenu, mainMenu, brandName, brand } = data.menu;

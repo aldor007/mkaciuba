@@ -44,7 +44,7 @@ const getAssetPath = (name) => {
   }
 };
 
-const scripts = [];
+let scripts = [];
 const vendorsPath = getAssetPath('vendor.js');
 if (!vendorsPath) {
   scripts.push(getAssetPath("vendors~main.js"))
@@ -57,10 +57,16 @@ if (!vendorsPath) {
 scripts.push(getAssetPath('runtime.js'))
 scripts.push(getAssetPath('main.js'))
 
+scripts = scripts.filter(x => x)
+
 const app = express();
 app.use(cookeParser())
 
-app.use('/graphql', proxy(process.env.STRAPI_URL || environment.strapiUrl));
+app.use('/graphql', proxy(process.env.STRAPI_URL || environment.strapiUrl, {
+  proxyReqPathResolver: function (req) {
+    return '/graphql' + req.url.replace('/', '');
+  }
+}));
 
 app.use('/assets',
     express.static(assetsPath, {

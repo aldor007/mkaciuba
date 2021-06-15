@@ -90,8 +90,8 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
   })
 
   if (error) {
-    console.error(error)
-    return <ErrorPage code={500} message={error.message} /> 
+    console.error('CategoriesList', error)
+    return <ErrorPage code={500} message={error.message} />
    };
 
    if (loading && !data) {

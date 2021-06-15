@@ -58,7 +58,7 @@ export const Photos = () => {
   } else if (error && error.graphQLErrors.some(g => g.extensions?.code == 'FORBIDDEN')) {
     authRequired = true;
   } else if (error) {
-    console.error(error)
+    console.error('Photos', error)
     return (<ErrorPage code={500} message={error.message} />)
   }
 
@@ -87,7 +87,7 @@ export const Photos = () => {
   return  (
     <>
     <Header mainMenu={menu}/>
-    <ImageList categorySlug={categorySlug}/> 
+    <ImageList categorySlug={categorySlug}/>
     <Footer></Footer>
     </>
   )

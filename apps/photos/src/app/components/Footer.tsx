@@ -43,8 +43,8 @@ export const Footer = () => {
   });
   if (loading) return <Loading/>;
   if (error) {
-    console.error(error)
-    return <ErrorPage code={500} message={error.message} /> 
+    console.error('Footer', error)
+    return <ErrorPage code={500} message={error.message} />
    };
 
   const recentPhotos = data.categories.map(c => {

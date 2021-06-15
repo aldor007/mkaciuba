@@ -37,12 +37,12 @@ export const Categories = () => {
   });
   if (loading) return <Loading/>;
   if (error) {
-    console.error(error)
-    return <ErrorPage code={500} message={error.message} /> 
+    console.error('Categories', error)
+    return <ErrorPage code={500} message={error.message} />
    };
   const { gallery, categories } = data.galleryMenu;
   if (!gallery) {
-    return <ErrorPage code={404} message={'Gallery no found'} /> 
+    return <ErrorPage code={404} message={'Gallery no found'} />
   }
 
    const children  = categories.map((item) => {
