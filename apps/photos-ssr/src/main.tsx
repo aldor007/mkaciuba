@@ -44,9 +44,7 @@ const getAssetPath = (name) => {
   }
 };
 
-const scripts = [
-  getAssetPath('main.js'),
-];
+const scripts = [];
 const vendorsPath = getAssetPath('vendor.js');
 if (!vendorsPath) {
   scripts.push(getAssetPath("vendors~main.js"))
@@ -54,8 +52,10 @@ if (!vendorsPath) {
 } else {
   scripts.push(vendorsPath);
   scripts.push(getAssetPath('polyfills.js'))
-
 }
+
+scripts.push(getAssetPath('runtime.js'))
+scripts.push(getAssetPath('main.js'))
 
 const app = express();
 app.use(cookeParser())
