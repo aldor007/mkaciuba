@@ -117,6 +117,7 @@ app.get('*', (req, res) => {
     const meta =    `
       <link href="${getAssetPath('main.css')}" rel="stylesheet"/>
       <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
       <link href="${getAssetPath('assets/default-skin.css')}" rel="stylesheet"/>
       <link href="${getAssetPath('assets/photos.css')}" rel="stylesheet"/>${metaTagsInstance.renderToString()}`
 
