@@ -12,6 +12,7 @@ import { startLimitPagination } from './apollo';
 import { createPersistedQueryLink } from "@apollo/client/link/persisted-queries";
 import { sha256 } from 'crypto-hash';
 import { setContext } from '@apollo/client/link/context';
+import ReactGA from 'react-ga';
 
 
 export function ScrollToTop() {
@@ -46,6 +47,11 @@ const authLink = setContext((_, { headers }) => {
 });
 
 export const App = ({ client }: AppsProps) => {
+  useEffect(() => {
+    ReactGA.initialize('UA-21042903-3');
+    ReactGA.pageview(window.location.pathname + window.location.search);
+  })
+  
   if (!client) {
       const link = createPersistedQueryLink({ sha256, useGETForHashedQueries: true }).concat(authLink).concat(new HttpLink({
         uri: environment.apiUrl,

@@ -2,9 +2,7 @@ import  { LoginForm } from '../components/LoginForm'
 import { Footer } from '../components/Footer';
 import React from 'react';
 import  Header from '../Header';
-import { generatePath, useParams } from 'react-router-dom';
-import { AppRoutes } from '../routes';
-import useToken from '../useToken';
+import { useLocation } from 'react-router-dom';
 
 function parseQuery<T>(queryString: string) {
     const query: T = {} as T;
@@ -17,6 +15,7 @@ function parseQuery<T>(queryString: string) {
 }
 
 export const Login = () => {
+  let location = useLocation();
   const {gallery, category} = parseQuery<{gallery: string, category: string}>(location.search)
   return  (
     <>

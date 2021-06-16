@@ -88,6 +88,7 @@ app.get('*', (req, res) => {
       credentials: 'same-origin',
       headers: {
         cookie: req.header('Cookie'),
+        'x-gallery-token': req.headers['x-gallery-token']
       },
     }),
     cache: new InMemoryCache(),
@@ -125,6 +126,8 @@ app.get('*', (req, res) => {
     if (!req.cookies.category_token) {
       res.setHeader('cache-control', 'public, max-age=120')
       res.setHeader('x-browser-cache-control', 'public, max-age=60');
+    } else {
+      res.setHeader('cache-control', 'privte, max-age=60')
     }
 
     // Render the component to static markup and return it
