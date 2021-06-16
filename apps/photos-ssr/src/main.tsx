@@ -125,8 +125,8 @@ app.get('*', (req, res) => {
     // Add both the page content and the cache state to a top-level component
     const html = <Html content={content} state={initialState} meta={meta} scripts={scripts}/>;
     if (!req.cookies.category_token) {
-      res.setHeader('cache-control', 'public, max-age=120')
-      res.setHeader('x-browser-cache-control', 'public, max-age=60');
+      res.setHeader('cache-control', 'public, max-age=600')
+      res.setHeader('x-browser-cache-control', 'public, max-age=160');
     } else {
       res.setHeader('cache-control', 'privte, max-age=60')
     }

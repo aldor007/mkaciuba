@@ -2,7 +2,7 @@ const apolloServerPluginResponseCache = require('apollo-server-plugin-response-c
 const { RedisCache } = require('apollo-server-cache-redis')
 
 // set this to whatever you believe should be the max age for your cache control
-const MAX_AGE = 60
+const MAX_AGE = 300
 
 module.exports = {
   federation: false,
@@ -34,7 +34,7 @@ module.exports = {
 
 const cache = new RedisCache({
   port: process.env.REDIS_PORT, // Redis port
-  host: process.env.REDIS_HOST, 
+  host: process.env.REDIS_HOST,
   family: 4, // 4 (IPv4) or 6 (IPv6)
   db: process.env.REDIS_DB,
 })
@@ -70,15 +70,8 @@ function injectCacheControl() {
   return {
     requestDidStart(requestContext) {
       const { context } = requestContext;
-      // if (!context.context.request.headers['x-gallery-token']) {
-      //   requestContext.overallCachePolicy = {
-      //     scope: 'PUBLIC',
-      //     maxAge: MAX_AGE,
-      //   }
-      // } 
     }
   }
 }
- 
-         
-         
+
+
