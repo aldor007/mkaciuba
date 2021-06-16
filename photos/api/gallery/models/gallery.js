@@ -17,9 +17,7 @@ module.exports = {
       }
     },
     async beforeUpdate(params, data) {
-      if (data.name && !data.slugOverride) {
-        data.slug = `${slugify(data.name, {lower: true})}-${params.id}`;
-      } else {
+      if (data.slugOverride) {
         data.slug = data.slugOverride
       }
     },
