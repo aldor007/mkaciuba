@@ -38,7 +38,6 @@ const assetsPath = path.join(__dirname, '../photos');
 const manifest = JSON.parse(fs.readFileSync(path.join(assetsPath, 'manifest.json'), 'utf-8'));
 
 const getAssetPath = (name) => {
-  console.info('DEBUG ', name, process.env.ASSETS_URL, manifest[name])
   if (manifest[name]) {
     return process.env.ASSETS_URL + '/' + manifest[name];
   }
@@ -96,7 +95,6 @@ app.get('*', (req, res) => {
 
   const context = {};
 
-  console.info('Request ', req.path, req.url)
   // Checks the given path, matches with component and returns array of items about to be rendered
   const routes = matchRoutes(Routes, req.path);
   const staticApp = (
@@ -134,7 +132,7 @@ app.get('*', (req, res) => {
     // Render the component to static markup and return it
     // res.status(200);
     renderToNodeStream(html).pipe(res);
-    // res.end();
+    res.end();
   }).catch((e) => {
     console.error('Error reading', e)
     res.status(503);

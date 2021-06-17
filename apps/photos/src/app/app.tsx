@@ -36,7 +36,10 @@ declare global {
 const authLink = setContext((_, { headers }) => {
   // get the authentication token from local storage if it exists
 
-  const token = sessionStorage.getItem('token');
+  let token = '';
+  if (sessionStorage) {
+    token = sessionStorage.getItem('token');
+  }
   // return the headers to the context so httpLink can read them
   return {
     headers: {
@@ -51,7 +54,7 @@ export const App = ({ client }: AppsProps) => {
     ReactGA.initialize('UA-21042903-3');
     ReactGA.pageview(window.location.pathname + window.location.search);
   })
-  
+
   if (!client) {
       const link = createPersistedQueryLink({ sha256, useGETForHashedQueries: true }).concat(authLink).concat(new HttpLink({
         uri: environment.apiUrl,

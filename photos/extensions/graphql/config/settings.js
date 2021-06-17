@@ -51,6 +51,11 @@ async function shouldReadFromCache({ context }) {
   if (context.context.request.headers['x-gallery-token']) {
     return false;
   }
+
+  if (context.context.request.headers['x-debug']) {
+    return false;
+  }
+  
   return true
 }
 
@@ -59,6 +64,11 @@ async function shouldWriteToCache({ context}) {
   if (context.context.request.headers['x-gallery-token']) {
     return false;
   }
+
+  if (context.context.request.headers['x-debug']) {
+    return false;
+  }
+
   return true
 }
 

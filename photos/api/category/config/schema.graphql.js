@@ -85,7 +85,7 @@ const getCacheKey = (prefix, options = {}, obj = {}) => {
     prefix += JSON.stringify(options.id_in)
   }
   if (options.slug) {
-    prefix += options.slug; 
+    prefix += options.slug;
   }
   return `${prefix}:${options.limit}:${options.sort}:${obj.id}`;
 }
@@ -184,7 +184,7 @@ module.exports = {
           if (options._sort) {
             search._sort = options.sort;
           }
-          info.cacheControl.setCacheHint({ maxAge: 62, scope: 'PUBLIC' });
+          info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
           return obj.medias.sort((a, b) => a - b).slice(options.start, options.start + options.limit);
        }
      }
@@ -240,7 +240,7 @@ module.exports = {
             if (category) {
               strapi.services.cache.set(key, category, 600);
             }
-          } 
+          }
 
           if (!category) {
             return new UserInputError('unable to find category ')
@@ -248,7 +248,7 @@ module.exports = {
 
           if (!category.public) {
             const token = context.request.headers['x-gallery-token'];
-            info.cacheControl.setCacheHint({ maxAge: 120, scope: 'PRIVATE' });
+            info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PRIVATE' });
             if (!token) {
               return new AuthenticationError('auth required')
             }
@@ -260,7 +260,7 @@ module.exports = {
               return new ForbiddenError("invalid token parse");
             }
           } else {
-            info.cacheControl.setCacheHint({ maxAge: 120, scope: 'PUBLIC' });
+            info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
           }
           return category;
         }
