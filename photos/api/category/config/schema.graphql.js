@@ -47,7 +47,20 @@ const presetList = [
   new Preset('small', 150, null, '(max-width: 400px)', 'jpeg'),
   new Preset('big1000', 1000, null, '(max-width: 1300px)', 'jpeg'),
   new Preset('big1300', 1300, null, '(max-width: 1600px)', 'jpeg'),
+
 ]
+
+const allPresets = presetList.concat([
+
+  new Preset('categorylist', 600, 450, '(max-width: 1000px)', 'jpeg'),
+  new Preset('categorylistwebp', 600, 450, '(max-width: 1000px)', 'webp'),
+  new Preset('categorylists', 300, 225, '(max-width: 600px)', 'jpeg'),
+  new Preset('categorylistwebps', 300, 225, '(max-width: 600px)', 'webp'),
+  new Preset('postlist', 1500, 1000, '(max-width: 1300px)', 'jpeg'),
+  new Preset('postlistwebp', 1500, 1000, '(max-width: 1300px)', 'webp'),
+  new Preset('postlists', 750, 750, '(max-width: 600px)', 'jpeg'),
+  new Preset('postlistwebps', 750, 740, '(max-width: 600px)', 'webp'),
+]);
 
 
 
@@ -106,6 +119,7 @@ module.exports = {
   extend type UploadFile {
     thumbnails: [Image]
     thumbnail(width: Int, webp: Boolean): Image
+    matchingThumbnails(preset: String): [Image]
   }
   extend type Query {
     categoryBySlug(slug: String): Category
@@ -151,6 +165,20 @@ module.exports = {
           const result = [];
           for (const p of presetList) {
             result.push(getImage(obj, p))
+          }
+          return result;
+        },
+      },
+      matchingThumbnails: {
+        resolverOf: 'application::category.category.find',
+        resolver: async (obj, options, ctx) => {
+          const result = [];
+          for (const p of allPresets) {
+            console.info('--->', p.name, options.preset)
+            if(p.name.includes(options.preset)) {
+          strapi.log.debug('--------jeest---->',options.preset)
+              result.push(getImage(obj, p))
+            }
           }
           return result;
         },

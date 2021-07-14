@@ -56,12 +56,22 @@ export const App = ({ client }: AppsProps) => {
   })
 
   if (!client) {
-      const link = createPersistedQueryLink({ sha256, useGETForHashedQueries: true }).concat(authLink).concat(new HttpLink({
-        uri: environment.apiUrl,
-        // batchMax: 12, // No more than 5 operations per batch
-        // batchInterval: 50, // Wait no more than 20ms after first batched operation
-        useGETForQueries: true
-      }));
+      let link;
+      if (environment.production) {
+        link = createPersistedQueryLink({ sha256, useGETForHashedQueries: true }).concat(authLink).concat(new HttpLink({
+          uri: environment.apiUrl,
+          // batchMax: 12, // No more than 5 operations per batch
+          // batchInterval: 50, // Wait no more than 20ms after first batched operation
+          useGETForQueries: true
+        }));
+      } else {
+        link = (authLink).concat(new HttpLink({
+          uri: environment.apiUrl,
+          // batchMax: 12, // No more than 5 operations per batch
+          // batchInterval: 50, // Wait no more than 20ms after first batched operation
+          useGETForQueries: true
+        }));
+      }
       const cache = new InMemoryCache({
         typePolicies: {
           Category: {

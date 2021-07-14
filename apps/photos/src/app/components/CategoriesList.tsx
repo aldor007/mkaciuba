@@ -27,7 +27,7 @@ const GET_CATEGORIES = gql`
     id
     slug
     image {
-     thumbnails {
+     matchingThumbnails(preset: "categorylist") {
         url
         mediaQuery
         webp
@@ -106,7 +106,7 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
       acc[cur.id] = null;
       return acc;
     }
-    acc[cur.id] = findImageForWidth(cur.image.thumbnails, width, webp)
+    acc[cur.id] = findImageForWidth(cur.image.matchingThumbnails, width, webp)
     return acc;
   }, {})
     return (
@@ -124,7 +124,7 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
             categorySlug: item.slug,
           })}>
               { !item.image &&   <div className="bg-gray-700" ></div>  }
-              { item.image &&   <ImageComponent thumbnails={item.image.thumbnails} defaultImage={defaultImages[item.id]} />  }
+              { item.image &&   <ImageComponent thumbnails={item.image.matchingThumbnails} defaultImage={defaultImages[item.id]} />  }
               <div className="category-heading">
                <h2>{item.name}</h2>
               </div>
