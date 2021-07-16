@@ -57,6 +57,7 @@ const GET_IMAGES = gql`
 
 export interface ImageListProps {
   categorySlug: string
+  minSize?: boolean
 }
 
 
@@ -79,7 +80,7 @@ export const findImageForWidth = (images: Image[], width: number, webp: boolean)
   return filterPresets[minIndex];
 }
 
-export const ImageList = ({ categorySlug }: ImageListProps) => {
+export const ImageList = ({ categorySlug, minSize }: ImageListProps) => {
   const webp = useWebPSupportCheck();
   const width = useWindowWidth({
     initialWidth: 1000
@@ -149,13 +150,15 @@ export const ImageList = ({ categorySlug }: ImageListProps) => {
    if (category.image) {
     seoImage = images.map((item) => findImageForWidth(category.image.thumbnails, 1024, false));
    }
+
+   let imageClass = "my-1 px-1 w-1/1 overflow-hidden sm:w-1/1 md:w-1/2 lg:w-1/3 xl:w-1/4"
+   if (minSize) {
+    imageClass = "my-1 px-1 w-1/1 overflow-hidden sm:w-1/1 md:1/1 w-1/2"
+   }
    return (
      <>
         <div className="flex flex-wrap -mx-1 overflow-hidden" >
           <MetaTags>
-            <title>{category.name}</title>
-            <meta name="description" content={category.description} />
-            <meta property="og:title" content={category.name} />
             <meta name="twitter:image" content={seoImage[0].url} />
             <meta property="og:image" content={seoImage[0].url} />
           </MetaTags>
@@ -171,7 +174,7 @@ export const ImageList = ({ categorySlug }: ImageListProps) => {
               title={item.caption}
             >
             {({ ref, open }) => (
-                <div className="my-1 px-1 w-1/1 overflow-hidden sm:w-1/1 md:w-1/2 lg:w-1/3 xl:w-1/4">
+                <div className={imageClass}>
                <ImageComponent ref={ref as RefObject<HTMLImageElement>} onClick={open} thumbnails={item.thumbnails} defaultImage={defaultImages[index]} />
                   <div className="hidden overflow-hidden">
                     <div className="text-white text-lg">{item.alternativeText}</div>

@@ -12,9 +12,10 @@ module.exports = ({ env }) => ({
     },
   },
   graphql: {
-    amountLimit: 16,
+    amountLimit: 20,
+    depthLimit: 7,
     apolloServer: {
-      tracing: false 
+      tracing: false
     }
   },
   // ...

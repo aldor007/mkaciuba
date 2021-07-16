@@ -4,6 +4,7 @@ import { Photos } from './app/pages/Photos';
 import { Login } from './app/pages/Login';
 import { IframePhotos } from './app/pages/IframePhotos';
 import { AppRoutes } from './app/routes';
+import { Post  } from './app/pages/Post';
 
 export const Routes = [
     {
@@ -21,6 +22,10 @@ export const Routes = [
     {
         component: Login,
         path: AppRoutes.login.path
+    },
+    {
+        component: Post,
+        path: AppRoutes.post.path
     },
     {
         component: Home,

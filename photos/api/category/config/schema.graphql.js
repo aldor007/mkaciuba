@@ -207,8 +207,9 @@ module.exports = {
         resolverOf: 'application::category.category.findOne',
         resolver: async (obj, options, { context }, info) => {
           const search = options.where || {};
+          options.start = options.start || 0;
           search._limit =  options.limit;
-          search._start = options.start || 1;
+          search._start = options.start;
           if (options._sort) {
             search._sort = options.sort;
           }

@@ -19,6 +19,7 @@ module.exports = {
     definition: `
     extend type Query {
       postsCount(where: JSON): Int!
+      postBySlug(slug: String): Post
   }
   `,
   resolver: {
@@ -75,6 +76,22 @@ module.exports = {
             return posts.length;
           }
           return await strapi.services.post.count(search);
+        }
+      },
+      postBySlug: {
+        resolverOf: 'application::post.post.find',
+        resolver: async (obj, options, { context }, info) => {
+          const search = {};
+          search.publicationDate_lt = new Date();
+          const key = getCacheKey('post' + options.slug, options);
+          let post = await strapi.services.cache.get(key)
+          // info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
+          if (post) {
+            return post;
+          }
+          post = await strapi.services.post.findOne({ slug: options.slug})
+          // post.gallery = await strapi.services.gallery.findOne({ id: post.gallery.id})
+          return post;
         }
       },
     },

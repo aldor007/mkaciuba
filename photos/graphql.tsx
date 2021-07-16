@@ -311,7 +311,7 @@ export type MenuInput = {
   updated_by?: Maybe<Scalars['ID']>;
 };
 
-export type Morph = UsersPermissionsMe | UsersPermissionsMeRole | UsersPermissionsLoginPayload | UserPermissionsPasswordPayload | Image | ValidationToken | GalleryCategories | Category | CategoryConnection | CategoryAggregator | CategoryGroupBy | CategoryConnectionId | CategoryConnectionCreated_At | CategoryConnectionUpdated_At | CategoryConnectionName | CategoryConnectionSlug | CategoryConnectionSlugOverride | CategoryConnectionPublic | CategoryConnectionPublicationDate | CategoryConnectionFile | CategoryConnectionImage | CategoryConnectionGallery | CategoryConnectionKeywords | CategoryConnectionDescription | CreateCategoryPayload | UpdateCategoryPayload | DeleteCategoryPayload | Footer | UpdateFooterPayload | DeleteFooterPayload | Gallery | CreateGalleryPayload | UpdateGalleryPayload | DeleteGalleryPayload | Menu | UpdateMenuPayload | DeleteMenuPayload | Post | PostConnection | PostAggregator | PostGroupBy | PostConnectionId | PostConnectionCreated_At | PostConnectionUpdated_At | PostConnectionText | PostConnectionTitle | PostConnectionPublicationDate | PostConnectionGallery | PostConnectionDescription | PostConnectionImage | PostConnectionKeywords | PostConnectionPublished_At | CreatePostPayload | UpdatePostPayload | DeletePostPayload | UploadFile | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsUser | CreateUserPayload | UpdateUserPayload | ComponentMenuConfigMenu;
+export type Morph = UsersPermissionsMe | UsersPermissionsMeRole | UsersPermissionsLoginPayload | UserPermissionsPasswordPayload | Image | ValidationToken | GalleryCategories | Category | CategoryConnection | CategoryAggregator | CategoryGroupBy | CategoryConnectionId | CategoryConnectionCreated_At | CategoryConnectionUpdated_At | CategoryConnectionName | CategoryConnectionSlug | CategoryConnectionSlugOverride | CategoryConnectionPublic | CategoryConnectionPublicationDate | CategoryConnectionFile | CategoryConnectionImage | CategoryConnectionGallery | CategoryConnectionKeywords | CategoryConnectionDescription | CreateCategoryPayload | UpdateCategoryPayload | DeleteCategoryPayload | Footer | UpdateFooterPayload | DeleteFooterPayload | Gallery | CreateGalleryPayload | UpdateGalleryPayload | DeleteGalleryPayload | Menu | UpdateMenuPayload | DeleteMenuPayload | PostCategory | PostCategoryConnection | PostCategoryAggregator | PostCategoryGroupBy | PostCategoryConnectionId | PostCategoryConnectionCreated_At | PostCategoryConnectionUpdated_At | PostCategoryConnectionName | PostCategoryConnectionSlug | CreatePostCategoryPayload | UpdatePostCategoryPayload | DeletePostCategoryPayload | Post | PostConnection | PostAggregator | PostGroupBy | PostConnectionId | PostConnectionCreated_At | PostConnectionUpdated_At | PostConnectionText | PostConnectionTitle | PostConnectionPublicationDate | PostConnectionGallery | PostConnectionImage | PostConnectionKeywords | PostConnectionDescription | PostConnectionCategory | PostConnectionSlug | PostConnectionPublished_At | CreatePostPayload | UpdatePostPayload | DeletePostPayload | UploadFile | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsUser | CreateUserPayload | UpdateUserPayload | ComponentMenuConfigMenu;
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -325,6 +325,9 @@ export type Mutation = {
   deleteGallery?: Maybe<DeleteGalleryPayload>;
   updateMenu?: Maybe<UpdateMenuPayload>;
   deleteMenu?: Maybe<DeleteMenuPayload>;
+  createPostCategory?: Maybe<CreatePostCategoryPayload>;
+  updatePostCategory?: Maybe<UpdatePostCategoryPayload>;
+  deletePostCategory?: Maybe<DeletePostCategoryPayload>;
   createPost?: Maybe<CreatePostPayload>;
   updatePost?: Maybe<UpdatePostPayload>;
   deletePost?: Maybe<DeletePostPayload>;
@@ -372,6 +375,21 @@ export type MutationUpdateMenuArgs = {
 };
 
 
+export type MutationCreatePostCategoryArgs = {
+  input?: Maybe<CreatePostCategoryInput>;
+};
+
+
+export type MutationUpdatePostCategoryArgs = {
+  input?: Maybe<UpdatePostCategoryInput>;
+};
+
+
+export type MutationDeletePostCategoryArgs = {
+  input?: Maybe<DeletePostCategoryInput>;
+};
+
+
 export type MutationCreatePostArgs = {
   input?: Maybe<CreatePostInput>;
 };
@@ -401,9 +419,11 @@ export type Post = {
   title?: Maybe<Scalars['String']>;
   publicationDate?: Maybe<Scalars['DateTime']>;
   gallery?: Maybe<Category>;
-  description?: Maybe<Scalars['String']>;
   image?: Maybe<UploadFile>;
   keywords?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  category?: Maybe<PostCategory>;
+  slug?: Maybe<Scalars['String']>;
   published_at?: Maybe<Scalars['DateTime']>;
 };
 
@@ -413,11 +433,85 @@ export type PostAggregator = {
   totalCount?: Maybe<Scalars['Int']>;
 };
 
+export type PostCategory = {
+  __typename?: 'PostCategory';
+  id: Scalars['ID'];
+  created_at: Scalars['DateTime'];
+  updated_at: Scalars['DateTime'];
+  name?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']>;
+};
+
+export type PostCategoryAggregator = {
+  __typename?: 'PostCategoryAggregator';
+  count?: Maybe<Scalars['Int']>;
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type PostCategoryConnection = {
+  __typename?: 'PostCategoryConnection';
+  values?: Maybe<Array<Maybe<PostCategory>>>;
+  groupBy?: Maybe<PostCategoryGroupBy>;
+  aggregate?: Maybe<PostCategoryAggregator>;
+};
+
+export type PostCategoryConnectionCreated_At = {
+  __typename?: 'PostCategoryConnectionCreated_at';
+  key?: Maybe<Scalars['DateTime']>;
+  connection?: Maybe<PostCategoryConnection>;
+};
+
+export type PostCategoryConnectionId = {
+  __typename?: 'PostCategoryConnectionId';
+  key?: Maybe<Scalars['ID']>;
+  connection?: Maybe<PostCategoryConnection>;
+};
+
+export type PostCategoryConnectionName = {
+  __typename?: 'PostCategoryConnectionName';
+  key?: Maybe<Scalars['String']>;
+  connection?: Maybe<PostCategoryConnection>;
+};
+
+export type PostCategoryConnectionSlug = {
+  __typename?: 'PostCategoryConnectionSlug';
+  key?: Maybe<Scalars['String']>;
+  connection?: Maybe<PostCategoryConnection>;
+};
+
+export type PostCategoryConnectionUpdated_At = {
+  __typename?: 'PostCategoryConnectionUpdated_at';
+  key?: Maybe<Scalars['DateTime']>;
+  connection?: Maybe<PostCategoryConnection>;
+};
+
+export type PostCategoryGroupBy = {
+  __typename?: 'PostCategoryGroupBy';
+  id?: Maybe<Array<Maybe<PostCategoryConnectionId>>>;
+  created_at?: Maybe<Array<Maybe<PostCategoryConnectionCreated_At>>>;
+  updated_at?: Maybe<Array<Maybe<PostCategoryConnectionUpdated_At>>>;
+  name?: Maybe<Array<Maybe<PostCategoryConnectionName>>>;
+  slug?: Maybe<Array<Maybe<PostCategoryConnectionSlug>>>;
+};
+
+export type PostCategoryInput = {
+  name?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']>;
+  created_by?: Maybe<Scalars['ID']>;
+  updated_by?: Maybe<Scalars['ID']>;
+};
+
 export type PostConnection = {
   __typename?: 'PostConnection';
   values?: Maybe<Array<Maybe<Post>>>;
   groupBy?: Maybe<PostGroupBy>;
   aggregate?: Maybe<PostAggregator>;
+};
+
+export type PostConnectionCategory = {
+  __typename?: 'PostConnectionCategory';
+  key?: Maybe<Scalars['ID']>;
+  connection?: Maybe<PostConnection>;
 };
 
 export type PostConnectionCreated_At = {
@@ -468,6 +562,12 @@ export type PostConnectionPublished_At = {
   connection?: Maybe<PostConnection>;
 };
 
+export type PostConnectionSlug = {
+  __typename?: 'PostConnectionSlug';
+  key?: Maybe<Scalars['String']>;
+  connection?: Maybe<PostConnection>;
+};
+
 export type PostConnectionText = {
   __typename?: 'PostConnectionText';
   key?: Maybe<Scalars['String']>;
@@ -495,9 +595,11 @@ export type PostGroupBy = {
   title?: Maybe<Array<Maybe<PostConnectionTitle>>>;
   publicationDate?: Maybe<Array<Maybe<PostConnectionPublicationDate>>>;
   gallery?: Maybe<Array<Maybe<PostConnectionGallery>>>;
-  description?: Maybe<Array<Maybe<PostConnectionDescription>>>;
   image?: Maybe<Array<Maybe<PostConnectionImage>>>;
   keywords?: Maybe<Array<Maybe<PostConnectionKeywords>>>;
+  description?: Maybe<Array<Maybe<PostConnectionDescription>>>;
+  category?: Maybe<Array<Maybe<PostConnectionCategory>>>;
+  slug?: Maybe<Array<Maybe<PostConnectionSlug>>>;
   published_at?: Maybe<Array<Maybe<PostConnectionPublished_At>>>;
 };
 
@@ -506,9 +608,11 @@ export type PostInput = {
   title?: Maybe<Scalars['String']>;
   publicationDate?: Maybe<Scalars['DateTime']>;
   gallery?: Maybe<Scalars['ID']>;
-  description?: Maybe<Scalars['String']>;
   image?: Maybe<Scalars['ID']>;
   keywords?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  category?: Maybe<Scalars['ID']>;
+  slug?: Maybe<Scalars['String']>;
   published_at?: Maybe<Scalars['DateTime']>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
@@ -525,6 +629,9 @@ export type Query = {
   categoriesConnection?: Maybe<CategoryConnection>;
   footer?: Maybe<Footer>;
   menu?: Maybe<Menu>;
+  postCategory?: Maybe<PostCategory>;
+  postCategories?: Maybe<Array<Maybe<PostCategory>>>;
+  postCategoriesConnection?: Maybe<PostCategoryConnection>;
   post?: Maybe<Post>;
   posts?: Maybe<Array<Maybe<Post>>>;
   postsConnection?: Maybe<PostConnection>;
@@ -534,6 +641,7 @@ export type Query = {
   galleryBySlug?: Maybe<Gallery>;
   galleryMenu?: Maybe<GalleryCategories>;
   postsCount: Scalars['Int'];
+  postBySlug?: Maybe<Post>;
 };
 
 
@@ -561,6 +669,29 @@ export type QueryFooterArgs = {
 
 export type QueryMenuArgs = {
   publicationState?: Maybe<PublicationState>;
+};
+
+
+export type QueryPostCategoryArgs = {
+  id: Scalars['ID'];
+  publicationState?: Maybe<PublicationState>;
+};
+
+
+export type QueryPostCategoriesArgs = {
+  sort?: Maybe<Scalars['String']>;
+  limit?: Maybe<Scalars['Int']>;
+  start?: Maybe<Scalars['Int']>;
+  where?: Maybe<Scalars['JSON']>;
+  publicationState?: Maybe<PublicationState>;
+};
+
+
+export type QueryPostCategoriesConnectionArgs = {
+  sort?: Maybe<Scalars['String']>;
+  limit?: Maybe<Scalars['Int']>;
+  start?: Maybe<Scalars['Int']>;
+  where?: Maybe<Scalars['JSON']>;
 };
 
 
@@ -614,6 +745,11 @@ export type QueryGalleryMenuArgs = {
 
 export type QueryPostsCountArgs = {
   where?: Maybe<Scalars['JSON']>;
+};
+
+
+export type QueryPostBySlugArgs = {
+  slug?: Maybe<Scalars['String']>;
 };
 
 export type RoleInput = {
@@ -800,6 +936,15 @@ export type CreateGalleryPayload = {
   gallery?: Maybe<Gallery>;
 };
 
+export type CreatePostCategoryInput = {
+  data?: Maybe<PostCategoryInput>;
+};
+
+export type CreatePostCategoryPayload = {
+  __typename?: 'createPostCategoryPayload';
+  postCategory?: Maybe<PostCategory>;
+};
+
 export type CreatePostInput = {
   data?: Maybe<PostInput>;
 };
@@ -844,6 +989,15 @@ export type DeleteGalleryPayload = {
 export type DeleteMenuPayload = {
   __typename?: 'deleteMenuPayload';
   menu?: Maybe<Menu>;
+};
+
+export type DeletePostCategoryInput = {
+  where?: Maybe<InputId>;
+};
+
+export type DeletePostCategoryPayload = {
+  __typename?: 'deletePostCategoryPayload';
+  postCategory?: Maybe<PostCategory>;
 };
 
 export type DeletePostInput = {
@@ -909,14 +1063,23 @@ export type EditMenuInput = {
   updated_by?: Maybe<Scalars['ID']>;
 };
 
+export type EditPostCategoryInput = {
+  name?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']>;
+  created_by?: Maybe<Scalars['ID']>;
+  updated_by?: Maybe<Scalars['ID']>;
+};
+
 export type EditPostInput = {
   text?: Maybe<Scalars['String']>;
   title?: Maybe<Scalars['String']>;
   publicationDate?: Maybe<Scalars['DateTime']>;
   gallery?: Maybe<Scalars['ID']>;
-  description?: Maybe<Scalars['String']>;
   image?: Maybe<Scalars['ID']>;
   keywords?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  category?: Maybe<Scalars['ID']>;
+  slug?: Maybe<Scalars['String']>;
   published_at?: Maybe<Scalars['DateTime']>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
@@ -981,6 +1144,16 @@ export type UpdateMenuInput = {
 export type UpdateMenuPayload = {
   __typename?: 'updateMenuPayload';
   menu?: Maybe<Menu>;
+};
+
+export type UpdatePostCategoryInput = {
+  where?: Maybe<InputId>;
+  data?: Maybe<EditPostCategoryInput>;
+};
+
+export type UpdatePostCategoryPayload = {
+  __typename?: 'updatePostCategoryPayload';
+  postCategory?: Maybe<PostCategory>;
 };
 
 export type UpdatePostInput = {

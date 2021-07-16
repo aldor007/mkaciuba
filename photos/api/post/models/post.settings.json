@@ -40,6 +40,14 @@
     },
     "description": {
       "type": "richtext"
+    },
+    "category": {
+      "model": "post-category"
+    },
+    "slug": {
+      "type": "string",
+      "unique": true,
+      "private": false
     }
   }
 }

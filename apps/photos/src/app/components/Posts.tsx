@@ -25,7 +25,12 @@ const GET_POSTS = gql`
     title
     id
     publicationDate
+    slug
     keywords
+    category {
+      name
+      slug
+    }
     image {
       matchingThumbnails(preset: "postlist") {
         url
@@ -111,16 +116,35 @@ export const Posts = () => {
       headerClass = "relative  mx-auto max-w-screen-xl lg:col-span-2 "
     }
     return (
-      <div className={headerClass} id={item.title}>
+      <div className={headerClass} key={`${item.title}-${item.id}`}>
         <div className="bg-cover bg-center z-0">
         <ImageComponent thumbnails={item.image.matchingThumbnails} defaultImage={defaultImages[item.id]} />
 </div>
-        <div className="absolute text-lg   inset-x-0 bottom-16 z-10 h-16 flex justify-center items-center  text-white px-4">
-        <h1 className="font-black  text-4xl	">{item.title}</h1>
-        <p>{item.publicationDate}</p>
-        <p>{item.keywords}</p>
+        <div className="absolute text-lg 	leading-snug font-serif inset-x-1/3	 bottom-32 z-10 h-16  justify-center items-center  text-white">
+          <div className="container text-center  items-center mx-auto p-3">
+            <div className="row">
+              <Link to={generatePath(AppRoutes.post.path, {
+                slug: item.slug,
+              })}>
+                <h1 className="font-black md:text-3xl sm:text-1xl text-4xl hover:underline	">{item.title}</h1>
+               </Link>
+            </div>
+            <div className="row m-3">
+              <span className="meta-date">
+                {new Date(item.publicationDate).toLocaleDateString()}
+                </span>
+              <span className="mx-3">•</span>
+              <span className="underline">
+                <Link to={generatePath(AppRoutes.postcategory.path, {
+                  slug: item.category.slug,
+                })}>
+                  {item.category.name}
+                  </Link>
+                  </span>
+            </div>
+				  </div>
+				</div>
         </div>
-      </div>
     )
   }
   // setStart(stagccrt + limit)

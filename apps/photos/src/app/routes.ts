@@ -15,4 +15,10 @@ export const AppRoutes = {
         path: '/',
         exact: true
     },
+  'post': {
+        path: '/blog/:slug',
+    },
+  'postcategory': {
+        path: '/blog/category/:slug',
+    },
 }

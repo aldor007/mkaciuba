@@ -7,11 +7,10 @@ import { ImageList } from '@mkaciuba/image';
 import { ApolloError  } from '@apollo/client';
 import { useQuery,  } from '@apollo/client/react';
 import gql from  'graphql-tag';
-import  { LoginForm } from '../components/LoginForm'
 import { Query } from '@mkaciuba/api';
 import { AppRoutes } from '../routes';
 import { Loading, ErrorPage } from '@mkaciuba/ui-kit'
-import useToken from '../useToken';
+import MetaTags from 'react-meta-tags';
 
 const GET_PHOTOS = gql`
   query ($categorySlug: String!, $gallerySlug: String!) {
@@ -69,6 +68,7 @@ export const Photos = () => {
   }
 
   const { categories, gallery } = data.galleryMenu;
+  const category = data.categoryBySlug;
   const children  = categories.map((item) => {
     return {
      url: generatePath(AppRoutes.photos.path, {
@@ -86,6 +86,11 @@ export const Photos = () => {
 
   return  (
     <>
+          <MetaTags>
+            <title>{category.name}</title>
+            <meta name="description" content={category.description} />
+            <meta property="og:title" content={category.name} />
+          </MetaTags>
     <Header mainMenu={menu}/>
     <ImageList categorySlug={categorySlug}/>
     <Footer></Footer>
