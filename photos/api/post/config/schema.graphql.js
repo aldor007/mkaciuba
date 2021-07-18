@@ -20,6 +20,7 @@ module.exports = {
     extend type Query {
       postsCount(where: JSON): Int!
       postBySlug(slug: String): Post
+      prevNextPost(slug: String): [Post]
   }
   `,
   resolver: {
@@ -83,15 +84,39 @@ module.exports = {
         resolver: async (obj, options, { context }, info) => {
           const search = {};
           search.publicationDate_lt = new Date();
+          search.slug = options.slug
           const key = getCacheKey('post' + options.slug, options);
           let post = await strapi.services.cache.get(key)
           // info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
           if (post) {
             return post;
           }
-          post = await strapi.services.post.findOne({ slug: options.slug})
+          post = await strapi.services.post.findOne(search);
           // post.gallery = await strapi.services.gallery.findOne({ id: post.gallery.id})
           return post;
+        }
+      },
+      prevNextPost: {
+        resolverOf: 'application::post.post.find',
+        resolver: async (obj, options, { context }, info) => {
+          const search = {};
+          search.publicationDate_lt = new Date();
+          search.slug = options.slug;
+          const key = getCacheKey('post' + options.slug, options);
+          let post = await strapi.services.cache.get(key)
+          info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
+          post = await strapi.services.post.findOne(search);
+          const search_lt = {
+            id_lt: post.id,
+            publicationDate_lt: search.publicationDate_lt
+          }
+          const search_gt = {
+            id_gt: post.id,
+            publicationDate_lt: search.publicationDate_lt
+          }
+          const post_lt = await strapi.services.post.findOne(search_lt);
+          const post_gt = await strapi.services.post.findOne(search_gt);
+          return [post_lt, post_gt];
         }
       },
     },

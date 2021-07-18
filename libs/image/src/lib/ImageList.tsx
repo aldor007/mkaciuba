@@ -153,7 +153,7 @@ export const ImageList = ({ categorySlug, minSize }: ImageListProps) => {
 
    let imageClass = "my-1 px-1 w-1/1 overflow-hidden sm:w-1/1 md:w-1/2 lg:w-1/3 xl:w-1/4"
    if (minSize) {
-    imageClass = "my-1 px-1 w-1/1 overflow-hidden sm:w-1/1 md:1/1 w-1/2"
+    imageClass = "my-1 px-1 w-1/1 overflow-hidden sm:w-1/1 md:1/1 lg:w-1/2"
    }
    return (
      <>

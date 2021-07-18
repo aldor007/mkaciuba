@@ -12,8 +12,8 @@ module.exports = {
    */
   lifecycles: {
     async beforeCreate(data) {
-      if (data.name) {
-        data.slug = `${slugify(data.name, {lower: true})}-${Math.random()}`;
+      if (data.title) {
+        data.slug = `${slugify(data.title, {lower: true})}-${Math.random()}`;
       }
     },
   },

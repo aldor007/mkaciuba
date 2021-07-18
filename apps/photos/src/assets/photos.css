@@ -146,3 +146,12 @@
 .pswp__error-msg a {
   color: #CCC;
   text-decoration: underline; }
+
+
+  .hover-trigger .hover-target {
+    display: none;
+}
+
+.hover-trigger:hover .hover-target {
+    display: block;
+}

@@ -236,12 +236,12 @@ export type Gallery = {
   id: Scalars['ID'];
   created_at: Scalars['DateTime'];
   updated_at: Scalars['DateTime'];
-  name?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
   slug: Scalars['String'];
   slugOverride?: Maybe<Scalars['String']>;
   public?: Maybe<Scalars['Boolean']>;
   keywords?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
+  description: Scalars['String'];
   categories?: Maybe<Array<Maybe<Category>>>;
 };
 
@@ -260,13 +260,13 @@ export type GalleryCategories = {
 };
 
 export type GalleryInput = {
-  name?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
   slug: Scalars['String'];
   slugOverride?: Maybe<Scalars['String']>;
   public?: Maybe<Scalars['Boolean']>;
   categories?: Maybe<Array<Maybe<Scalars['ID']>>>;
   keywords?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
+  description: Scalars['String'];
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
 };
@@ -416,8 +416,8 @@ export type Post = {
   created_at: Scalars['DateTime'];
   updated_at: Scalars['DateTime'];
   text?: Maybe<Scalars['String']>;
-  title?: Maybe<Scalars['String']>;
-  publicationDate?: Maybe<Scalars['DateTime']>;
+  title: Scalars['String'];
+  publicationDate: Scalars['DateTime'];
   gallery?: Maybe<Category>;
   image?: Maybe<UploadFile>;
   keywords?: Maybe<Scalars['String']>;
@@ -438,7 +438,7 @@ export type PostCategory = {
   id: Scalars['ID'];
   created_at: Scalars['DateTime'];
   updated_at: Scalars['DateTime'];
-  name?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
   slug?: Maybe<Scalars['String']>;
 };
 
@@ -495,7 +495,7 @@ export type PostCategoryGroupBy = {
 };
 
 export type PostCategoryInput = {
-  name?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
   slug?: Maybe<Scalars['String']>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
@@ -605,8 +605,8 @@ export type PostGroupBy = {
 
 export type PostInput = {
   text?: Maybe<Scalars['String']>;
-  title?: Maybe<Scalars['String']>;
-  publicationDate?: Maybe<Scalars['DateTime']>;
+  title: Scalars['String'];
+  publicationDate: Scalars['DateTime'];
   gallery?: Maybe<Scalars['ID']>;
   image?: Maybe<Scalars['ID']>;
   keywords?: Maybe<Scalars['String']>;
@@ -642,6 +642,7 @@ export type Query = {
   galleryMenu?: Maybe<GalleryCategories>;
   postsCount: Scalars['Int'];
   postBySlug?: Maybe<Post>;
+  prevNextPost?: Maybe<Array<Maybe<Post>>>;
 };
 
 
@@ -749,6 +750,11 @@ export type QueryPostsCountArgs = {
 
 
 export type QueryPostBySlugArgs = {
+  slug?: Maybe<Scalars['String']>;
+};
+
+
+export type QueryPrevNextPostArgs = {
   slug?: Maybe<Scalars['String']>;
 };
 
