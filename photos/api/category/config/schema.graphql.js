@@ -44,7 +44,10 @@ const presetList = [
   new Preset('big1000webp', 1000, null, '(max-width: 1300px)', 'webp'),
   new Preset('big1300webp', 1300, null, '(max-width: 1600px)', 'webp'),
   new Preset('big', 700, null, '(max-width: 1000px)', 'jpeg'),
-  new Preset('small', 150, null, '(max-width: 400px)', 'jpeg'),
+  new Preset('small', 80, null, '(max-width: 100px)', 'jpeg'),
+  new Preset('smallwebp', 80, null, '(max-width: 100px)', 'webp'),
+  new Preset('big300', 300, null, '(max-width: 300px)', 'jpeg'),
+  new Preset('big300webp', 300, null, '(max-width: 300px)', 'webp'),
   new Preset('big1000', 1000, null, '(max-width: 1300px)', 'jpeg'),
   new Preset('big1300', 1300, null, '(max-width: 1600px)', 'jpeg'),
 
@@ -174,9 +177,7 @@ module.exports = {
         resolver: async (obj, options, ctx) => {
           const result = [];
           for (const p of allPresets) {
-            console.info('--->', p.name, options.preset)
             if(p.name.includes(options.preset)) {
-          strapi.log.debug('--------jeest---->',options.preset)
               result.push(getImage(obj, p))
             }
           }

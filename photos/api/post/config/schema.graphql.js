@@ -108,11 +108,13 @@ module.exports = {
           post = await strapi.services.post.findOne(search);
           const search_lt = {
             id_lt: post.id,
-            publicationDate_lt: search.publicationDate_lt
+            publicationDate_lt: search.publicationDate_lt,
+            _sort: 'id:desc'
           }
           const search_gt = {
             id_gt: post.id,
-            publicationDate_lt: search.publicationDate_lt
+            publicationDate_lt: search.publicationDate_lt,
+            _sort: 'id:desc'
           }
           const post_lt = await strapi.services.post.findOne(search_lt);
           const post_gt = await strapi.services.post.findOne(search_gt);

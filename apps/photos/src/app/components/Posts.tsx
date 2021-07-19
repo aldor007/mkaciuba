@@ -45,15 +45,47 @@ const GET_POSTS = gql`
  postsCount
 }
 `;
+const GET_POSTS_FROM_CAT = gql`
+  query posts($start: Int, $limit: Int, $categoryId: String) {
+  posts(limit: $limit, start: $start, sort:"id:desc", where: {
+    category: $categoryId
+  } ) {
+    title
+    id
+    publicationDate
+    slug
+    keywords
+    category {
+      name
+      slug
+    }
+    image {
+      matchingThumbnails(preset: "postlist") {
+        url
+        mediaQuery
+        webp
+        type
+        width
+        height
+      }
+    }
+ }
+ postsCount(where: {
+   category: $categoryId
+ })
+}`
 
-export const Posts = () => {
+export interface PostsProps {
+  categoryId?: String
+}
+export const Posts = ( { categoryId }: PostsProps) => {
   const webp = useWebPSupportCheck();
   const width = useWindowWidth();
   const [loadingMore, setLoadingMore] = useState(false);
   const [start, setStart] = useState(0)
   const limit = 9
-  const {loading, error, data, fetchMore } = useQuery<Query>(GET_POSTS, {
-    variables: {  start: 0, limit},
+  const {loading, error, data, fetchMore } = useQuery<Query>(categoryId ? GET_POSTS_FROM_CAT : GET_POSTS, {
+    variables: {  start: 0, limit, categoryId},
     notifyOnNetworkStatusChange: true
   });
 
@@ -149,7 +181,7 @@ export const Posts = () => {
   }
   // setStart(stagccrt + limit)
     return (
-  <div className="max-w-screen-xl mx-auto grid grid-cols-2  gap-4">
+  <div className="max-w-screen-xl mx-auto grid xl:grid-cols-2  gap-4">
         {posts && posts.map((item, index) =>
           singlePost(item, index)
         )}

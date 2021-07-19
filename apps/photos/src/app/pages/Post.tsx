@@ -7,7 +7,7 @@ import { Loading, ErrorPage } from "@mkaciuba/ui-kit";
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client/react';
 import gql from  'graphql-tag'
-import { Query } from '@mkaciuba/api';
+import { Query, Post as PostType } from '@mkaciuba/api';
 import { ImageComponent, ImageList } from '@mkaciuba/image';
 import MetaTags from 'react-meta-tags';
 import { Link } from 'react-router-dom'
@@ -67,9 +67,12 @@ const GET_POST = gql`
 
 export const Post = () => {
   const { slug } = useParams<{slug: string}>();
+  const [showNext, setShowNext] = React.useState(false);
+  const [showPrev, setShowPrev] = React.useState(false);
   const { loading, error, data } = useQuery<Query>(GET_POST, {
     variables: { postSlug: slug},
   });
+
   if (loading) return <Loading/>;
   if (error) {
     console.error('Post', error)
@@ -78,9 +81,54 @@ export const Post = () => {
 
   const post = data.postBySlug;
   const [prevPost, nextPost] = data.prevNextPost;
-  function onHover (e)  {
 
-  }
+  const returnArrow = (post: PostType, shouldShow: boolean, onHover, headingText, icon, direction: string) => {
+    const inner = direction.includes('right') ? (<><div className="flex-cols m-2 font-bold	text-xl	">
+      <h1 className="text-lg	text-gray-400	">{headingText}</h1>
+        <Link to={generatePath(AppRoutes.post.path, {
+          slug: post.slug,
+        })}>
+        <h2 className="text-gray-600">{post.title}</h2>
+          </Link>
+    </div>
+    <div className="flex-col">
+        <Link to={generatePath(AppRoutes.post.path, {
+          slug: post.slug,
+        })}>
+    <ImageComponent thumbnails={post.image.matchingThumbnails} defaultImage={post.image.matchingThumbnails[0]}/>
+    </Link>
+    </div></>)
+    : (<>
+      <div className="flex font-bold	text-xl	w-full">
+        <div className="-m-2 col">
+          <Link to={generatePath(AppRoutes.post.path, {
+            slug: post.slug,
+          })}>
+          <ImageComponent thumbnails={post.image.matchingThumbnails} defaultImage={post.image.matchingThumbnails[0]}/>
+        </Link>
+        </div>
+        <div>
+          <div className="m-4 p-3">
+        <h1 className="text-lg text-gray-400 col 	">{headingText}</h1>
+          <Link to={generatePath(AppRoutes.post.path, {
+            slug: post.slug,
+          })}>
+          <h2 className="text-gray-600">{post.title}</h2>
+            </Link>
+          </div>
+        </div>
+    </div></>) ;
+
+    return (
+      <div className={direction + " hidden sm:block  cursor-pointer fixed top-1/2"}  onMouseEnter={onHover(true)} onMouseLeave={onHover(false)} >
+      <FontAwesomeIcon className={ shouldShow? "hidden": "" + "m-4 hover:hidden"} icon={icon} size='1x'  onMouseEnter={onHover(true)} onMouseLeave={onHover(false)} />
+       <div className={ shouldShow ? "" : "hidden" + " transition-all	 delay-150 duration-800 ease-in-out bg-gray-300"}>
+        <div className="flex leading-snug font-serif bg-gray-100 rounded shadow-xl">
+          {inner}
+        </div>
+      </div>
+      </div>)
+}
 
   return  (
     <>
@@ -92,24 +140,8 @@ export const Post = () => {
           </MetaTags>
     <Header/>
      <div className="fixed">
-       <div className="left-0 m-4 cursor-pointer fixed top-1/2">
-        <FontAwesomeIcon icon={faArrowLeft} size='1x' />
-
-      </div>
-      <div className="right-0 cursor-pointer  hover-trigger fixed top-1/2">
-      <FontAwesomeIcon className="m-4 hover:hidden" icon={faArrowRight} size='1x' onMouseEnter={onHover} />
-      <div className="hover-target">
-        <div className="flex leading-snug font-serif">
-          <div className="flex-cols m-2 font-bold	text-xl	">
-            <h1 className="text-lg	text-gray-400	">Newer</h1>
-            <h2 className="text-gray-600">{nextPost.title}</h2>
-          </div>
-          <div className="flex-cols">
-          <ImageComponent thumbnails={nextPost.image.matchingThumbnails} defaultImage={nextPost.image.matchingThumbnails[0]}/>
-          </div>
-        </div>
-      </div>
-      </div>
+        {prevPost && returnArrow(prevPost, showPrev, (value) => () => setShowPrev(value), 'Starsze', faArrowLeft, 'left-0 ') }
+        {nextPost && returnArrow(nextPost, showNext, (value) => () => setShowNext(value), 'Nowsze', faArrowRight, 'right-0 -m-4') }
       </div>
         <div className="text-lg  	leading-snug font-serif  justify-center items-center  text-black">
           <div className="container text-center  items-center mx-auto p-3">

@@ -16,7 +16,7 @@ export const AppRoutes = {
         exact: true
     },
   'post': {
-        path: '/blog/:slug',
+        path: '/post/:slug',
     },
   'postcategory': {
         path: '/blog/category/:slug',
