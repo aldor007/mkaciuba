@@ -181,10 +181,15 @@ export const Posts = ( { categoryId }: PostsProps) => {
   }
   // setStart(stagccrt + limit)
     return (
+      <>
   <div className="max-w-screen-xl mx-auto grid xl:grid-cols-2  gap-4">
         {posts && posts.map((item, index) =>
           singlePost(item, index)
         )}
   </div>
+  { hasNextPage() &&<div className="max-w-screen-xl m-4 mx-auto text-center border-4 " onClick={handleLoadMore}>
+    Załaduj więcej
+  </div> }
+  </>
   )
 };

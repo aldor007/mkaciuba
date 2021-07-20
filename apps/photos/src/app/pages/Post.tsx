@@ -16,6 +16,7 @@ import { AppRoutes } from "../routes";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons/faArrowLeft';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons/faArrowRight';
+import { PostCard } from '../components/PostCard';
 
 
 
@@ -25,9 +26,7 @@ const GET_POST = gql`
       id
       title
       publicationDate
-      image {
-        url
-      }
+
       gallery {
         slug
       }
@@ -43,6 +42,7 @@ const GET_POST = gql`
       title
       slug
       image {
+        id
         matchingThumbnails(preset: "small") {
             url
             mediaQuery
@@ -52,15 +52,33 @@ const GET_POST = gql`
             height
           }
       }
-      gallery {
-        slug
-      }
-      category {
+     category {
         name
         slug
       }
   }
 
+  relatedPosts(slug: "blogyyyy") {
+    id
+    title
+    slug
+    publicationDate
+    image {
+      id
+      matchingThumbnails(preset: "postlist") {
+          url
+          mediaQuery
+          webp
+          type
+          width
+          height
+      }
+    }
+    category {
+      name
+      slug
+    }
+ }
 }
 `;
 
@@ -69,16 +87,17 @@ export const Post = () => {
   const { slug } = useParams<{slug: string}>();
   const [showNext, setShowNext] = React.useState(false);
   const [showPrev, setShowPrev] = React.useState(false);
-  const { loading, error, data } = useQuery<Query>(GET_POST, {
+  const result = useQuery<Query>(GET_POST, {
     variables: { postSlug: slug},
   });
-
+  const { loading, error, data } = result;
   if (loading) return <Loading/>;
   if (error) {
     console.error('Post', error)
     return <ErrorPage code={500} message={error.message} />
    };
 
+   console.info(result)
   const post = data.postBySlug;
   const [prevPost, nextPost] = data.prevNextPost;
 
@@ -160,7 +179,7 @@ export const Post = () => {
                   {post.category.name}
                   </Link>
                   </span>
-            <p>
+            <p className="m-4">
             {post.description}
             </p>
             </div>
@@ -171,10 +190,17 @@ export const Post = () => {
       {post.text}
       </p>
       <ImageList categorySlug={post.gallery.slug} minSize={true} />
+      <hr className="divide-y m-8 bg-gray-700" />
       </div>
       <>
-
       </>
+    <h1 className="m-8 font-black text-lg 	leading-snug font-serif  md:text-3xl sm:text-1xl text-4xl text-center">Powiązane posty</h1>
+    <div className="max-w-screen-xl mx-auto grid xl:grid-cols-2  gap-4">
+
+        {data.relatedPosts && data.relatedPosts.map((post) => (
+          <PostCard post={post} />
+        ))}
+      </div>
     <Footer></Footer>
     </>
   )

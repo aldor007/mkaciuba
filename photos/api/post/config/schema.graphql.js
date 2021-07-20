@@ -21,6 +21,7 @@ module.exports = {
       postsCount(where: JSON): Int!
       postBySlug(slug: String): Post
       prevNextPost(slug: String): [Post]
+      relatedPosts(slug: String): [Post]
   }
   `,
   resolver: {
@@ -119,6 +120,27 @@ module.exports = {
           const post_lt = await strapi.services.post.findOne(search_lt);
           const post_gt = await strapi.services.post.findOne(search_gt);
           return [post_lt, post_gt];
+        }
+      },
+      relatedPosts: {
+        resolverOf: 'application::post.post.find',
+        resolver: async (obj, options, { context }, info) => {
+          const search = {};
+          search.publicationDate_lt = new Date();
+          search.slug = options.slug;
+          const key = getCacheKey('post' + options.slug, options);
+          let post = await strapi.services.cache.get(key)
+          info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
+          post = await strapi.services.post.findOne(search);
+          const search_related = {
+            id_ne: post.id,
+            publicationDate_lt: search.publicationDate_lt,
+            _sort: 'id:desc',
+            _limit: 2,
+            _keywords_contains: post.keywords.slice(0, 10)
+          }
+          const related = await strapi.services.post.find(search_related);
+          return related
         }
       },
     },

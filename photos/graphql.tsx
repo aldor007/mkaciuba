@@ -589,6 +589,7 @@ export type Query = {
   postsCount: Scalars['Int'];
   postBySlug?: Maybe<Post>;
   prevNextPost?: Maybe<Array<Maybe<Post>>>;
+  relatedPosts?: Maybe<Array<Maybe<Post>>>;
 };
 
 
@@ -683,6 +684,11 @@ export type QueryPostBySlugArgs = {
 
 
 export type QueryPrevNextPostArgs = {
+  slug?: Maybe<Scalars['String']>;
+};
+
+
+export type QueryRelatedPostsArgs = {
   slug?: Maybe<Scalars['String']>;
 };
 
