@@ -248,7 +248,8 @@ module.exports = {
           search._sort = options.sort || 'id:desc'
           search.publicationDate_lt = new Date();
           search.gallery_null = false;
-          const key = getCacheKey('categories' + search.publicationDate_lt, options);
+          search.public = true;
+          const key = getCacheKey('categories-v2-1', options);
           let categories = await strapi.services.cache.get(key)
           info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
           if (categories) {
