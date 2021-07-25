@@ -108,7 +108,6 @@ app.get('*', (req, res) => {
     res.sendStatus(404);
     return;
   }
-
   getDataFromTree(staticApp).then((content) => {
     // Extract the entirety of the Apollo Client cache's current state
     const initialState = client.extract();
@@ -129,10 +128,7 @@ app.get('*', (req, res) => {
       res.setHeader('cache-control', 'privte, max-age=60')
     }
 
-    // Render the component to static markup and return it
-    // res.status(200);
     renderToNodeStream(html).pipe(res);
-    res.end();
   }).catch((e) => {
     console.error('Error reading', e)
     res.status(503);
