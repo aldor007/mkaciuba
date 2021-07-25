@@ -7,7 +7,7 @@ import { Loading, ErrorPage } from "@mkaciuba/ui-kit";
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client/react';
 import gql from  'graphql-tag'
-import { Query, Post as PostType } from '@mkaciuba/api';
+import { Query, Post as PostType, Enum_Post_Content_Position  } from '@mkaciuba/api';
 import { ImageComponent, ImageList } from '@mkaciuba/image';
 import MetaTags from 'react-meta-tags';
 import { Link } from 'react-router-dom'
@@ -36,6 +36,7 @@ const GET_POST = gql`
       }
       description
       text
+      content_position
   }
   prevNextPost(slug: $postSlug) {
       id
@@ -58,7 +59,7 @@ const GET_POST = gql`
       }
   }
 
-  relatedPosts(slug: "blogyyyy") {
+  relatedPosts(slug: $postSlug) {
     id
     title
     slug
@@ -87,17 +88,15 @@ export const Post = () => {
   const { slug } = useParams<{slug: string}>();
   const [showNext, setShowNext] = React.useState(false);
   const [showPrev, setShowPrev] = React.useState(false);
-  const result = useQuery<Query>(GET_POST, {
+  const { loading, error, data } = useQuery<Query>(GET_POST, {
     variables: { postSlug: slug},
   });
-  const { loading, error, data } = result;
   if (loading) return <Loading/>;
   if (error) {
     console.error('Post', error)
     return <ErrorPage code={500} message={error.message} />
    };
 
-   console.info(result)
   const post = data.postBySlug;
   const [prevPost, nextPost] = data.prevNextPost;
 
@@ -114,16 +113,16 @@ export const Post = () => {
         <Link to={generatePath(AppRoutes.post.path, {
           slug: post.slug,
         })}>
-    <ImageComponent thumbnails={post.image.matchingThumbnails} defaultImage={post.image.matchingThumbnails[0]}/>
+    { post.image && <ImageComponent thumbnails={post.image.matchingThumbnails} defaultImage={post.image.matchingThumbnails[0]}/> }
     </Link>
     </div></>)
     : (<>
       <div className="flex font-bold	text-xl	w-full">
-        <div className="-m-2 col">
+        <div className="-ml-2 col">
           <Link to={generatePath(AppRoutes.post.path, {
             slug: post.slug,
           })}>
-          <ImageComponent thumbnails={post.image.matchingThumbnails} defaultImage={post.image.matchingThumbnails[0]}/>
+         { post.image && <ImageComponent thumbnails={post.image.matchingThumbnails} defaultImage={post.image.matchingThumbnails[0]}/> }
         </Link>
         </div>
         <div>
@@ -179,17 +178,21 @@ export const Post = () => {
                   {post.category.name}
                   </Link>
                   </span>
-            <p className="m-4">
-            {post.description}
-            </p>
             </div>
 				  </div>
 				</div>
-    <div className="max-w-screen-xl mx-auto">
-      <p>
-      {post.text}
-      </p>
+    <div className="max-w-screen-xl mx-auto post-text">
+            <p className="m-4" dangerouslySetInnerHTML={{
+              __html: post.description
+              }}/>
+
+        {post.content_position == Enum_Post_Content_Position.Top }  <p  dangerouslySetInnerHTML={{
+              __html: post.text
+              }}/>
       <ImageList categorySlug={post.gallery.slug} minSize={true} />
+        {post.content_position == Enum_Post_Content_Position.Bottom }  <p  dangerouslySetInnerHTML={{
+              __html: post.text
+              }}/>
       <hr className="divide-y m-8 bg-gray-700" />
       </div>
       <>

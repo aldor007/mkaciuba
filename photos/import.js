@@ -4,6 +4,7 @@ const axiosRetry = require('axios-retry')
 const http = require('http');
 const https = require('https');
 const Agent = require('agentkeepalive');
+const { default: slugify } = require('slugify');
 const keepAliveAgent = new Agent.HttpsAgent({
   maxSockets: 100,
   maxFreeSockets: 10,
@@ -11,6 +12,10 @@ const keepAliveAgent = new Agent.HttpsAgent({
   freeSocketTimeout: 30000, // free socket keepalive for 30 seconds
 });
 
+if (!process.env.API_KEY) {
+  console.info('API key missing')
+  process.exit(12);
+}
 const instance = axios.create({
   baseURL: 'https://media-api.mkaciuba.com',
   timeout: 1000,
@@ -123,41 +128,84 @@ mysql> show columns from  media__gallery_media;
 | created_at | datetime   | NO   |     | NULL    |       |
 +------------+------------+------+-----+---------+-------+
 7 rows in set (0.00 sec)
+
+COLUMNS
+mysql> show COLUMNS  from posts;
++------------------------+--------------+------+-----+---------+-------+
+| Field                  | Type         | Null | Key | Default | Extra |
++------------------------+--------------+------+-----+---------+-------+
+| id                     | varchar(255) | NO   | PRI | NULL    |       |
+| collectionid           | varchar(255) | YES  | MUL | NULL    |       |
+| userid                 | int          | YES  | MUL | NULL    |       |
+| permalink              | varchar(255) | NO   | MUL | NULL    |       |
+| title                  | varchar(255) | NO   |     | NULL    |       |
+| created_at             | datetime     | NO   |     | NULL    |       |
+| publication_date_start | datetime     | NO   | MUL | NULL    |       |
+| updated_at             | datetime     | NO   |     | NULL    |       |
+| content_formatter      | varchar(255) | NO   |     | NULL    |       |
+| content                | longtext     | YES  |     | NULL    |       |
+| raw_content            | longtext     | YES  |     | NULL    |       |
+| description            | longtext     | YES  |     | NULL    |       |
+| keywords               | varchar(255) | YES  |     | NULL    |       |
+| public                 | tinyint(1)   | NO   |     | NULL    |       |
+| media_id               | char(36)     | YES  | MUL | NULL    |       |
+| gallery_id             | char(36)     | YES  | MUL | NULL    |       |
+| promoted               | tinyint(1)   | NO   |     | NULL    |       |
+| gallery_template       | varchar(255) | YES  |     | NULL    |       |
+| comments_count         | int          | NO   |     | NULL    |       |
+| likes_count            | int          | NO   |     | NULL    |       |
+| lang                   | varchar(2)   | NO   |     | NULL    |       |
+| comments_enabled       | tinyint(1)   | NO   |     | NULL    |       |
+| titleslug              | varchar(255) | NO   |     | NULL    |       |
+| other_lang_post_id     | varchar(255) | YES  | UNI | NULL    |       |
+| content_position       | varchar(255) | YES  |     | NULL    |       |
+| blog_home_mort_preset  | varchar(255) | YES  |     | NULL    |       |
+| promoted_mort_preset   | varchar(255) | YES  |     | NULL    |       |
+| image_presets          | varchar(255) | YES  |     | NULL    |       |
++------------------------+--------------+------+-----+---------+-------+
+28 rows in set (0.00 sec)
 */
 
-async function insertUpload(connection, image, g, type, position) {
+const galleryTemplatesMap = {
+  'photo-swipe': 'normal',
+  'photo-swipe-description': 'description'
+}
 
-  await connection.awaitBeginTransaction();
+async function insertUpload(connection, image, g, type, position, entity = 'categories') {
+
+  // await connection.awaitBeginTransaction();
   let ext ='.' + image.provider_reference.split('.')[1];
   let mediaUrl, url, previewUrl;
   try {
     const mediaUrlRes = await instance.head(`media/${image.id}`);
-    console.info('Response', image.id, mediaUrlRes.statusCode, mediaUrlRes.headers.location)
     mediaUrl = mediaUrlRes.headers['location'].replace('https://mort.mkaciuba.com', '');
     const base64Parent = Buffer.from(mediaUrl).toString('base64').replace('+', '-').replace('/', '_').replace(/=+$/, '');
     url = `https://mort.mkaciuba.com/images/transform/${base64Parent}/photo_admin_big.jpg`;
+    if (image.content_type.includes("zip")) {
+      url = mediaUrlRes.headers.location;
+    }
     previewUrl = `https://mort.mkaciuba.com/images/transform/${base64Parent}/photo_opis_small.jpg`
-    console.info(`About to insert media ${mediaUrl} ${image.idCounter}, ${image.name} ${url}`);
+    console.info(`About to insert media ${mediaUrl} ${image.idCounter}, ${image.name} ${url} for ${type} ${entity}`);
     await connection.awaitQuery(`INSERT INTO upload_file (name, id, alternativeText, caption, width, height, hash, ext, mime, size, url, previewUrl, provider, created_by, updated_by, path, created_at, updated_at)   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [image.name, image.idCounter, image.description, image.description, image.width, image.height, image.id + '', ext,  image.content_type, image.content_size / 1000, url, previewUrl, 'mort', 1, 1, mediaUrl, image.created_at, image.updated_at])
     await connection.awaitQuery('INSERT INTO upload_file_morph (upload_file_id, related_id, related_type, field, `order`) VALUES (?, ?, ?, ?, ?)', [
-      image.idCounter, g.idCounter, 'categories', type, position
+      image.idCounter, g.idCounter, entity, type, position
     ])
   } catch (e) {
     if (e.code == 'ER_DUP_ENTRY') {
-      console.info('-----------probably mainImage',image.idCounter)
+      console.info('-----------probably mainImage',image.idCounter, type, entity)
       await connection.awaitQuery('INSERT INTO upload_file_morph (upload_file_id, related_id, related_type, field, `order`) VALUES (?, ?, ?, ?, ?)', [
-        image.idCounter, g.idCounter, 'categories', type, position
+        image.idCounter, g.idCounter, entity, type, position
       ])
 
     } else {
-      await connection.awaitRollback()
+      // await connection.awaitRollback()
       console.log('------------------', image.name, image.idCounter, image.description, image.description, image.width, image.height, image.id, ext,  image.content_type, image.content_size / 1000, url, previewUrl, 'mort', 1, 1, mediaUrl, image.created_at, image.updated_at)
       console.log('Rollback',e.code, e.message, e.stack)
       process.exit(1)
     }
   }
-  await connection.awaitCommit()
+  // await connection.awaitCommit()
 }
 
 function makeid(length) {
@@ -183,9 +231,10 @@ const main = async () => {
   let media = await mkaciuba.awaitQuery(`SELECT id, name, description, width, height, length, content_type, provider_reference, content_size, updated_at, created_at FROM media__media`)
   let galleryCollection = await mkaciuba.awaitQuery(`select * from gallery_collection`);
   let galleryCollectionMap = await mkaciuba.awaitQuery(`select * from galleries_gallery_collection`);
-  let galleries = await mkaciuba.awaitQuery(`SELECT id, name, public, description, keywords, slug, image_id, file_id, updated_at, created_at FROM media__gallery order by updated_at ASC`)
+  let galleries = await mkaciuba.awaitQuery(`SELECT id, name, public, description, keywords, slug, image_id, file_id, updated_at, created_at FROM media__gallery order by created_at ASC`)
   let mediaGallery = await mkaciuba.awaitQuery('Select gallery_id, media_id, position from media__gallery_media')
-
+  let posts = await mkaciuba.awaitQuery('select id,permalink, title, publication_date_start, gallery_template,content,content_position, gallery_id,collectionid, media_id, raw_content,  keywords, description, public, created_at, updated_at from posts where lang = "pl" order by updated_at ASC')
+  let postCategories = await mkaciuba.awaitQuery('select * from classification__collection where lang = "pl"')
   let counter = 1;
   const mediaById = media.reduce((acc, cur, i) => {
     cur.idCounter = counter++;
@@ -210,11 +259,38 @@ const main = async () => {
     database: 'strapi',
     charset : 'utf8'
   });
+  await connection.awaitQuery('truncate table post_categories');
+  await connection.awaitQuery('truncate table posts')
+  await connection.awaitQuery('truncate table upload_file_morph');
+  await connection.awaitQuery('truncate table upload_file')
+  await connection.awaitQuery('truncate table post_categories')
+  await connection.awaitQuery('truncate table galleries')
+  await connection.awaitQuery('truncate table categories')
   counter = 1;
  galleries.map(async (g) => {
    g.idCounter = counter++;
    return g
  })
+ counter = 1;
+ posts.map((p) => {
+    p.idCounter = counter++;
+    return p;
+  })
+counter = 1;
+postCategories.map((c) => {
+  c.idCounter = counter++;
+  return c;
+})
+
+const postCategoriesById = postCategories.reduce((acc, cur,) => {
+  acc[cur.id] = cur;
+  return acc;
+}, {})
+ const galleriesById = galleries.reduce((acc, cur, i) => {
+   acc[cur.id] = cur
+    return acc;
+  }, {});
+
  counter = 1;
  galleryCollection.map(g => {
    g.idCounter = counter++;
@@ -234,17 +310,17 @@ const main = async () => {
  process.on('unhandledRejection', async error => {
   // Will print "unhandledRejection err is not defined"
   console.log('unhandledRejection rollback', error.message, error);
-  await connection.awaitRollback();
+  // await connection.awaitRollback();
   process.exit(0)
 });
 
- await connection.awaitBeginTransaction();
+//  await connection.awaitBeginTransaction();
  try {
   await galleryCollection.map( async g => {
       await connection.awaitQuery(`INSERT INTO galleries (id, name, slug, public, keywords, description, created_by, updated_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [g.idCounter, g.name, g.slug +'-'+makeid(3), g.public, g.keywords, g.description, 1, 1, 1]);
   })
-  await galleries.map(async (g) => {
+  await galleries.map(async (g, i) => {
       let galleryId = null;
       if (galleryCollectionToGallery[g.id]) {
           galleryId = galleryCollectionById[galleryCollectionToGallery[g.id].gallery_collection_id].idCounter
@@ -259,7 +335,8 @@ const main = async () => {
       }
       const file = mediaById[g.file_id];
       const mainImage = mediaById[g.image_id];
-      (async gallery => {
+      await (async gallery => {
+        console.info('--------------> gallery ', i, galleries.length)
         await mediaGalleryByGalleryId[gallery.id].map(async (gHm) => {
           const image = mediaById[gHm.media_id]
           if (!image.name) {
@@ -277,16 +354,39 @@ const main = async () => {
         await insertUpload(connection, mainImage, g, 'image', 1)
       }
   })
+  await postCategories.map(async (c) => {
+    console.info('insert post categpry', c.name)
+    await connection.awaitQuery(`INSERT INTO post_categories(id, name, slug, keywords, description, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [c.idCounter, c.name, c.slug, c.keywords, c.description, 1, c.created_at, c.updated_at]);
+  })
+  await posts.map(async (p) => {
+    console.info('------------------>insert post', p.title, p.gallery_id, p.collectionid, p.media_id)
+    await connection.awaitQuery(`INSERT INTO posts(id, title, slug, keywords, description, created_by, created_at, updated_at, publicationDate,published_at, gallery, text, category, permalink, content_position,  gallery_template) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [p.idCounter, p.title, p.titleslug || slugify( p.title,  {lower: true}) + '-' + p.idCounter, p.keywords, p.description, 1, p.created_at, p.updated_at, p.publication_date_start,
+         p.publication_date_start, galleriesById[p.gallery_id] ? galleriesById[p.gallery_id].idCounter : null, p.content, postCategoriesById[p.collectionid] ? postCategoriesById[p.collectionid].idCounter : null, '/blog/' + p.permalink,
+        p.content_position || 'top', galleryTemplatesMap[p.gallery_template]
+        ]);
+        if (p.media_id) {
+          console.info('----------------> insert post media ',p.title,  p.media_id, mediaById[p.media_id].idCounter)
+          await insertUpload(connection, mediaById[p.media_id], p, 'image', 1, 'posts' )
+          // await connection.awaitQuery('INSERT INTO upload_file_morph (upload_file_id, related_id, related_type, field, `order`) VALUES (?, ?, ?, ?, ?)', [
+          //     mediaById[p.media_id].idCounter, p.idCounter, 'posts', 'image', 1
+          //   ])
+        }
+  })
  } catch (e) {
-  await connection.awaitRollback();
+   console.error("---------------------ERROR ---------->", e)
+  // await connection.awaitRollback();
   process.exit(0)
  }
 
 
 
- await connection.awaitCommit();
-
+console.info('--------------------before commit-------------------------');
+//  await connection.awaitCommit();
+console.info('--------------------END------------------------------------');
   // connection.awaitEnd();
+
 
 }
 

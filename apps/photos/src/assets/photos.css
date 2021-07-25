@@ -155,3 +155,11 @@
 .hover-trigger:hover .hover-target {
     display: block;
 }
+
+.post-text a {
+  color: rgb(113, 179, 15);
+}
+
+.post-text a:hover {
+  text-decoration: underline;
+}

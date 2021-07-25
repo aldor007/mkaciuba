@@ -209,6 +209,16 @@ export enum Enum_Componentmenuconfigmenu_Icon {
   Linkedin = 'linkedin'
 }
 
+export enum Enum_Post_Content_Position {
+  Top = 'top',
+  Bottom = 'bottom'
+}
+
+export enum Enum_Post_Gallery_Template {
+  Normal = 'normal',
+  Description = 'description'
+}
+
 export type FileInfoInput = {
   name?: Maybe<Scalars['String']>;
   alternativeText?: Maybe<Scalars['String']>;
@@ -311,7 +321,7 @@ export type MenuInput = {
   updated_by?: Maybe<Scalars['ID']>;
 };
 
-export type Morph = UsersPermissionsMe | UsersPermissionsMeRole | UsersPermissionsLoginPayload | UserPermissionsPasswordPayload | Image | ValidationToken | GalleryCategories | Category | CategoryConnection | CategoryAggregator | CategoryGroupBy | CategoryConnectionId | CategoryConnectionCreated_At | CategoryConnectionUpdated_At | CategoryConnectionName | CategoryConnectionSlug | CategoryConnectionSlugOverride | CategoryConnectionPublic | CategoryConnectionPublicationDate | CategoryConnectionFile | CategoryConnectionImage | CategoryConnectionGallery | CategoryConnectionKeywords | CategoryConnectionDescription | CreateCategoryPayload | UpdateCategoryPayload | DeleteCategoryPayload | Footer | UpdateFooterPayload | DeleteFooterPayload | Gallery | CreateGalleryPayload | UpdateGalleryPayload | DeleteGalleryPayload | Menu | UpdateMenuPayload | DeleteMenuPayload | PostCategory | CreatePostCategoryPayload | UpdatePostCategoryPayload | DeletePostCategoryPayload | Post | PostConnection | PostAggregator | PostGroupBy | PostConnectionId | PostConnectionCreated_At | PostConnectionUpdated_At | PostConnectionText | PostConnectionTitle | PostConnectionPublicationDate | PostConnectionGallery | PostConnectionImage | PostConnectionKeywords | PostConnectionDescription | PostConnectionCategory | PostConnectionSlug | PostConnectionPublished_At | CreatePostPayload | UpdatePostPayload | DeletePostPayload | UploadFile | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsUser | CreateUserPayload | UpdateUserPayload | ComponentMenuConfigMenu;
+export type Morph = UsersPermissionsMe | UsersPermissionsMeRole | UsersPermissionsLoginPayload | UserPermissionsPasswordPayload | Image | ValidationToken | GalleryCategories | Category | CategoryConnection | CategoryAggregator | CategoryGroupBy | CategoryConnectionId | CategoryConnectionCreated_At | CategoryConnectionUpdated_At | CategoryConnectionName | CategoryConnectionSlug | CategoryConnectionSlugOverride | CategoryConnectionPublic | CategoryConnectionPublicationDate | CategoryConnectionFile | CategoryConnectionImage | CategoryConnectionGallery | CategoryConnectionKeywords | CategoryConnectionDescription | CreateCategoryPayload | UpdateCategoryPayload | DeleteCategoryPayload | Footer | UpdateFooterPayload | DeleteFooterPayload | Gallery | CreateGalleryPayload | UpdateGalleryPayload | DeleteGalleryPayload | Menu | UpdateMenuPayload | DeleteMenuPayload | PostCategory | CreatePostCategoryPayload | UpdatePostCategoryPayload | DeletePostCategoryPayload | Post | PostConnection | PostAggregator | PostGroupBy | PostConnectionId | PostConnectionCreated_At | PostConnectionUpdated_At | PostConnectionText | PostConnectionTitle | PostConnectionPublicationDate | PostConnectionGallery | PostConnectionImage | PostConnectionKeywords | PostConnectionDescription | PostConnectionCategory | PostConnectionSlug | PostConnectionPermalink | PostConnectionContent_Position | PostConnectionGallery_Template | PostConnectionPublished_At | CreatePostPayload | UpdatePostPayload | DeletePostPayload | UploadFile | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsUser | CreateUserPayload | UpdateUserPayload | ComponentMenuConfigMenu;
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -424,6 +434,9 @@ export type Post = {
   description?: Maybe<Scalars['String']>;
   category?: Maybe<PostCategory>;
   slug?: Maybe<Scalars['String']>;
+  permalink?: Maybe<Scalars['String']>;
+  content_position?: Maybe<Enum_Post_Content_Position>;
+  gallery_template?: Maybe<Enum_Post_Gallery_Template>;
   published_at?: Maybe<Scalars['DateTime']>;
 };
 
@@ -440,11 +453,15 @@ export type PostCategory = {
   updated_at: Scalars['DateTime'];
   name: Scalars['String'];
   slug?: Maybe<Scalars['String']>;
+  keywords?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
 };
 
 export type PostCategoryInput = {
   name: Scalars['String'];
   slug?: Maybe<Scalars['String']>;
+  keywords?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
 };
@@ -459,6 +476,12 @@ export type PostConnection = {
 export type PostConnectionCategory = {
   __typename?: 'PostConnectionCategory';
   key?: Maybe<Scalars['ID']>;
+  connection?: Maybe<PostConnection>;
+};
+
+export type PostConnectionContent_Position = {
+  __typename?: 'PostConnectionContent_position';
+  key?: Maybe<Scalars['String']>;
   connection?: Maybe<PostConnection>;
 };
 
@@ -480,6 +503,12 @@ export type PostConnectionGallery = {
   connection?: Maybe<PostConnection>;
 };
 
+export type PostConnectionGallery_Template = {
+  __typename?: 'PostConnectionGallery_template';
+  key?: Maybe<Scalars['String']>;
+  connection?: Maybe<PostConnection>;
+};
+
 export type PostConnectionId = {
   __typename?: 'PostConnectionId';
   key?: Maybe<Scalars['ID']>;
@@ -494,6 +523,12 @@ export type PostConnectionImage = {
 
 export type PostConnectionKeywords = {
   __typename?: 'PostConnectionKeywords';
+  key?: Maybe<Scalars['String']>;
+  connection?: Maybe<PostConnection>;
+};
+
+export type PostConnectionPermalink = {
+  __typename?: 'PostConnectionPermalink';
   key?: Maybe<Scalars['String']>;
   connection?: Maybe<PostConnection>;
 };
@@ -548,6 +583,9 @@ export type PostGroupBy = {
   description?: Maybe<Array<Maybe<PostConnectionDescription>>>;
   category?: Maybe<Array<Maybe<PostConnectionCategory>>>;
   slug?: Maybe<Array<Maybe<PostConnectionSlug>>>;
+  permalink?: Maybe<Array<Maybe<PostConnectionPermalink>>>;
+  content_position?: Maybe<Array<Maybe<PostConnectionContent_Position>>>;
+  gallery_template?: Maybe<Array<Maybe<PostConnectionGallery_Template>>>;
   published_at?: Maybe<Array<Maybe<PostConnectionPublished_At>>>;
 };
 
@@ -561,6 +599,9 @@ export type PostInput = {
   description?: Maybe<Scalars['String']>;
   category?: Maybe<Scalars['ID']>;
   slug?: Maybe<Scalars['String']>;
+  permalink?: Maybe<Scalars['String']>;
+  content_position?: Maybe<Enum_Post_Content_Position>;
+  gallery_template?: Maybe<Enum_Post_Gallery_Template>;
   published_at?: Maybe<Scalars['DateTime']>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
@@ -588,6 +629,7 @@ export type Query = {
   postCategoryBySlug?: Maybe<PostCategory>;
   postsCount: Scalars['Int'];
   postBySlug?: Maybe<Post>;
+  postByPermalink?: Maybe<Post>;
   prevNextPost?: Maybe<Array<Maybe<Post>>>;
   relatedPosts?: Maybe<Array<Maybe<Post>>>;
 };
@@ -680,6 +722,11 @@ export type QueryPostsCountArgs = {
 
 export type QueryPostBySlugArgs = {
   slug?: Maybe<Scalars['String']>;
+};
+
+
+export type QueryPostByPermalinkArgs = {
+  permalink?: Maybe<Scalars['String']>;
 };
 
 
@@ -1006,6 +1053,8 @@ export type EditMenuInput = {
 export type EditPostCategoryInput = {
   name?: Maybe<Scalars['String']>;
   slug?: Maybe<Scalars['String']>;
+  keywords?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
 };
@@ -1020,6 +1069,9 @@ export type EditPostInput = {
   description?: Maybe<Scalars['String']>;
   category?: Maybe<Scalars['ID']>;
   slug?: Maybe<Scalars['String']>;
+  permalink?: Maybe<Scalars['String']>;
+  content_position?: Maybe<Enum_Post_Content_Position>;
+  gallery_template?: Maybe<Enum_Post_Gallery_Template>;
   published_at?: Maybe<Scalars['DateTime']>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;

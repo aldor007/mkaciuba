@@ -20,6 +20,7 @@ module.exports = {
     extend type Query {
       postsCount(where: JSON): Int!
       postBySlug(slug: String): Post
+      postByPermalink(permalink: String): Post
       prevNextPost(slug: String): [Post]
       relatedPosts(slug: String): [Post]
   }
@@ -57,8 +58,8 @@ module.exports = {
           // if (posts) {
           //   return posts;
           // }
-          strapi.log.debug('dupa;', search)
           let posts = await strapi.services.post.find(search);
+
           // strapi.services.cache.set(key, posts, 60*60);
           return posts;
         }
@@ -97,6 +98,23 @@ module.exports = {
           return post;
         }
       },
+      postByPermalink: {
+        resolverOf: 'application::post.post.find',
+        resolver: async (obj, options, { context }, info) => {
+          const search = {};
+          search.publicationDate_lt = new Date();
+          search.permalink = options.permalink
+          const key = getCacheKey('post' + options.permalink, options);
+          let post = await strapi.services.cache.get(key)
+          // info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
+          if (post) {
+            return post;
+          }
+          post = await strapi.services.post.findOne(search);
+          // post.gallery = await strapi.services.gallery.findOne({ id: post.gallery.id})
+          return post;
+        }
+      },
       prevNextPost: {
         resolverOf: 'application::post.post.find',
         resolver: async (obj, options, { context }, info) => {
@@ -115,7 +133,7 @@ module.exports = {
           const search_gt = {
             id_gt: post.id,
             publicationDate_lt: search.publicationDate_lt,
-            _sort: 'id:desc'
+            _sort: 'id:asc'
           }
           const post_lt = await strapi.services.post.findOne(search_lt);
           const post_gt = await strapi.services.post.findOne(search_gt);
@@ -137,7 +155,9 @@ module.exports = {
             publicationDate_lt: search.publicationDate_lt,
             _sort: 'id:desc',
             _limit: 2,
-            _keywords_contains: post.keywords.slice(0, 10)
+          }
+          if (post.keywords) {
+            search_related.keywords_contains = post.keywords.slice(0, 10)
           }
           const related = await strapi.services.post.find(search_related);
           return related

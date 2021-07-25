@@ -81,7 +81,8 @@ export const App = ({ client }: AppsProps) => {
           },
           Query: {
             fields: {
-              categories: startLimitPagination(['where', 'limit'])
+              categories: startLimitPagination(['where', 'limit']),
+              posts: startLimitPagination(['where', 'limit'])
             }
           }
         }

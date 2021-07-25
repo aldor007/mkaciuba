@@ -50,6 +50,23 @@
       "type": "string",
       "unique": true,
       "private": false
+    },
+    "permalink": {
+      "type": "string"
+    },
+    "content_position": {
+      "type": "enumeration",
+      "enum": [
+        "top",
+        "bottom"
+      ]
+    },
+    "gallery_template": {
+      "type": "enumeration",
+      "enum": [
+        "normal",
+        "description"
+      ]
     }
   }
 }

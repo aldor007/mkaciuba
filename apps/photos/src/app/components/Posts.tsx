@@ -82,7 +82,7 @@ export const Posts = ( { categoryId }: PostsProps) => {
   const webp = useWebPSupportCheck();
   const width = useWindowWidth();
   const [loadingMore, setLoadingMore] = useState(false);
-  const [start, setStart] = useState(0)
+  const [start, setStart] = useState(9)
   const limit = 9
   const {loading, error, data, fetchMore } = useQuery<Query>(categoryId ? GET_POSTS_FROM_CAT : GET_POSTS, {
     variables: {  start: 0, limit, categoryId},
@@ -114,12 +114,6 @@ export const Posts = ( { categoryId }: PostsProps) => {
       }});
     }, [fetchMore, start, limit ]);
 
-  const [sentryRef ]= useInfiniteScroll({
-    loading: loadingMore,
-    hasNextPage: hasNextPage(),
-    onLoadMore: handleLoadMore,
-    delayInMs: 250,
-  })
 
   if (error) {
     console.error('Posts', error)
@@ -150,8 +144,8 @@ export const Posts = ( { categoryId }: PostsProps) => {
     return (
       <div className={headerClass} key={`${item.title}-${item.id}`}>
         <div className="bg-cover bg-center z-0">
-        <ImageComponent thumbnails={item.image.matchingThumbnails} defaultImage={defaultImages[item.id]} />
-</div>
+        {item.image && <ImageComponent thumbnails={item.image.matchingThumbnails} defaultImage={defaultImages[item.id]} /> }
+        </div>
         <div className="absolute text-lg 	leading-snug font-serif inset-x-1/3	 bottom-32 z-10 h-16  justify-center items-center  text-white">
           <div className="container text-center  items-center mx-auto p-3">
             <div className="row">
@@ -187,8 +181,10 @@ export const Posts = ( { categoryId }: PostsProps) => {
           singlePost(item, index)
         )}
   </div>
-  { hasNextPage() &&<div className="max-w-screen-xl m-4 mx-auto text-center border-4 " onClick={handleLoadMore}>
-    Załaduj więcej
+  { hasNextPage() &&<div className="max-w-screen-xl m-4 mx-auto text-center  " >
+      <button onClick={handleLoadMore}  className="max-w-screen-xl m-4 mx-auto text-center border-4  px-5 py-3 rounded-xl text-sm font-medium text-indigo-600 bg-white outline-none focus:outline-none m-1 hover:m-0 focus:m-0 border border-indigo-600 hover:border-4 focus:border-4 hover:border-indigo-800 hover:text-indigo-800 focus:border-purple-200 active:border-grey-900 active:text-grey-900 transition-all">
+        <i className="mdi mdi-circle-outline mr-2 text-xl align-middle leading-none"></i>
+        Załaduj więcej</button>
   </div> }
   </>
   )

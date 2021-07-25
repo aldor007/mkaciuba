@@ -302,11 +302,12 @@ module.exports = {
             return new UserInputError('Has to be less than 9')
           }
           info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
-          const key = getCacheKey('recentImages-', options);
+          const key = getCacheKey('recentImages-v2', options);
           let images = await strapi.services.cache.get(key);
           if (images) {
             return images;
           }
+          let category = await strapi.services.category.findOne({ name: 'Blog' });
           images = category.map((c) => {
             return c.medias[Math.floor(Math.random() * c.medias.length) - 1];
           });

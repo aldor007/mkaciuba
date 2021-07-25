@@ -6,6 +6,7 @@ import { IframePhotos } from './app/pages/IframePhotos';
 import { AppRoutes } from './app/routes';
 import { Post  } from './app/pages/Post';
 import { PostCategory } from './app/pages/PostCategory';
+import { OldPost } from './app/pages/OldPosts';
 
 export const Routes = [
     {
@@ -31,6 +32,10 @@ export const Routes = [
     {
         component: PostCategory,
         path: AppRoutes.postcategory.path
+    },
+    {
+        component: OldPost,
+        path: AppRoutes.oldposts.path
     },
     {
         component: Home,
