@@ -185,14 +185,13 @@ export const Post = () => {
             <p className="m-4" dangerouslySetInnerHTML={{
               __html: post.description
               }}/>
-
-        {post.content_position == Enum_Post_Content_Position.Top }  <p  dangerouslySetInnerHTML={{
+        {post.content_position === Enum_Post_Content_Position.Top  && <p  dangerouslySetInnerHTML={{
               __html: post.text
-              }}/>
+              }}/>}
       <ImageList categorySlug={post.gallery.slug} minSize={true} />
-        {post.content_position == Enum_Post_Content_Position.Bottom }  <p  dangerouslySetInnerHTML={{
+        {post.content_position === Enum_Post_Content_Position.Bottom && <p  dangerouslySetInnerHTML={{
               __html: post.text
-              }}/>
+              }}/>}
       <hr className="divide-y m-8 bg-gray-700" />
       </div>
       <>
