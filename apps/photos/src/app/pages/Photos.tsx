@@ -78,8 +78,16 @@ export const Photos = () => {
      name: item.name
     }
  })
- const menu = [{
+ const menu = [
+  {
    name: gallery.name,
+   url: generatePath(AppRoutes.categoryList.path, {
+     gallerySlug: gallery.slug
+    }),
+  
+  },
+  {
+   name: 'Galerie',
    url: '#',
    children,
  }]
@@ -92,6 +100,7 @@ export const Photos = () => {
             <meta property="og:title" content={category.name} />
           </MetaTags>
     <Header mainMenu={menu}/>
+    <h1 className="text-center m-5 text-4xl leading-snug font-serif ">{category.name}</h1>
     <ImageList categorySlug={categorySlug}/>
     <Footer></Footer>
     </>

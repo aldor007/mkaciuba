@@ -85,6 +85,39 @@ const createDropdown = (additionalMainMenu, setDropdownOpen, dropdownOpen) => {
   return dropdownMenu;
 }
 
+const createDropdownV2 = (additionalMainMenu, setDropdownOpen, dropdownOpen) => {
+  const generateIdKey = (item) => (
+    `${item.id}-${item.url}`
+  )
+  const dropDownItems = (children) => (children.map((item, id) => (
+    <a key={generateIdKey(item)} className="block px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg dark-mode:bg-transparent dark-mode:hover:bg-gray-600 dark-mode:focus:bg-gray-600 dark-mode:focus:text-white dark-mode:hover:text-white dark-mode:text-gray-200 md:mt-0 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" href={item.url}>
+      {item.name}
+     </a>
+  )));
+
+  return (
+    <div className="relative">
+      {additionalMainMenu.map((m) => (
+        <>
+          <button className="flex flex-row items-center w-full px-4 py-2 mt-2 text-sm font-semibold text-left bg-transparent rounded-lg md:w-auto md:inline md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
+          onClick={ m.children ? () => setDropdownOpen(!dropdownOpen) : () => {}}>
+            {!m.children && <a href={m.url} ><span>{m.name}</span></a>}
+            {m.children &&  <span>{m.name}</span>}
+                {m.children && <svg fill="currentColor" viewBox="0 0 20 20" className="inline w-4 h-4 mt-1 ml-1 transition-transform duration-200 transform md:-mt-1"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>}
+          </button>
+          <div    x-show="open"    className="absolute right-0 w-full mt-2 origin-top-right rounded-md shadow-lg md:w-48">
+            {m.children && dropdownOpen &&
+          <div className="overflow-y-auto h-64 bg-white rounded-md shadow dark-mode:bg-gray-800">
+            {m.children && dropDownItems(m.children)}
+          </div>
+            }
+        </div>
+      </>
+      ))}
+    </div>
+  )
+}
+
 export const Navbar = function (props: NavbarProps) {
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const [navbarOpen, setNavbarOpen] = React.useState(false);
@@ -126,7 +159,7 @@ export const Navbar = function (props: NavbarProps) {
 
   let dropdownMenu = null;
   if (props.additionalMainMenu) {
-    dropdownMenu = createDropdown(props.additionalMainMenu, setDropdownOpen, dropdownOpen)
+    dropdownMenu = createDropdownV2(props.additionalMainMenu, setDropdownOpen, dropdownOpen)
   }
 
   let navbarCSS = '';
@@ -153,7 +186,7 @@ export const Navbar = function (props: NavbarProps) {
         </div>
       </nav>
       </div>
-      <div className="w-full sticky top-0 text-gray-700 bg-white dark-mode:text-gray-200 dark-mode:bg-gray-800">
+      <div className="w-full sticky top-0 text-gray-700 bg-white dark-mode:text-gray-200 dark-mode:bg-gray-800 z-50">
         <div x-data="{ open: false }" className="flex flex-col max-w-screen-xl px-4 mx-auto md:items-center md:justify-between md:flex-row md:px-6 lg:px-8">
           <div className="p-4 flex flex-row items-center justify-between">
             <a href="#" className="flex flex-wrap -mx-1 overflow-hidden text-lg font-semibold tracking-widest text-gray-900 rounded-lg dark-mode:text-white focus:outline-none focus:shadow-outline">
@@ -162,7 +195,7 @@ export const Navbar = function (props: NavbarProps) {
               </a>
             <button className="md:hidden rounded-lg focus:outline-none focus:shadow-outline" onClick={() => setNavbarOpen(!navbarOpen)}>
               <svg fill="currentColor" viewBox="0 0 20 20" className="w-6 h-6">
-               {!navbarOpen && <path x-show="!open" fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM9 15a1 1 0 011-1h6a1 1 0 110 2h-6a1 1 0 01-1-1z" clipRule="evenodd"></path>}
+               {!navbarOpen &&  <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>}
                {navbarOpen && <path x-show="open" fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"></path>}
              </svg>
             </button>

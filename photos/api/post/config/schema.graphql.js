@@ -154,7 +154,7 @@ module.exports = {
             id_ne: post.id,
             publicationDate_lt: search.publicationDate_lt,
             _sort: 'id:desc',
-            _limit: 2,
+            _limit: 4,
           }
           if (post.keywords) {
             search_related.keywords_contains = post.keywords.slice(0, 10)

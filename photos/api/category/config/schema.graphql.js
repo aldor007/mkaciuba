@@ -55,6 +55,8 @@ const presetList = [
 
 const allPresets = presetList.concat([
 
+  new Preset('categorylistbig', 1500, 1000, '(max-width: 1300px)', 'jpeg'),
+  new Preset('categorylistbigwebp', 1500, 1000, '(max-width: 1300px)', 'webp'),
   new Preset('categorylist', 600, 450, '(max-width: 1000px)', 'jpeg'),
   new Preset('categorylistwebp', 600, 450, '(max-width: 1000px)', 'webp'),
   new Preset('categorylists', 300, 225, '(max-width: 600px)', 'jpeg'),

@@ -74,7 +74,7 @@ export const Footer = () => {
 
 return (
 
-  <div className="w-full m-4 top-0 text-gray-700 bg-white dark-mode:text-gray-200 dark-mode:bg-gray-800">
+  <div className="w-full sm:mx-auto lg:m-4 top-0 text-gray-700 bg-white mt-8">
     <div className="flex flex-col max-w-screen-xl px-4 mx-auto  md:flex-row md:px-6 lg:px-8">
     <div className="flex-coll overflow-hidden sm:my-1 sm:px-1 sm:w-1/2 md:my-px md:px-px md:w-1/2 lg:my-2 lg:px-2 lg:w-1/3 xl:my-2 xl:px-2 xl:w-1/3 pb-6">
       <h1 className="uppercase px-1 my-1  text-lg 	leading-snug font-serif  text-xl text-center">Facebook</h1>
