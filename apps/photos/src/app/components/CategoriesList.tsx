@@ -111,14 +111,14 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
   }, {})
     return (
       <>
-     <div className="flex flex-wrap -mx-1 overflow-hidden">
+     <div className="flex flex-wrap mx-auto overflow-hidden">
        <MetaTags>
             <title>{gallery.name}</title>
             <meta name="description" content={gallery.description} />
             <meta property="og:title" content={gallery.name} />
           </MetaTags>
       {categories && categories.map(item => (
-         <div className="my-1 px-1 w-1/1 overflow-hidden sm:w-1/1 md:w-1/2 lg:w-1/2 xl:w-1/3" key={item.slug}>
+         <div className="mx-auto my-1 px-1 w-1/1 overflow-hidden sm:w-1/1 md:w-1/2 lg:w-1/2 xl:w-1/3" key={item.slug}>
           <Link to={generatePath(AppRoutes.photos.path, {
             gallerySlug: gallery.slug,
             categorySlug: item.slug,

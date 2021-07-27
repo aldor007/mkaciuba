@@ -41,6 +41,7 @@ const GET_IMAGES = gql`
     medias(start: $start, limit: $limit, sort: "id:desc") {
      id
      alternativeText
+     name
      caption
      thumbnails {
         url
@@ -175,9 +176,9 @@ export const ImageList = ({ categorySlug, minSize }: ImageListProps) => {
             >
             {({ ref, open }) => (
                 <div className={imageClass}>
-               <ImageComponent ref={ref as RefObject<HTMLImageElement>} onClick={open} thumbnails={item.thumbnails} defaultImage={defaultImages[index]} />
+               <ImageComponent ref={ref as RefObject<HTMLImageElement>} onClick={open} thumbnails={item.thumbnails} defaultImage={defaultImages[index]} alt={item.alternativeText || item.name} />
                   <div className="hidden overflow-hidden">
-                    <div className="text-white text-lg">{item.alternativeText}</div>
+                    <div className="text-white text-lg">{item.alternativeText || item.name}</div>
                   </div>
                 </div>
             )}

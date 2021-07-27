@@ -47,14 +47,14 @@ module.exports = {
       posts: {
         resolverOf: 'application::post.post.find',
         resolver: async (obj, options, { context }, info) => {
-          const search = {};
+          const search = options.where || {};
           search._limit =  options.limit;
           search._start = options.start || 0;
           search._sort = options.sort || 'id:desc'
           search.publicationDate_lt = new Date();
           const key = getCacheKey('posts' + search.publicationDate_lt, options);
           // let posts = await strapi.services.cache.get(key)
-          // // info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
+          info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
           // if (posts) {
           //   return posts;
           // }

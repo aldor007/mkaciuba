@@ -200,7 +200,7 @@ export const Post = () => {
     <div className="max-w-screen-xl mx-auto grid xl:grid-cols-2  gap-4">
 
         {data.relatedPosts && data.relatedPosts.map((post) => (
-          <PostCard post={post} />
+          <PostCard post={post} key={post.id} />
         ))}
       </div>
     <Footer></Footer>

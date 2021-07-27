@@ -69,7 +69,7 @@ export const App = ({ client }: AppsProps) => {
           uri: environment.apiUrl,
           // batchMax: 12, // No more than 5 operations per batch
           // batchInterval: 50, // Wait no more than 20ms after first batched operation
-          useGETForQueries: true
+          useGETForQueries: false
         }));
       }
       const cache = new InMemoryCache({

@@ -83,7 +83,7 @@ export const Posts = ( { categoryId }: PostsProps) => {
   const width = useWindowWidth();
   const [loadingMore, setLoadingMore] = useState(false);
   const [start, setStart] = useState(9)
-  const limit = 9
+  const limit = 6
   const {loading, error, data, fetchMore } = useQuery<Query>(categoryId ? GET_POSTS_FROM_CAT : GET_POSTS, {
     variables: {  start: 0, limit, categoryId},
     notifyOnNetworkStatusChange: true
