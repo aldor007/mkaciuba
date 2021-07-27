@@ -233,12 +233,7 @@ module.exports = {
           search._sort = options.sort || 'id:desc'
           search.gallery_null = false;
           search.publicationDate_lt = new Date();
-          const key = getCacheKey('categories' + search.publicationDate_lt, options);
-          let categories = await strapi.services.cache.get(key)
-          if (categories) {
-            return categories.length;
-          }
-           return await strapi.services.category.count(search || {});
+          return await strapi.services.category.count(search || {});
         }
       },
       categories: {
@@ -251,14 +246,8 @@ module.exports = {
           search.publicationDate_lt = new Date();
           search.gallery_null = false;
           search.public = true;
-          const key = getCacheKey('categories-v2-1', options);
-          let categories = await strapi.services.cache.get(key)
           info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
-          if (categories) {
-            return categories;
-          }
-          categories = await strapi.services.category.find(search);
-          strapi.services.cache.set(key, categories, 60*60);
+          const categories = await strapi.services.category.find(search);
 
           return categories;
         }
