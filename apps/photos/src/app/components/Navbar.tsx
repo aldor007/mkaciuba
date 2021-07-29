@@ -158,7 +158,7 @@ export const Navbar = function (props: NavbarProps) {
         </div>
       </nav>
       </div>
-      <div className="w-full sticky top-0 text-gray-700 bg-white dark-mode:text-gray-200 dark-mode:bg-gray-800 z-50">
+      <div className="w-full top-0 text-gray-700 bg-white dark-mode:text-gray-200 dark-mode:bg-gray-800 z-50">
         <div x-data="{ open: false }" className="flex flex-col max-w-screen-xl px-4 mx-auto md:items-center md:justify-between md:flex-row md:px-6 lg:px-8">
           <div className="p-4 flex flex-row items-center justify-between">
             <a href="/" className="flex flex-wrap -mx-1 overflow-hidden text-lg font-semibold tracking-widest text-gray-900 rounded-lg dark-mode:text-white focus:outline-none focus:shadow-outline">
