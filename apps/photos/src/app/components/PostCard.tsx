@@ -15,10 +15,13 @@ export interface PostCardProps {
   post: Post
 }
 
-export const PostCard = ({ post}: PostCardProps) => {
+export const PostCard = ({ post }: PostCardProps) => {
     const webp = useWebPSupportCheck();
     const width = useWindowWidth();
-    const defaultImage = findImageForWidth(post.image.matchingThumbnails, width, webp)
+    let defaultImage = null;
+    if (post.image) {
+      defaultImage = findImageForWidth(post.image.matchingThumbnails, width, webp)
+    }
     let titleFont = 'lg:text-5xl text-2xl'
     if (post.title.length > 14) {
       titleFont = 'lg:text-3xl text-4xl'
@@ -27,7 +30,7 @@ export const PostCard = ({ post}: PostCardProps) => {
     return (
       <div className={headerClass} key={`${post.title}-${post.id}`}>
         <div className="bg-cover bg-center z-0">
-        <ImageComponent thumbnails={post.image.matchingThumbnails} defaultImage={defaultImage} />
+         { defaultImage && <ImageComponent thumbnails={post.image.matchingThumbnails} defaultImage={defaultImage} /> }
 </div>
         <div className="absolute text-lg 	leading-snug font-serif inset-x-1/4 top-1/3 sm:top-1/4 lg:top-1/2 z-10 h-16  justify-center items-center  text-white">
           <div className="container text-center  items-center mx-auto p-3">
