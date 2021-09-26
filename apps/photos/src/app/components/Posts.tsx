@@ -17,6 +17,7 @@ import {
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { AppRoutes } from "../routes";
 import { ErrorPage, Loading, LoadingMore } from "@mkaciuba/ui-kit";
+import { PostCard } from "./PostCard";
 
 
 const GET_POSTS = gql`
@@ -136,45 +137,10 @@ export const Posts = ( { categoryId }: PostsProps) => {
   }, {})
 
 
-  const singlePost = (item: Post , index) => {
-    let headerClass ="relative  mx-auto max-w-screen-xl "
-    if ((index + 1) % 3 == 1) {
-      headerClass = "relative  mx-auto max-w-screen-xl lg:col-span-2 "
-    }
-    let titleFont = 'lg:text-6xl text-2xl'
-    if (item.title.length > 14) {
-      titleFont = 'lg:text-3xl text-4xl'
-    }
+  const singlePost = (item: Post, index) => {
+
     return (
-      <article className={headerClass} key={`${item.title}-${item.id}`}>
-        <div className="bg-cover bg-center z-0">
-        {item.image && <ImageComponent thumbnails={item.image.matchingThumbnails} defaultImage={defaultImages[item.id]} /> }
-        </div>
-        <div className="absolute text-lg 	leading-snug font-serif md:inset-x-1/3	inset-x-1/4 top-1/3 sm:top-1/4 lg:top-1/2 z-10 h-16  justify-center items-center  text-white">
-          <div className="container text-center  items-center mx-auto p-3">
-            <div className="row">
-              <Link to={generatePath(AppRoutes.post.path, {
-                slug: item.slug,
-              })}>
-                <h1 className={`font-black md:text-2xl sm:text-2xl ${titleFont} hover:underline`} >{item.title}</h1>
-               </Link>
-            </div>
-            <div className="row mt-3 ">
-              <span className="meta-date">
-                {new Date(item.publicationDate).toLocaleDateString()}
-                </span>
-              <span className="mx-3">•</span>
-              <span className="underline hover:text-green">
-                <Link to={generatePath(AppRoutes.postcategory.path, {
-                  slug: item.category.slug,
-                })}>
-                  {item.category.name}
-                  </Link>
-                  </span>
-            </div>
-				  </div>
-				</div>
-        </article>
+      <PostCard post={item} inColumn={(index + 1) % 3 == 1} />
     )
   }
   // setStart(stagccrt + limit)

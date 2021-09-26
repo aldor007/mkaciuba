@@ -67,6 +67,11 @@
         "normal",
         "description"
       ]
+    },
+    "tags": {
+      "collection": "tag",
+      "via": "posts",
+      "dominant": true
     }
   }
 }

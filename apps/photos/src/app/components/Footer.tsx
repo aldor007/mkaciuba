@@ -30,6 +30,16 @@ const GET_FOOTER = gql`
       FeaturedCategories {
           name
           url
+          image {
+            matchingThumbnails(preset: "categorylist") {
+              url
+              mediaQuery
+              webp
+              type
+              width
+              height
+            }
+          }
         }
       }
   }
@@ -68,6 +78,8 @@ export const Footer = () => {
     <li className="leading-7 hover:underline text-lg 	leading-snug font-serif  text-xl " key={f.name}>
       <Link to={f.url}>
         <p>{f.name}</p>
+        {/* {f.image && <ImageComponent thumbnails={item.image.matchingThumbnails} defaultImage={defaultImages[item.id]} /> } */}
+
       </Link>
     </li>
   ))

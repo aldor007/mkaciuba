@@ -10,43 +10,51 @@ import {
   useWindowWidth
 } from '@react-hook/window-size';
 import { AppRoutes } from "../routes";
+import { format } from "date-fns";
 
 export interface PostCardProps {
   post: Post
+  inColumn?: boolean
 }
 
-export const PostCard = ({ post }: PostCardProps) => {
+export const PostCard = ({ post, inColumn }: PostCardProps) => {
     const webp = useWebPSupportCheck();
     const width = useWindowWidth();
     let defaultImage = null;
     if (post.image) {
       defaultImage = findImageForWidth(post.image.matchingThumbnails, width, webp)
     }
-    let titleFont = 'lg:text-5xl text-2xl'
-    if (post.title.length > 14) {
+    let headerClass ="relative  mx-auto max-w-screen-xl "
+    let imageClass ="absolute text-lg bg-gray	leading-snug font-serif  top-1/3 sm:top-1/4 lg:top-1/2 z-10 h-16 min-w-full	 justify-center items-center  text-white"
+    if (inColumn) {
+      headerClass = "relative  mx-auto max-w-screen-xl lg:col-span-2 "
+      imageClass ="absolute text-lg bg-gray	leading-snug font-serif  top-1/3 sm:top-1/4 lg:top-1/2 z-10 h-16 min-w-full	 justify-center items-center  text-white"
+    }
+    let titleFont = 'lg:text-6xl text-2xl'
+    if (post.title.length > 22) {
       titleFont = 'lg:text-3xl text-4xl'
     }
-    let headerClass = "relative  mx-auto max-w-screen-xl ";
+
     return (
       <div className={headerClass} key={`${post.title}-${post.id}`}>
         <div className="bg-cover bg-center z-0">
-         { defaultImage && <ImageComponent thumbnails={post.image.matchingThumbnails} defaultImage={defaultImage} /> }
-</div>
-        <div className="absolute text-lg 	leading-snug font-serif inset-x-1/4 top-1/3 sm:top-1/4 lg:top-1/2 z-10 h-16  justify-center items-center  text-white">
-          <div className="container text-center  items-center mx-auto p-3">
+        {post.image && <ImageComponent thumbnails={post.image.matchingThumbnails} defaultImage={defaultImage} /> }
+        </div>
+        <div className={imageClass}>
+          <div className="container text-center overflow-hidden	 bg-gray-300 bg-opacity-40	 items-center mx-auto p-8">
             <div className="row">
               <Link to={generatePath(AppRoutes.post.path, {
                 slug: post.slug,
               })}>
-                <h1 className={`font-black md:text-2xl sm:text-2xl ${titleFont} hover:underline`}>{post.title}</h1>
+                <h1 className={`font-black md:text-2xl sm:text-2xl ${titleFont} hover:underline`} >{post.title}</h1>
                </Link>
             </div>
-            <div className="row mt-3 	inset-x-1/4 top-1/3 sm:top-1/4 lg:top-1/2 ">
+            <div className="row mt-3 ">
               <span className="meta-date">
-                {new Date(post.publicationDate).toLocaleDateString()}
+                {format(new Date(post.publicationDate), 'dd/MM/yyyy')}
                 </span>
               <span className="mx-3">•</span>
-              <span className="underline hover:text-green ">
+              <span className="underline hover:text-green">
                 <Link to={generatePath(AppRoutes.postcategory.path, {
                   slug: post.category.slug,
                 })}>

@@ -17,8 +17,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons/faArrowLeft';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons/faArrowRight';
 import { PostCard } from '../components/PostCard';
-
-
+import { format } from "date-fns";
 
 const GET_POST = gql`
   query ($postSlug: String!) {
@@ -168,7 +167,7 @@ export const Post = () => {
             </div>
             <div className="row m-3">
               <span className="meta-date">
-                {new Date(post.publicationDate).toLocaleDateString()}
+                  {format(new Date(post.publicationDate), 'dd/MM/yyyy')}
                 </span>
               <span className="mx-3">•</span>
               <span className="underline">
@@ -188,7 +187,7 @@ export const Post = () => {
         {post.content_position === Enum_Post_Content_Position.Top  && <p  dangerouslySetInnerHTML={{
               __html: post.text
               }}/>}
-      <ImageList categorySlug={post.gallery.slug} minSize={true} />
+       {post.gallery && <ImageList categorySlug={post.gallery.slug} minSize={true} />}
         {post.content_position === Enum_Post_Content_Position.Bottom && <p  dangerouslySetInnerHTML={{
               __html: post.text
               }}/>}

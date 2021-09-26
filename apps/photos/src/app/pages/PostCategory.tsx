@@ -37,7 +37,7 @@ export const PostCategory = () => {
   return  (
     <>
     <Header/>
-    <h1 className="text-center m-5 text-4xl leading-snug font-serif ">{category.name}</h1>
+    <h1 className="text-center m-5 text-4xl leading-snug font-serif ">Posty z kategorii: {category.name}</h1>
     <Posts categoryId={category.id}/>
     <Footer></Footer>
     </>

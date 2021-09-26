@@ -235,6 +235,9 @@ const main = async () => {
   let mediaGallery = await mkaciuba.awaitQuery('Select gallery_id, media_id, position from media__gallery_media')
   let posts = await mkaciuba.awaitQuery('select id,permalink, title, publication_date_start, gallery_template,content,content_position, gallery_id,collectionid, media_id, raw_content,  keywords, description, public, created_at, updated_at from posts where lang = "pl" order by updated_at ASC')
   let postCategories = await mkaciuba.awaitQuery('select * from classification__collection where lang = "pl"')
+  let tags = await mkaciuba.awaitQuery('select * from classification__tag where lang = "pl"');
+  let tagPost = await mkaciuba.awaitQuery('select * from post__tags');
+  
   let counter = 1;
   const mediaById = media.reduce((acc, cur, i) => {
     cur.idCounter = counter++;

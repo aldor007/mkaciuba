@@ -65,6 +65,10 @@ const allPresets = presetList.concat([
   new Preset('postlistwebp', 1500, 1000, '(max-width: 1300px)', 'webp'),
   new Preset('postlists', 750, 750, '(max-width: 600px)', 'jpeg'),
   new Preset('postlistwebps', 750, 740, '(max-width: 600px)', 'webp'),
+  new Preset('featcatbig', 410, null, '(min-width: 600px)', 'jpeg'),
+  new Preset('featcatbigwebps', 410, null, '(min-width: 600px)', 'webp'),
+  new Preset('featcat', 410, null, '(max-width: 400px)', 'jpeg'),
+  new Preset('featcatbigwebps', 410, null, '(max-width: 400px)', 'webp'),
 ]);
 
 
@@ -198,6 +202,7 @@ module.exports = {
         resolverOf: 'application::category.category.findOne',
         resolver: async (obj, options, { context }, info) => {
           const images = obj.medias.filter(o => o.id)
+
           info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
           let image = images[Math.floor(Math.random() * (obj.medias.length - 1))];
           if (!image) {

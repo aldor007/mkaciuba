@@ -29,6 +29,7 @@
   },
   "private": true,
   "dependencies": {
+    "date-fns": "^2.24.0",
     "@apollo/client": "^3.3.10",
     "@fortawesome/fontawesome-svg-core": "^1.2.27",
     "@fortawesome/free-brands-svg-icons": "^5.12.1",
