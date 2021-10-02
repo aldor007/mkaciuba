@@ -36,6 +36,10 @@ const GET_POST = gql`
       description
       text
       content_position
+      tags {
+          name
+          slug
+      }
   }
   prevNextPost(slug: $postSlug) {
       id
@@ -191,6 +195,14 @@ export const Post = () => {
         {post.content_position === Enum_Post_Content_Position.Bottom && <p  dangerouslySetInnerHTML={{
               __html: post.text
               }}/>}
+      </div>
+      <div className="max-w-screen-xl mx-auto post-text">
+            {post.tags.map(t =>
+              <div className="p-3 bg-gray-300 m-1 float-right">
+                {t.name}
+              </div>
+            )}
+              <div className="clear-right"></div>
       <hr className="divide-y m-8 bg-gray-700" />
       </div>
       <>

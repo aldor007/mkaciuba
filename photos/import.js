@@ -5,6 +5,7 @@ const http = require('http');
 const https = require('https');
 const Agent = require('agentkeepalive');
 const { default: slugify } = require('slugify');
+const { cursorTo } = require('readline');
 const keepAliveAgent = new Agent.HttpsAgent({
   maxSockets: 100,
   maxFreeSockets: 10,
@@ -236,12 +237,28 @@ const main = async () => {
   let posts = await mkaciuba.awaitQuery('select id,permalink, title, publication_date_start, gallery_template,content,content_position, gallery_id,collectionid, media_id, raw_content,  keywords, description, public, created_at, updated_at from posts where lang = "pl" order by updated_at ASC')
   let postCategories = await mkaciuba.awaitQuery('select * from classification__collection where lang = "pl"')
   let tags = await mkaciuba.awaitQuery('select * from classification__tag where lang = "pl"');
-  let tagPost = await mkaciuba.awaitQuery('select * from post__tags');
-  
+  let tagPost = await mkaciuba.awaitQuery('select * from post_tags');
+
   let counter = 1;
   const mediaById = media.reduce((acc, cur, i) => {
     cur.idCounter = counter++;
     acc[cur.id] = cur;
+    return acc;
+  }, {});
+
+  counter = 1;
+  const tagsById = tags.reduce((acc, cur, i) => {
+    cur.idCounter = counter++;
+    acc[cur.id] = cur;
+    return acc;
+  }, {})
+
+  const tagsByPostId = tagPost.reduce((acc, cur, i) => {
+    if (acc[cur.post_id]) {
+      acc[cur.post_id].push(cur);
+    } else {
+      acc[cur.post_id] = [cur]
+    }
     return acc;
   }, {});
 
@@ -269,6 +286,8 @@ const main = async () => {
   await connection.awaitQuery('truncate table post_categories')
   await connection.awaitQuery('truncate table galleries')
   await connection.awaitQuery('truncate table categories')
+  await connection.awaitQuery('truncate table tags')
+  await connection.awaitQuery('truncate table posts_tags__tags_posts')
   counter = 1;
  galleries.map(async (g) => {
    g.idCounter = counter++;
@@ -319,6 +338,13 @@ const postCategoriesById = postCategories.reduce((acc, cur,) => {
 
 //  await connection.awaitBeginTransaction();
  try {
+   await tags.map( async t => {
+     console.info('----------------aaa------------->', t.name, t.idCounter)
+     if (t.name ) {
+       await connection.awaitQuery(`INSERT INTO tags (id, name, slug) VALUES (?, ?, ?)`,
+       [t.idCounter, t.name, t.slug])
+     }
+   })
   await galleryCollection.map( async g => {
       await connection.awaitQuery(`INSERT INTO galleries (id, name, slug, public, keywords, description, created_by, updated_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [g.idCounter, g.name, g.slug +'-'+makeid(3), g.public, g.keywords, g.description, 1, 1, 1]);
@@ -364,19 +390,27 @@ const postCategoriesById = postCategories.reduce((acc, cur,) => {
   })
   await posts.map(async (p) => {
     console.info('------------------>insert post', p.title, p.gallery_id, p.collectionid, p.media_id)
-    await connection.awaitQuery(`INSERT INTO posts(id, title, slug, keywords, description, created_by, created_at, updated_at, publicationDate,published_at, gallery, text, category, permalink, content_position,  gallery_template) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [p.idCounter, p.title, p.titleslug || slugify( p.title,  {lower: true}) + '-' + p.idCounter, p.keywords, p.description, 1, p.created_at, p.updated_at, p.publication_date_start,
-         p.publication_date_start, galleriesById[p.gallery_id] ? galleriesById[p.gallery_id].idCounter : null, p.content, postCategoriesById[p.collectionid] ? postCategoriesById[p.collectionid].idCounter : null, '/blog/' + p.permalink,
-        p.content_position || 'top', galleryTemplatesMap[p.gallery_template]
-        ]);
-        if (p.media_id) {
+     if (p.media_id) {
+      await connection.awaitQuery(`INSERT INTO posts(id, title, slug, keywords, description, created_by, created_at, updated_at, publicationDate,published_at, gallery, text, category, permalink, content_position,  gallery_template) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [p.idCounter, p.title, p.titleslug || slugify( p.title,  {lower: true}) + '-' + p.idCounter, p.keywords, p.description, 1, p.created_at, p.updated_at, p.publication_date_start,
+          p.publication_date_start, galleriesById[p.gallery_id] ? galleriesById[p.gallery_id].idCounter : null, p.content, postCategoriesById[p.collectionid] ? postCategoriesById[p.collectionid].idCounter : null, '/blog/' + p.permalink,
+          p.content_position || 'top', galleryTemplatesMap[p.gallery_template]
+          ]);
           console.info('----------------> insert post media ',p.title,  p.media_id, mediaById[p.media_id].idCounter)
           await insertUpload(connection, mediaById[p.media_id], p, 'image', 1, 'posts' )
           // await connection.awaitQuery('INSERT INTO upload_file_morph (upload_file_id, related_id, related_type, field, `order`) VALUES (?, ?, ?, ?, ?)', [
           //     mediaById[p.media_id].idCounter, p.idCounter, 'posts', 'image', 1
           //   ])
         }
+        const postTags = tagsByPostId[p.id];
+        for (const t of postTags) {
+          console.info('tttt--------------->', t)
+          await connection.awaitQuery(`INSERT INTO posts_tags__tags_posts(post_id, tag_id) VALUES(?, ?)`,
+            [p.idCounter, tagsById[t.tag_id].idCounter]
+          )
+        }
   })
+
  } catch (e) {
    console.error("---------------------ERROR ---------->", e)
   // await connection.awaitRollback();

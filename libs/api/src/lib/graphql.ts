@@ -191,12 +191,14 @@ export type ComponentMenuConfigMenu = {
   name?: Maybe<Scalars['String']>;
   url?: Maybe<Scalars['String']>;
   icon?: Maybe<Enum_Componentmenuconfigmenu_Icon>;
+  image?: Maybe<UploadFile>;
 };
 
 export type ComponentMenuConfigMenuInput = {
   name?: Maybe<Scalars['String']>;
   url?: Maybe<Scalars['String']>;
   icon?: Maybe<Enum_Componentmenuconfigmenu_Icon>;
+  image?: Maybe<Scalars['ID']>;
 };
 
 
@@ -321,7 +323,7 @@ export type MenuInput = {
   updated_by?: Maybe<Scalars['ID']>;
 };
 
-export type Morph = UsersPermissionsMe | UsersPermissionsMeRole | UsersPermissionsLoginPayload | UserPermissionsPasswordPayload | Image | ValidationToken | GalleryCategories | Category | CategoryConnection | CategoryAggregator | CategoryGroupBy | CategoryConnectionId | CategoryConnectionCreated_At | CategoryConnectionUpdated_At | CategoryConnectionName | CategoryConnectionSlug | CategoryConnectionSlugOverride | CategoryConnectionPublic | CategoryConnectionPublicationDate | CategoryConnectionFile | CategoryConnectionImage | CategoryConnectionGallery | CategoryConnectionKeywords | CategoryConnectionDescription | CreateCategoryPayload | UpdateCategoryPayload | DeleteCategoryPayload | Footer | UpdateFooterPayload | DeleteFooterPayload | Gallery | CreateGalleryPayload | UpdateGalleryPayload | DeleteGalleryPayload | Menu | UpdateMenuPayload | DeleteMenuPayload | PostCategory | CreatePostCategoryPayload | UpdatePostCategoryPayload | DeletePostCategoryPayload | Post | PostConnection | PostAggregator | PostGroupBy | PostConnectionId | PostConnectionCreated_At | PostConnectionUpdated_At | PostConnectionText | PostConnectionTitle | PostConnectionPublicationDate | PostConnectionGallery | PostConnectionImage | PostConnectionKeywords | PostConnectionDescription | PostConnectionCategory | PostConnectionSlug | PostConnectionPermalink | PostConnectionContent_Position | PostConnectionGallery_Template | PostConnectionPublished_At | CreatePostPayload | UpdatePostPayload | DeletePostPayload | UploadFile | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsUser | CreateUserPayload | UpdateUserPayload | ComponentMenuConfigMenu;
+export type Morph = UsersPermissionsMe | UsersPermissionsMeRole | UsersPermissionsLoginPayload | UserPermissionsPasswordPayload | Image | ValidationToken | GalleryCategories | Category | CategoryConnection | CategoryAggregator | CategoryGroupBy | CategoryConnectionId | CategoryConnectionCreated_At | CategoryConnectionUpdated_At | CategoryConnectionName | CategoryConnectionSlug | CategoryConnectionSlugOverride | CategoryConnectionPublic | CategoryConnectionPublicationDate | CategoryConnectionFile | CategoryConnectionImage | CategoryConnectionGallery | CategoryConnectionKeywords | CategoryConnectionDescription | CreateCategoryPayload | UpdateCategoryPayload | DeleteCategoryPayload | Footer | UpdateFooterPayload | DeleteFooterPayload | Gallery | CreateGalleryPayload | UpdateGalleryPayload | DeleteGalleryPayload | Menu | UpdateMenuPayload | DeleteMenuPayload | PostCategory | CreatePostCategoryPayload | UpdatePostCategoryPayload | DeletePostCategoryPayload | Post | PostConnection | PostAggregator | PostGroupBy | PostConnectionId | PostConnectionCreated_At | PostConnectionUpdated_At | PostConnectionText | PostConnectionTitle | PostConnectionPublicationDate | PostConnectionGallery | PostConnectionImage | PostConnectionKeywords | PostConnectionDescription | PostConnectionCategory | PostConnectionSlug | PostConnectionPermalink | PostConnectionContent_Position | PostConnectionGallery_Template | PostConnectionPublished_At | CreatePostPayload | UpdatePostPayload | DeletePostPayload | Tag | TagConnection | TagAggregator | TagGroupBy | TagConnectionId | TagConnectionCreated_At | TagConnectionUpdated_At | TagConnectionName | TagConnectionSlug | CreateTagPayload | UpdateTagPayload | DeleteTagPayload | UploadFile | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsUser | CreateUserPayload | UpdateUserPayload | ComponentMenuConfigMenu;
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -341,6 +343,9 @@ export type Mutation = {
   createPost?: Maybe<CreatePostPayload>;
   updatePost?: Maybe<UpdatePostPayload>;
   deletePost?: Maybe<DeletePostPayload>;
+  createTag?: Maybe<CreateTagPayload>;
+  updateTag?: Maybe<UpdateTagPayload>;
+  deleteTag?: Maybe<DeleteTagPayload>;
   validateTokenForCategory?: Maybe<ValidationToken>;
 };
 
@@ -415,6 +420,21 @@ export type MutationDeletePostArgs = {
 };
 
 
+export type MutationCreateTagArgs = {
+  input?: Maybe<CreateTagInput>;
+};
+
+
+export type MutationUpdateTagArgs = {
+  input?: Maybe<UpdateTagInput>;
+};
+
+
+export type MutationDeleteTagArgs = {
+  input?: Maybe<DeleteTagInput>;
+};
+
+
 export type MutationValidateTokenForCategoryArgs = {
   token?: Maybe<Scalars['String']>;
   categorySlug?: Maybe<Scalars['String']>;
@@ -438,6 +458,15 @@ export type Post = {
   content_position?: Maybe<Enum_Post_Content_Position>;
   gallery_template?: Maybe<Enum_Post_Gallery_Template>;
   published_at?: Maybe<Scalars['DateTime']>;
+  tags?: Maybe<Array<Maybe<Tag>>>;
+};
+
+
+export type PostTagsArgs = {
+  sort?: Maybe<Scalars['String']>;
+  limit?: Maybe<Scalars['Int']>;
+  start?: Maybe<Scalars['Int']>;
+  where?: Maybe<Scalars['JSON']>;
 };
 
 export type PostAggregator = {
@@ -602,6 +631,7 @@ export type PostInput = {
   permalink?: Maybe<Scalars['String']>;
   content_position?: Maybe<Enum_Post_Content_Position>;
   gallery_template?: Maybe<Enum_Post_Gallery_Template>;
+  tags?: Maybe<Array<Maybe<Scalars['ID']>>>;
   published_at?: Maybe<Scalars['DateTime']>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
@@ -621,6 +651,9 @@ export type Query = {
   post?: Maybe<Post>;
   posts?: Maybe<Array<Maybe<Post>>>;
   postsConnection?: Maybe<PostConnection>;
+  tag?: Maybe<Tag>;
+  tags?: Maybe<Array<Maybe<Tag>>>;
+  tagsConnection?: Maybe<TagConnection>;
   categoryBySlug?: Maybe<Category>;
   recentImages?: Maybe<Array<Maybe<UploadFile>>>;
   categoriesCount: Scalars['Int'];
@@ -678,6 +711,29 @@ export type QueryPostsArgs = {
 
 
 export type QueryPostsConnectionArgs = {
+  sort?: Maybe<Scalars['String']>;
+  limit?: Maybe<Scalars['Int']>;
+  start?: Maybe<Scalars['Int']>;
+  where?: Maybe<Scalars['JSON']>;
+};
+
+
+export type QueryTagArgs = {
+  id: Scalars['ID'];
+  publicationState?: Maybe<PublicationState>;
+};
+
+
+export type QueryTagsArgs = {
+  sort?: Maybe<Scalars['String']>;
+  limit?: Maybe<Scalars['Int']>;
+  start?: Maybe<Scalars['Int']>;
+  where?: Maybe<Scalars['JSON']>;
+  publicationState?: Maybe<PublicationState>;
+};
+
+
+export type QueryTagsConnectionArgs = {
   sort?: Maybe<Scalars['String']>;
   limit?: Maybe<Scalars['Int']>;
   start?: Maybe<Scalars['Int']>;
@@ -745,6 +801,84 @@ export type RoleInput = {
   type?: Maybe<Scalars['String']>;
   permissions?: Maybe<Array<Maybe<Scalars['ID']>>>;
   users?: Maybe<Array<Maybe<Scalars['ID']>>>;
+  created_by?: Maybe<Scalars['ID']>;
+  updated_by?: Maybe<Scalars['ID']>;
+};
+
+export type Tag = {
+  __typename?: 'Tag';
+  id: Scalars['ID'];
+  created_at: Scalars['DateTime'];
+  updated_at: Scalars['DateTime'];
+  name?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']>;
+  posts?: Maybe<Array<Maybe<Post>>>;
+};
+
+
+export type TagPostsArgs = {
+  sort?: Maybe<Scalars['String']>;
+  limit?: Maybe<Scalars['Int']>;
+  start?: Maybe<Scalars['Int']>;
+  where?: Maybe<Scalars['JSON']>;
+};
+
+export type TagAggregator = {
+  __typename?: 'TagAggregator';
+  count?: Maybe<Scalars['Int']>;
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type TagConnection = {
+  __typename?: 'TagConnection';
+  values?: Maybe<Array<Maybe<Tag>>>;
+  groupBy?: Maybe<TagGroupBy>;
+  aggregate?: Maybe<TagAggregator>;
+};
+
+export type TagConnectionCreated_At = {
+  __typename?: 'TagConnectionCreated_at';
+  key?: Maybe<Scalars['DateTime']>;
+  connection?: Maybe<TagConnection>;
+};
+
+export type TagConnectionId = {
+  __typename?: 'TagConnectionId';
+  key?: Maybe<Scalars['ID']>;
+  connection?: Maybe<TagConnection>;
+};
+
+export type TagConnectionName = {
+  __typename?: 'TagConnectionName';
+  key?: Maybe<Scalars['String']>;
+  connection?: Maybe<TagConnection>;
+};
+
+export type TagConnectionSlug = {
+  __typename?: 'TagConnectionSlug';
+  key?: Maybe<Scalars['String']>;
+  connection?: Maybe<TagConnection>;
+};
+
+export type TagConnectionUpdated_At = {
+  __typename?: 'TagConnectionUpdated_at';
+  key?: Maybe<Scalars['DateTime']>;
+  connection?: Maybe<TagConnection>;
+};
+
+export type TagGroupBy = {
+  __typename?: 'TagGroupBy';
+  id?: Maybe<Array<Maybe<TagConnectionId>>>;
+  created_at?: Maybe<Array<Maybe<TagConnectionCreated_At>>>;
+  updated_at?: Maybe<Array<Maybe<TagConnectionUpdated_At>>>;
+  name?: Maybe<Array<Maybe<TagConnectionName>>>;
+  slug?: Maybe<Array<Maybe<TagConnectionSlug>>>;
+};
+
+export type TagInput = {
+  name?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']>;
+  posts?: Maybe<Array<Maybe<Scalars['ID']>>>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
 };
@@ -941,6 +1075,15 @@ export type CreatePostPayload = {
   post?: Maybe<Post>;
 };
 
+export type CreateTagInput = {
+  data?: Maybe<TagInput>;
+};
+
+export type CreateTagPayload = {
+  __typename?: 'createTagPayload';
+  tag?: Maybe<Tag>;
+};
+
 export type CreateUserInput = {
   data?: Maybe<UserInput>;
 };
@@ -996,6 +1139,15 @@ export type DeletePostPayload = {
   post?: Maybe<Post>;
 };
 
+export type DeleteTagInput = {
+  where?: Maybe<InputId>;
+};
+
+export type DeleteTagPayload = {
+  __typename?: 'deleteTagPayload';
+  tag?: Maybe<Tag>;
+};
+
 export type EditCategoryInput = {
   name?: Maybe<Scalars['String']>;
   slug?: Maybe<Scalars['String']>;
@@ -1018,6 +1170,7 @@ export type EditComponentMenuConfigMenuInput = {
   name?: Maybe<Scalars['String']>;
   url?: Maybe<Scalars['String']>;
   icon?: Maybe<Enum_Componentmenuconfigmenu_Icon>;
+  image?: Maybe<Scalars['ID']>;
 };
 
 export type EditFooterInput = {
@@ -1072,6 +1225,7 @@ export type EditPostInput = {
   permalink?: Maybe<Scalars['String']>;
   content_position?: Maybe<Enum_Post_Content_Position>;
   gallery_template?: Maybe<Enum_Post_Gallery_Template>;
+  tags?: Maybe<Array<Maybe<Scalars['ID']>>>;
   published_at?: Maybe<Scalars['DateTime']>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
@@ -1083,6 +1237,14 @@ export type EditRoleInput = {
   type?: Maybe<Scalars['String']>;
   permissions?: Maybe<Array<Maybe<Scalars['ID']>>>;
   users?: Maybe<Array<Maybe<Scalars['ID']>>>;
+  created_by?: Maybe<Scalars['ID']>;
+  updated_by?: Maybe<Scalars['ID']>;
+};
+
+export type EditTagInput = {
+  name?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']>;
+  posts?: Maybe<Array<Maybe<Scalars['ID']>>>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
 };
@@ -1156,6 +1318,16 @@ export type UpdatePostInput = {
 export type UpdatePostPayload = {
   __typename?: 'updatePostPayload';
   post?: Maybe<Post>;
+};
+
+export type UpdateTagInput = {
+  where?: Maybe<InputId>;
+  data?: Maybe<EditTagInput>;
+};
+
+export type UpdateTagPayload = {
+  __typename?: 'updateTagPayload';
+  tag?: Maybe<Tag>;
 };
 
 export type UpdateUserInput = {

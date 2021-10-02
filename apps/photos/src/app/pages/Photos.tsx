@@ -84,7 +84,7 @@ export const Photos = () => {
    url: generatePath(AppRoutes.categoryList.path, {
      gallerySlug: gallery.slug
     }),
-  
+
   },
   {
    name: 'Galerie',
