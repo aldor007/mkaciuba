@@ -24,4 +24,7 @@ export const AppRoutes = {
   'oldposts': {
         path: '/blog/:year/:month/:slug',
     },
+  'tag': {
+        path: '/blog/tag/:slug',
+    },
 }

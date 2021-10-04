@@ -7,6 +7,7 @@ import { AppRoutes } from './app/routes';
 import { Post  } from './app/pages/Post';
 import { PostCategory } from './app/pages/PostCategory';
 import { OldPost } from './app/pages/OldPosts';
+import { PostTag } from './app/pages/PostTag';
 
 export const Routes = [
     {
@@ -36,6 +37,10 @@ export const Routes = [
     {
         component: OldPost,
         path: AppRoutes.oldposts.path
+    },
+    {
+        component: PostTag,
+        path: AppRoutes.tag.path
     },
     {
         component: Home,

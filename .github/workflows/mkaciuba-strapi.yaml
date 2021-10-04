@@ -32,8 +32,8 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: photos
-          file: photos/Dockerfile
+          context: blog
+          file: blog/Dockerfile
           platforms: linux/arm64,linux/amd64
           push: true
           tags: ghcr.io/aldor007/mkaciuba-strapi:${{ steps.vars.outputs.tag }}

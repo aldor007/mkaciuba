@@ -1,10 +1,9 @@
 import React from "react";
-import { FacebookProvider, Page } from 'react-facebook';
 import { useQuery } from '@apollo/client/react';
 import gql from  'graphql-tag';
 import { useWebPSupportCheck } from "react-use-webp-support-check";
 import { Query } from '@mkaciuba/api';
-import { toImage } from "@mkaciuba/image";
+import { toImage, ImageComponent } from "@mkaciuba/image";
 import { generatePath, Link} from 'react-router-dom';
 import { AppRoutes } from '../routes';
 import { Loading, ErrorPage} from "@mkaciuba/ui-kit";
@@ -25,6 +24,10 @@ const GET_FOOTER = gql`
           height
         }
       }
+    }
+    tags {
+      name
+      slug
     }
     footer {
       FeaturedCategories {
@@ -77,9 +80,19 @@ export const Footer = () => {
   const featuredCategories = data.footer.FeaturedCategories.filter(f => f.url).map( f => (
     <li className="leading-7 hover:underline text-lg 	leading-snug font-serif  text-xl " key={f.name}>
       <Link to={f.url}>
-        <p>{f.name}</p>
-        {/* {f.image && <ImageComponent thumbnails={item.image.matchingThumbnails} defaultImage={defaultImages[item.id]} /> } */}
+        {!f.image && <p>{f.name}</p>}
+        {f.image && <ImageComponent thumbnails={f.image.matchingThumbnails}  /> }
 
+      </Link>
+    </li>
+  ))
+
+  const tags = data.tags.map( t => (
+    <li className="leading-7 hover:underline text-lg m-2	leading-snug font-serif  text-xl float-right" key={t.name}>
+      <Link to={generatePath(AppRoutes.tag.path, {
+        slug: t.slug
+      })}>
+        <p>{t.name}</p>
       </Link>
     </li>
   ))
@@ -89,11 +102,10 @@ return (
   <div className="w-full sm:mx-auto  text-gray-700 bg-gray-100 mt-8 pt-8">
     <div className="flex flex-col max-w-screen-xl  mx-auto  md:flex-row">
     <div className="flex-coll overflow-hidden sm:my-1 sm:px-1 sm:w-1/2 md:my-px md:px-px md:w-1/2 lg:my-2 lg:px-2 lg:w-1/3 xl:my-2 xl:px-2 xl:w-1/3 pb-6">
-      <h1 className="uppercase px-1 my-1  text-lg  font-semibold leading-snug font-serif  text-xl text-center">Facebook</h1>
-      <FacebookProvider appId="1724717534454966">
-        <Page href="https://www.facebook.com/mkaciubapl" tabs="timeline" />
-      </FacebookProvider>
-
+      <h1 className="uppercase px-1 my-1  text-lg  font-semibold leading-snug font-serif  text-xl text-center">Tags</h1>
+      <ul className="text-lg 	leading-snug font-serif  text-xl ">
+      {tags}
+      </ul>
      </div>
 
     <div className="flex-coll overflow-hidden sm:my-1 sm:px-1 sm:w-1/2 md:my-px md:px-px md:w-1/2 lg:my-2 lg:px-2 lg:w-1/3 xl:my-2 xl:px-2 xl:w-1/3 pb-6">

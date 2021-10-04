@@ -1,6 +1,11 @@
 
 import { UploadFile } from '@mkaciuba/api';
 import React, { RefObject, useState} from 'react';
+import { findImageForWidth } from '..';
+import { useWebPSupportCheck } from "react-use-webp-support-check";
+import {
+  useWindowWidth
+} from '@react-hook/window-size';
 
 export interface Image {
   url: string
@@ -35,7 +40,7 @@ export const toImage = (upload: UploadFile) =>  {
 }
 export interface ImageComponentProps {
   thumbnails: Image[]
-  defaultImage: Image,
+  defaultImage?: Image,
   ref?: RefObject<HTMLImageElement>
   onClick?: any
   alt?: string
@@ -43,6 +48,11 @@ export interface ImageComponentProps {
 
 export const ImageComponent = React.forwardRef(({thumbnails, defaultImage, onClick, alt} :ImageComponentProps, ref: RefObject<HTMLImageElement>) => {
   const [loading, setLoading] = useState(true)
+  const webp = useWebPSupportCheck();
+  const width = useWindowWidth();
+  if (!defaultImage) {
+    defaultImage = findImageForWidth(thumbnails, width, webp )
+  }
   let classes = 'bg-gray-300';
   if (loading) {
     classes += ' animate-pulse bg-opacity-15	'

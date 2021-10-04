@@ -665,6 +665,7 @@ export type Query = {
   postByPermalink?: Maybe<Post>;
   prevNextPost?: Maybe<Array<Maybe<Post>>>;
   relatedPosts?: Maybe<Array<Maybe<Post>>>;
+  tagBySlug?: Maybe<Tag>;
 };
 
 
@@ -792,6 +793,11 @@ export type QueryPrevNextPostArgs = {
 
 
 export type QueryRelatedPostsArgs = {
+  slug?: Maybe<Scalars['String']>;
+};
+
+
+export type QueryTagBySlugArgs = {
   slug?: Maybe<Scalars['String']>;
 };
 

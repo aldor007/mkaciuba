@@ -199,7 +199,10 @@ export const Post = () => {
       <div className="max-w-screen-xl mx-auto post-text">
             {post.tags.map(t =>
               <div className="p-3 bg-gray-300 m-1 float-right">
-                {t.name}
+                <Link to={generatePath(AppRoutes.tag.path, {
+                  slug: t.slug,
+                })}> {t.name}
+                </Link>
               </div>
             )}
               <div className="clear-right"></div>

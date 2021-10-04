@@ -11,7 +11,7 @@ import { Posts, POST_TYPE } from '../components/Posts';
 
 const GET_POST_CATEGORY = gql`
   query ($slug: String!) {
-  postCategoryBySlug(
+    tagBySlug(
     slug: $slug
   ) {
     id
@@ -19,26 +19,26 @@ const GET_POST_CATEGORY = gql`
   }
 }
 `;
-export const PostCategory = () => {
+export const PostTag = () => {
   const { slug } = useParams<{slug: string}>();
   const { loading, error, data } = useQuery<Query>(GET_POST_CATEGORY, {
     variables: { slug},
   });
   if (loading) return <Loading/>;
   if (error) {
-    console.error('Categories', error)
+    console.error('Tags ', error)
     return <ErrorPage code={500} message={error.message} />
    };
-  const category = data.postCategoryBySlug;
-  if (!category) {
-    return <ErrorPage code={404} message={'Category no found'} />
+  const tag = data.tagBySlug;
+  if (!tag) {
+    return <ErrorPage code={404} message={'Tag no found'} />
   }
 
   return  (
     <>
     <Header/>
-    <h1 className="text-center m-5 text-4xl leading-snug font-serif ">Posty z kategorii: {category.name}</h1>
-    <Posts id={category.id} type={POST_TYPE.CATGORY}/>
+    <h1 className="text-center m-5 text-4xl leading-snug font-serif ">Posty z tagu: {tag.name}</h1>
+    <Posts id={tag.id} type={POST_TYPE.TAG}/>
     <Footer></Footer>
     </>
   )

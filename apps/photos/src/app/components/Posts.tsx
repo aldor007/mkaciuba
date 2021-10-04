@@ -47,9 +47,9 @@ const GET_POSTS = gql`
 }
 `;
 const GET_POSTS_FROM_CAT = gql`
-  query posts($start: Int, $limit: Int, $categoryId: String) {
+  query posts($start: Int, $limit: Int, $id: String) {
   posts(limit: $limit, start: $start, sort:"id:desc", where: {
-    category: $categoryId
+    category: $id
   } ) {
     title
     id
@@ -72,21 +72,65 @@ const GET_POSTS_FROM_CAT = gql`
     }
  }
  postsCount(where: {
-   category: $categoryId
+   category: $id
  })
 }`
 
-export interface PostsProps {
-  categoryId?: String
+const GET_POSTS_FROM_TAG = gql`
+  query posts($start: Int, $limit: Int, $id: String) {
+  posts(limit: $limit, start: $start, sort:"id:desc", where: {
+    tags: $id
+  } ) {
+    title
+    id
+    publicationDate
+    slug
+    keywords
+    category {
+      name
+      slug
+    }
+    image {
+      matchingThumbnails(preset: "postlist") {
+        url
+        mediaQuery
+        webp
+        type
+        width
+        height
+      }
+    }
+ }
+ postsCount(where: {
+   tag: $id
+ })
+}`
+
+export enum POST_TYPE {
+  ALL,
+  CATGORY,
+  TAG
 }
-export const Posts = ( { categoryId }: PostsProps) => {
+export interface PostsProps {
+  id?: String
+  type: POST_TYPE
+
+}
+export const Posts = ( { id, type} : PostsProps) => {
   const webp = useWebPSupportCheck();
   const width = useWindowWidth();
   const [loadingMore, setLoadingMore] = useState(false);
   const [start, setStart] = useState(9)
   const limit = 6
-  const {loading, error, data, fetchMore } = useQuery<Query>(categoryId ? GET_POSTS_FROM_CAT : GET_POSTS, {
-    variables: {  start: 0, limit, categoryId},
+  let query = GET_POSTS;
+  if (type === POST_TYPE.CATGORY) {
+    query = GET_POSTS_FROM_CAT
+  } else if (type === POST_TYPE.TAG) {
+    query = GET_POSTS_FROM_TAG
+  }
+
+  const {loading, error, data, fetchMore } = useQuery<Query>(query, {
+    variables: {  start: 0, limit, id},
     notifyOnNetworkStatusChange: true
   });
 
