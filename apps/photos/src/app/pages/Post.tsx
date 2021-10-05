@@ -104,12 +104,16 @@ export const Post = () => {
   const [prevPost, nextPost] = data.prevNextPost;
 
   const returnArrow = (post: PostType, shouldShow: boolean, onHover, headingText, icon, direction: string) => {
+    let title = post.title.substring(0, 13);
+    if (post.title.length > 13) {
+      title += '...'
+    }
     const inner = direction.includes('right') ? (<><div className="flex-cols m-2 font-bold	text-xl	">
       <h1 className="text-lg	text-gray-400	">{headingText}</h1>
         <Link to={generatePath(AppRoutes.post.path, {
           slug: post.slug,
         })}>
-        <h2 className="text-gray-600">{post.title}</h2>
+        <h2 className="text-gray-600">{title}</h2>
           </Link>
     </div>
     <div className="flex-col">
@@ -134,7 +138,7 @@ export const Post = () => {
           <Link to={generatePath(AppRoutes.post.path, {
             slug: post.slug,
           })}>
-          <h2 className="text-gray-600">{post.title}</h2>
+          <h2 className="text-gray-600">{title}</h2>
             </Link>
           </div>
         </div>
@@ -196,9 +200,9 @@ export const Post = () => {
               __html: post.text
               }}/>}
       </div>
-      <div className="max-w-screen-xl mx-auto post-text">
+      <div className="max-w-screen-xl mx-auto ">
             {post.tags.map(t =>
-              <div className="p-3 bg-gray-300 m-1 float-right">
+              <div className="p-3 bg-gray-300 m-1 text-gray-800 hover:underline	float-right">
                 <Link to={generatePath(AppRoutes.tag.path, {
                   slug: t.slug,
                 })}> {t.name}

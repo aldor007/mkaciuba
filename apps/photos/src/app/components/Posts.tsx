@@ -3,8 +3,9 @@ import React, { RefObject, useCallback, useState  } from "react";
 import { useQuery } from '@apollo/client/react';
 import gql from  'graphql-tag';
 
+import {useHistory} from "react-router-dom"
 import { Link } from 'react-router-dom'
-import { generatePath } from "react-router";
+import { generatePath, useLocation } from "react-router";
 import { findImageForWidth, ImageComponent } from "@mkaciuba/image";
 import { useWebPSupportCheck } from "react-use-webp-support-check";
 import MetaTags from 'react-meta-tags';
@@ -116,12 +117,25 @@ export interface PostsProps {
   type: POST_TYPE
 
 }
+
+function useQueryParams() {
+  return new URLSearchParams(useLocation().search);
+}
+
 export const Posts = ( { id, type} : PostsProps) => {
+  const history = useHistory();
+  const queryParams = useQueryParams();
   const webp = useWebPSupportCheck();
   const width = useWindowWidth();
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [start, setStart] = useState(9)
   const limit = 6
+  const [loadingMore, setLoadingMore] = useState(false);
+  let page = queryParams.get('page');
+  let startPage = parseInt(queryParams.get('page')) * limit;
+  if (!page) {
+    page = '1'
+    startPage = 0;
+  }
+  const [start, setStart] = useState(parseInt(page) * limit)
   let query = GET_POSTS;
   if (type === POST_TYPE.CATGORY) {
     query = GET_POSTS_FROM_CAT
@@ -130,7 +144,7 @@ export const Posts = ( { id, type} : PostsProps) => {
   }
 
   const {loading, error, data, fetchMore } = useQuery<Query>(query, {
-    variables: {  start: 0, limit, id},
+    variables: {  start: startPage , limit, id},
     notifyOnNetworkStatusChange: true
   });
 
@@ -152,6 +166,10 @@ export const Posts = ( { id, type} : PostsProps) => {
 
   const handleLoadMore = useCallback(() => {
     setStart(start + limit)
+    history.push({
+      pathname: window.location.pathname,
+      search: '?page=' + Math.floor((start + limit) / limit)
+    })
     fetchMore({
       variables: {
          start,
@@ -195,9 +213,8 @@ export const Posts = ( { id, type} : PostsProps) => {
           singlePost(item, index)
         )}
   </div>
-  { hasNextPage() &&<div className="max-w-screen-xl m-4 mx-auto text-center  " >
+  { hasNextPage() &&<div className="max-w-screen-xl w-full m-4 mx-auto text-center  " >
       <button onClick={handleLoadMore}  className="max-w-screen-xl m-4 mx-auto text-center border-4  px-5 py-3 rounded-xl text-sm font-medium text-indigo-600 bg-white outline-none focus:outline-none m-1 hover:m-0 focus:m-0 border border-indigo-600 hover:border-4 focus:border-4 hover:border-indigo-800 hover:text-indigo-800 focus:border-purple-200 active:border-grey-900 active:text-grey-900 transition-all">
-        <i className="mdi mdi-circle-outline mr-2 text-xl align-middle leading-none"></i>
         Załaduj więcej</button>
   </div> }
   </>
