@@ -20,10 +20,6 @@ export interface PostCardProps {
 export const PostCard = ({ post, inColumn }: PostCardProps) => {
     const webp = useWebPSupportCheck();
     const width = useWindowWidth();
-    let defaultImage = null;
-    if (post.image) {
-      defaultImage = findImageForWidth(post.image.matchingThumbnails, width, webp)
-    }
     let headerClass ="relative  mx-auto max-w-screen-xl "
     let imageClass ="absolute text-lg bg-gray	leading-snug font-serif  top-1/3 sm:top-1/4 lg:top-1/2 z-10 h-16 min-w-full	 justify-center items-center  text-white"
     if (inColumn) {
@@ -38,7 +34,7 @@ export const PostCard = ({ post, inColumn }: PostCardProps) => {
     return (
       <div className={headerClass} key={`${post.title}-${post.id}`}>
         <div className="bg-cover bg-center z-0">
-        {post.image && <ImageComponent thumbnails={post.image.matchingThumbnails} defaultImage={defaultImage} /> }
+        {post.mainImage && <ImageComponent thumbnails={post.mainImage} /> }
         </div>
         <div className={imageClass}>
           <div className="container text-center overflow-hidden	 bg-gray-300 bg-opacity-40	 items-center mx-auto p-8">

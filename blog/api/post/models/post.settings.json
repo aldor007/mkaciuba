@@ -72,6 +72,25 @@
       "collection": "tag",
       "via": "posts",
       "dominant": true
+    },
+    "post_image_preset": {
+      "type": "enumeration",
+      "enum": [
+        "postlist",
+        "postimg_ac"
+      ],
+      "private": true,
+      "default": "postlist"
+    },
+    "cover_image": {
+      "model": "file",
+      "via": "related",
+      "allowedTypes": [
+        "images"
+      ],
+      "plugin": "upload",
+      "required": false,
+      "pluginOptions": {}
     }
   }
 }

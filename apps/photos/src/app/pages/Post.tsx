@@ -25,7 +25,14 @@ const GET_POST = gql`
       id
       title
       publicationDate
-
+      coverImage {
+        url
+        mediaQuery
+        webp
+        type
+        width
+        height
+      }
       gallery {
         slug
       }
@@ -168,6 +175,7 @@ export const Post = () => {
         {prevPost && returnArrow(prevPost, showPrev, (value) => () => setShowPrev(value), 'Starsze', faArrowLeft, 'left-0 ') }
         {nextPost && returnArrow(nextPost, showNext, (value) => () => setShowNext(value), 'Nowsze', faArrowRight, 'right-0 -m-4') }
       </div>
+      {post.coverImage && <div className="w-full"><ImageComponent thumbnails={post.coverImage} /></div>}
         <div className="text-lg  	leading-snug font-serif  justify-center items-center  text-black">
           <div className="container text-center  items-center mx-auto p-3">
             <div className="row">

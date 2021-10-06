@@ -33,15 +33,13 @@ const GET_POSTS = gql`
       name
       slug
     }
-    image {
-      matchingThumbnails(preset: "postlist") {
-        url
-        mediaQuery
-        webp
-        type
-        width
-        height
-      }
+    mainImage {
+      url
+      mediaQuery
+      webp
+      type
+      width
+      height
     }
  }
  postsCount
@@ -61,15 +59,13 @@ const GET_POSTS_FROM_CAT = gql`
       name
       slug
     }
-    image {
-      matchingThumbnails(preset: "postlist") {
-        url
-        mediaQuery
-        webp
-        type
-        width
-        height
-      }
+    mainImage {
+      url
+      mediaQuery
+      webp
+      type
+      width
+      height
     }
  }
  postsCount(where: {
@@ -91,15 +87,13 @@ const GET_POSTS_FROM_TAG = gql`
       name
       slug
     }
-    image {
-      matchingThumbnails(preset: "postlist") {
-        url
-        mediaQuery
-        webp
-        type
-        width
-        height
-      }
+    mainImage {
+      url
+      mediaQuery
+      webp
+      type
+      width
+      height
     }
  }
  postsCount(where: {
@@ -130,11 +124,12 @@ export const Posts = ( { id, type} : PostsProps) => {
   const limit = 6
   const [loadingMore, setLoadingMore] = useState(false);
   let page = queryParams.get('page');
-  let startPage = parseInt(queryParams.get('page')) * limit;
   if (!page) {
     page = '1'
-    startPage = 0;
   }
+  let startPage = (parseInt(queryParams.get('page')) - 1) * limit;
+
+
   const [start, setStart] = useState(parseInt(page) * limit)
   let query = GET_POSTS;
   if (type === POST_TYPE.CATGORY) {
@@ -214,7 +209,7 @@ export const Posts = ( { id, type} : PostsProps) => {
         )}
   </div>
   { hasNextPage() &&<div className="max-w-screen-xl w-full m-4 mx-auto text-center  " >
-      <button onClick={handleLoadMore}  className="max-w-screen-xl m-4 mx-auto text-center border-4  px-5 py-3 rounded-xl text-sm font-medium text-indigo-600 bg-white outline-none focus:outline-none m-1 hover:m-0 focus:m-0 border border-indigo-600 hover:border-4 focus:border-4 hover:border-indigo-800 hover:text-indigo-800 focus:border-purple-200 active:border-grey-900 active:text-grey-900 transition-all">
+      <button onClick={handleLoadMore}  className="w-full mx-auto text-center border-4  px-5 py-3 rounded-xl text-sm font-medium text-indigo-600 bg-white outline-none border border-indigo-600 hover:border-4 hover:border-indigo-800 hover:text-indigo-800 transition-all">
         Załaduj więcej</button>
   </div> }
   </>

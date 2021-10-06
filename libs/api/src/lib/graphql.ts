@@ -221,6 +221,11 @@ export enum Enum_Post_Gallery_Template {
   Description = 'description'
 }
 
+export enum Enum_Post_Post_Image_Preset {
+  Postlist = 'postlist',
+  PostimgAc = 'postimg_ac'
+}
+
 export type FileInfoInput = {
   name?: Maybe<Scalars['String']>;
   alternativeText?: Maybe<Scalars['String']>;
@@ -323,7 +328,7 @@ export type MenuInput = {
   updated_by?: Maybe<Scalars['ID']>;
 };
 
-export type Morph = UsersPermissionsMe | UsersPermissionsMeRole | UsersPermissionsLoginPayload | UserPermissionsPasswordPayload | Image | ValidationToken | GalleryCategories | Category | CategoryConnection | CategoryAggregator | CategoryGroupBy | CategoryConnectionId | CategoryConnectionCreated_At | CategoryConnectionUpdated_At | CategoryConnectionName | CategoryConnectionSlug | CategoryConnectionSlugOverride | CategoryConnectionPublic | CategoryConnectionPublicationDate | CategoryConnectionFile | CategoryConnectionImage | CategoryConnectionGallery | CategoryConnectionKeywords | CategoryConnectionDescription | CreateCategoryPayload | UpdateCategoryPayload | DeleteCategoryPayload | Footer | UpdateFooterPayload | DeleteFooterPayload | Gallery | CreateGalleryPayload | UpdateGalleryPayload | DeleteGalleryPayload | Menu | UpdateMenuPayload | DeleteMenuPayload | PostCategory | CreatePostCategoryPayload | UpdatePostCategoryPayload | DeletePostCategoryPayload | Post | PostConnection | PostAggregator | PostGroupBy | PostConnectionId | PostConnectionCreated_At | PostConnectionUpdated_At | PostConnectionText | PostConnectionTitle | PostConnectionPublicationDate | PostConnectionGallery | PostConnectionImage | PostConnectionKeywords | PostConnectionDescription | PostConnectionCategory | PostConnectionSlug | PostConnectionPermalink | PostConnectionContent_Position | PostConnectionGallery_Template | PostConnectionPublished_At | CreatePostPayload | UpdatePostPayload | DeletePostPayload | Tag | TagConnection | TagAggregator | TagGroupBy | TagConnectionId | TagConnectionCreated_At | TagConnectionUpdated_At | TagConnectionName | TagConnectionSlug | CreateTagPayload | UpdateTagPayload | DeleteTagPayload | UploadFile | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsUser | CreateUserPayload | UpdateUserPayload | ComponentMenuConfigMenu;
+export type Morph = UsersPermissionsMe | UsersPermissionsMeRole | UsersPermissionsLoginPayload | UserPermissionsPasswordPayload | Image | ValidationToken | GalleryCategories | Category | CategoryConnection | CategoryAggregator | CategoryGroupBy | CategoryConnectionId | CategoryConnectionCreated_At | CategoryConnectionUpdated_At | CategoryConnectionName | CategoryConnectionSlug | CategoryConnectionSlugOverride | CategoryConnectionPublic | CategoryConnectionPublicationDate | CategoryConnectionFile | CategoryConnectionImage | CategoryConnectionGallery | CategoryConnectionKeywords | CategoryConnectionDescription | CreateCategoryPayload | UpdateCategoryPayload | DeleteCategoryPayload | Footer | UpdateFooterPayload | DeleteFooterPayload | Gallery | CreateGalleryPayload | UpdateGalleryPayload | DeleteGalleryPayload | Menu | UpdateMenuPayload | DeleteMenuPayload | PostCategory | CreatePostCategoryPayload | UpdatePostCategoryPayload | DeletePostCategoryPayload | Post | PostConnection | PostAggregator | PostGroupBy | PostConnectionId | PostConnectionCreated_At | PostConnectionUpdated_At | PostConnectionText | PostConnectionTitle | PostConnectionPublicationDate | PostConnectionGallery | PostConnectionImage | PostConnectionKeywords | PostConnectionDescription | PostConnectionCategory | PostConnectionSlug | PostConnectionPermalink | PostConnectionContent_Position | PostConnectionGallery_Template | PostConnectionCover_Image | PostConnectionPublished_At | CreatePostPayload | UpdatePostPayload | DeletePostPayload | Tag | TagConnection | TagAggregator | TagGroupBy | TagConnectionId | TagConnectionCreated_At | TagConnectionUpdated_At | TagConnectionName | TagConnectionSlug | CreateTagPayload | UpdateTagPayload | DeleteTagPayload | UploadFile | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsUser | CreateUserPayload | UpdateUserPayload | ComponentMenuConfigMenu;
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -457,8 +462,11 @@ export type Post = {
   permalink?: Maybe<Scalars['String']>;
   content_position?: Maybe<Enum_Post_Content_Position>;
   gallery_template?: Maybe<Enum_Post_Gallery_Template>;
+  cover_image?: Maybe<UploadFile>;
   published_at?: Maybe<Scalars['DateTime']>;
   tags?: Maybe<Array<Maybe<Tag>>>;
+  mainImage?: Maybe<Array<Maybe<Image>>>;
+  coverImage?: Maybe<Array<Maybe<Image>>>;
 };
 
 
@@ -511,6 +519,12 @@ export type PostConnectionCategory = {
 export type PostConnectionContent_Position = {
   __typename?: 'PostConnectionContent_position';
   key?: Maybe<Scalars['String']>;
+  connection?: Maybe<PostConnection>;
+};
+
+export type PostConnectionCover_Image = {
+  __typename?: 'PostConnectionCover_image';
+  key?: Maybe<Scalars['ID']>;
   connection?: Maybe<PostConnection>;
 };
 
@@ -615,6 +629,7 @@ export type PostGroupBy = {
   permalink?: Maybe<Array<Maybe<PostConnectionPermalink>>>;
   content_position?: Maybe<Array<Maybe<PostConnectionContent_Position>>>;
   gallery_template?: Maybe<Array<Maybe<PostConnectionGallery_Template>>>;
+  cover_image?: Maybe<Array<Maybe<PostConnectionCover_Image>>>;
   published_at?: Maybe<Array<Maybe<PostConnectionPublished_At>>>;
 };
 
@@ -632,6 +647,8 @@ export type PostInput = {
   content_position?: Maybe<Enum_Post_Content_Position>;
   gallery_template?: Maybe<Enum_Post_Gallery_Template>;
   tags?: Maybe<Array<Maybe<Scalars['ID']>>>;
+  post_image_preset?: Maybe<Enum_Post_Post_Image_Preset>;
+  cover_image?: Maybe<Scalars['ID']>;
   published_at?: Maybe<Scalars['DateTime']>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
@@ -1232,6 +1249,8 @@ export type EditPostInput = {
   content_position?: Maybe<Enum_Post_Content_Position>;
   gallery_template?: Maybe<Enum_Post_Gallery_Template>;
   tags?: Maybe<Array<Maybe<Scalars['ID']>>>;
+  post_image_preset?: Maybe<Enum_Post_Post_Image_Preset>;
+  cover_image?: Maybe<Scalars['ID']>;
   published_at?: Maybe<Scalars['DateTime']>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;

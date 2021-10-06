@@ -2,6 +2,7 @@ const { getStoragePath, base64Url } = require('../../../lib/index');
 const slugify = require('slugify');
 const { AuthenticationError, ForbiddenError, UserInputError } = require('apollo-server-errors');
 const jwt = require('jsonwebtoken');
+const { getImage, getImagesFromPreset } = require('../../../lib/image');
 
 const getCacheKey = (prefix, options = {}, obj = {}) => {
   if (options.where) {
@@ -23,9 +24,33 @@ module.exports = {
       postByPermalink(permalink: String): Post
       prevNextPost(slug: String): [Post]
       relatedPosts(slug: String): [Post]
-  }
+    }
+    extend type Post {
+      mainImage: [Image]
+      coverImage: [Image]
+    }
   `,
   resolver: {
+    Post: {
+      mainImage: {
+        resolverOf: 'application::post.post.find',
+        resolver: async (obj, options, { context }, info) => {
+          if (!obj.image) {
+            return null
+          }
+          return getImagesFromPreset(obj.image, obj.post_image_preset || 'postlist')
+        }
+      },
+      coverImage: {
+        resolverOf: 'application::post.post.find',
+        resolver: async (obj, options, { context }, info) => {
+          if (!obj.cover_image) {
+            return null
+          }
+          return getImagesFromPreset(obj.cover_image, 'coverimg')
+        }
+      }
+    },
     Query: {
       post: {
         resolverOf: 'application::post.post.find',
@@ -53,14 +78,8 @@ module.exports = {
           search._sort = options.sort || 'id:desc'
           search.publicationDate_lt = new Date();
           const key = getCacheKey('posts' + search.publicationDate_lt, options);
-          // let posts = await strapi.services.cache.get(key)
           info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
-          // if (posts) {
-          //   return posts;
-          // }
           let posts = await strapi.services.post.find(search);
-
-          // strapi.services.cache.set(key, posts, 60*60);
           return posts;
         }
       },
@@ -125,6 +144,9 @@ module.exports = {
           let post = await strapi.services.cache.get(key)
           info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
           post = await strapi.services.post.findOne(search);
+          if (!post) {
+            return null;
+          }
           const search_lt = {
             id_lt: post.id,
             publicationDate_lt: search.publicationDate_lt,
@@ -150,6 +172,9 @@ module.exports = {
           let post = await strapi.services.cache.get(key)
           info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
           post = await strapi.services.post.findOne(search);
+          if (!post) {
+            return null;
+          }
           const search_related = {
             id_ne: post.id,
             publicationDate_lt: search.publicationDate_lt,
