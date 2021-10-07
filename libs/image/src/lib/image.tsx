@@ -44,16 +44,17 @@ export interface ImageComponentProps {
   ref?: RefObject<HTMLImageElement>
   onClick?: any
   alt?: string
+  className?: string
 }
 
-export const ImageComponent = React.forwardRef(({thumbnails, defaultImage, onClick, alt} :ImageComponentProps, ref: RefObject<HTMLImageElement>) => {
+export const ImageComponent = React.forwardRef(({thumbnails, defaultImage, onClick, alt, className} :ImageComponentProps, ref: RefObject<HTMLImageElement>) => {
   const [loading, setLoading] = useState(true)
   const webp = useWebPSupportCheck();
   const width = useWindowWidth();
   if (!defaultImage) {
     defaultImage = findImageForWidth(thumbnails, width, webp )
   }
-  let classes = 'bg-gray-300';
+  let classes = 'bg-gray-300 ' + className;
   if (loading) {
     classes += ' animate-pulse bg-opacity-15	'
   }

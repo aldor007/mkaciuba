@@ -74,16 +74,13 @@ const GET_POST = gql`
     title
     slug
     publicationDate
-    image {
-      id
-      matchingThumbnails(preset: "postlist") {
-          url
-          mediaQuery
-          webp
-          type
-          width
-          height
-      }
+    mainImage {
+        url
+        mediaQuery
+        webp
+        type
+        width
+        height
     }
     category {
       name
@@ -175,7 +172,9 @@ export const Post = () => {
         {prevPost && returnArrow(prevPost, showPrev, (value) => () => setShowPrev(value), 'Starsze', faArrowLeft, 'left-0 ') }
         {nextPost && returnArrow(nextPost, showNext, (value) => () => setShowNext(value), 'Nowsze', faArrowRight, 'right-0 -m-4') }
       </div>
-      {post.coverImage && <div className="w-full"><ImageComponent thumbnails={post.coverImage} /></div>}
+      {post.coverImage && <div className="w-full " ><ImageComponent thumbnails={post.coverImage} className=""/></div>}
+      <div className="post-content -mt-16 w-full  max-w-screen-xl mx-auto">
+        <div className="mx-auto bg-red-400">
         <div className="text-lg  	leading-snug font-serif  justify-center items-center  text-black">
           <div className="container text-center  items-center mx-auto p-3">
             <div className="row">
@@ -222,12 +221,15 @@ export const Post = () => {
       </div>
       <>
       </>
+
     <h1 className="m-8 font-black text-lg 	leading-snug font-serif  md:text-3xl sm:text-1xl text-4xl text-center">Powiązane posty</h1>
     <div className="max-w-screen-xl mx-auto grid xl:grid-cols-2  gap-4">
 
         {data.relatedPosts && data.relatedPosts.map((post) => (
           <PostCard post={post} key={post.id} />
         ))}
+      </div>
+      </div>
       </div>
     <Footer></Footer>
     </>
