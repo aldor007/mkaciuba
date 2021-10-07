@@ -14,8 +14,8 @@ ADD ./babel.config.json /opt/app/babel.config.json
 ADD ./tailwind.config.js /opt/app/tailwind.config.js
 ADD ./postcss.config.js /opt/app/postcss.config.js
 ENV NODE_ENV=production
-RUN cp /opt/app/apps/photos/environments/environments.prod.ts /opt/app/apps/photos/environments/environments.ts
-RUN cp /opt/app/apps/photos-ssr/environments/environments.prod.ts /opt/app/apps/photos-ssr/environments/environments.ts
+RUN cp /opt/app/apps/photos/apps/photos/src/environments/environments.prod.ts /opt/app/apps/photos/src/environments/environments.ts
+RUN cp /opt/app/apps/photos-ssr/src/environments/environments.prod.ts /opt/app/apps/photos-ssr/src/environments/environments.ts
 RUN yarn nx build photos --prod --optimization --nocache  --outputHashing=bundles
 
 ADD ./dist/apps/photos/manifest.json /opt/app/dist/apps/photos/manifest.json
