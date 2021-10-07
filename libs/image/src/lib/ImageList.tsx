@@ -1,4 +1,4 @@
-import React, { RefObject, useCallback, useState } from "react";
+import React, { RefObject, useCallback, useState} from "react";
 import { gql, useQuery } from '@apollo/client';
 import { useWebPSupportCheck } from "react-use-webp-support-check";
 import {
@@ -81,11 +81,13 @@ export const findImageForWidth = (images: Image[], width: number, webp: boolean)
   return filterPresets[minIndex];
 }
 
+
 export const ImageList = ({ categorySlug, minSize }: ImageListProps) => {
   const webp = useWebPSupportCheck();
   const width = useWindowWidth({
     initialWidth: 1000
   });
+
   const [loadingMore, setLoadingMore] = useState(false);
   const limit = 12;
   const [start, setStart] = useState(limit)

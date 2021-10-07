@@ -18,6 +18,41 @@ export interface Image {
 }
 
 
+
+export const findImageForWidthBigger = (images: Image[], width: number, webp: boolean) => {
+  const filterPresets = images.filter(p => {
+    if (p.webp == webp) {
+      return p;
+    }
+  });
+  let minIndex = 0;
+  let minValue = Math.abs(width - filterPresets[0].width);
+  const lowerZero = [];
+  filterPresets.forEach((p, index) => {
+    const tmpValue = width - p.width;
+    if (tmpValue < 0) {
+      lowerZero.push({
+        value: tmpValue,
+        index,
+      });
+    }
+    if (tmpValue < minValue) {
+      minIndex = index;
+      minValue = tmpValue;
+    }
+  });
+  minValue = -1000000;
+  lowerZero.forEach(element => {
+    if (element.value > minValue) {
+      minValue = element.value;
+      minIndex = element.index;
+    }
+  });
+
+  return filterPresets[minIndex];
+}
+
+
 export const toImage = (upload: UploadFile) =>  {
   const image: Image = {
     url: upload.url,
@@ -38,6 +73,12 @@ export const toImage = (upload: UploadFile) =>  {
 
   return image;
 }
+
+export enum DefaultImgSizing {
+  DEFAULT = 2,
+  BIGGER
+}
+
 export interface ImageComponentProps {
   thumbnails: Image[]
   defaultImage?: Image,
@@ -45,27 +86,49 @@ export interface ImageComponentProps {
   onClick?: any
   alt?: string
   className?: string
+  defaultImgSizing?: DefaultImgSizing
 }
 
-export const ImageComponent = React.forwardRef(({thumbnails, defaultImage, onClick, alt, className} :ImageComponentProps, ref: RefObject<HTMLImageElement>) => {
+export const findImageForType = (images: Image[], webp: boolean) => {
+  const filterPresets = images.filter(p => {
+    if (p.webp == webp) {
+      return p;
+    }
+  });
+
+  return filterPresets[filterPresets.length - 1];
+}
+
+const addDatePrefix = (url) => {
+    let prefix = '?';
+    if (url.src.indexOf('?') !== -1) {
+      prefix = '&';
+    }
+    return url + prefix + new Date
+}
+
+export const ImageComponent = React.forwardRef(({thumbnails, defaultImage, onClick, alt, className, defaultImgSizing }:ImageComponentProps, ref: RefObject<HTMLImageElement>) => {
   const [loading, setLoading] = useState(true)
   const webp = useWebPSupportCheck();
-  const width = useWindowWidth();
+  const width = useWindowWidth({ initialWidth: 1000})
   if (!defaultImage) {
-    defaultImage = findImageForWidth(thumbnails, width, webp )
+    if (!defaultImgSizing || defaultImgSizing == DefaultImgSizing.DEFAULT) {
+      defaultImage = findImageForWidth(thumbnails, width, webp)
+    } else {
+      defaultImage = findImageForWidthBigger(thumbnails, width, webp)
+    }
   }
-  let classes = 'bg-gray-300 ' + className;
+  let classes = 'bg-gray-300 ' + className || '';
   if (loading) {
     classes += ' animate-pulse bg-opacity-15	'
   }
 
   const imageOnError = (img) => {
     setTimeout(() => {
-      let prefix = '?';
-      if (img.src.indexOf('?') !== -1) {
-        prefix = '&';
-      }
-      img.src += prefix + +new Date
+      defaultImage.url = addDatePrefix(defaultImage.url)
+      thumbnails.forEach(e => {
+        e.url = addDatePrefix(e.url)
+      })
     }, 250)
   }
   return (

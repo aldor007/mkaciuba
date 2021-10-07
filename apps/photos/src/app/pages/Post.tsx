@@ -8,7 +8,7 @@ import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client/react';
 import gql from  'graphql-tag'
 import { Query, Post as PostType, Enum_Post_Content_Position  } from '@mkaciuba/api';
-import { ImageComponent, ImageList } from '@mkaciuba/image';
+import { DefaultImgSizing, ImageComponent, ImageList } from '@mkaciuba/image';
 import MetaTags from 'react-meta-tags';
 import { Link } from 'react-router-dom'
 import { generatePath } from "react-router";
@@ -172,7 +172,7 @@ export const Post = () => {
         {prevPost && returnArrow(prevPost, showPrev, (value) => () => setShowPrev(value), 'Starsze', faArrowLeft, 'left-0 ') }
         {nextPost && returnArrow(nextPost, showNext, (value) => () => setShowNext(value), 'Nowsze', faArrowRight, 'right-0 -m-4') }
       </div>
-      {post.coverImage && <div className="w-full " ><ImageComponent thumbnails={post.coverImage} className=""/></div>}
+      {post.coverImage && <div className="w-full " ><ImageComponent thumbnails={post.coverImage} className="" defaultImgSizing={DefaultImgSizing.BIGGER}/></div>}
       <div className="post-content -mt-16 w-full  max-w-screen-xl mx-auto">
         <div className="mx-auto bg-red-400">
         <div className="text-lg  	leading-snug font-serif  justify-center items-center  text-black">

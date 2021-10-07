@@ -52,30 +52,34 @@ const presetList = [
 exports.presetList = presetList;
 
 const allPresets = presetList.concat([
-  new Preset('categorylistbig', 1500, 1000, '(max-width: 1300px)', 'jpeg'),
-  new Preset('categorylistbigwebp', 1500, 1000, '(max-width: 1300px)', 'webp'),
-  new Preset('categorylist', 600, 450, '(max-width: 1000px)', 'jpeg'),
-  new Preset('categorylistwebp', 600, 450, '(max-width: 1000px)', 'webp'),
   new Preset('categorylists', 300, 225, '(max-width: 600px)', 'jpeg'),
   new Preset('categorylistwebps', 300, 225, '(max-width: 600px)', 'webp'),
-  new Preset('postlist', 1500, 1000, '(max-width: 1300px)', 'jpeg'),
-  new Preset('postlistwebp', 1500, 1000, '(max-width: 1300px)', 'webp'),
+  new Preset('categorylist', 600, 450, '(max-width: 1000px)', 'jpeg'),
+  new Preset('categorylistwebp', 600, 450, '(max-width: 1000px)', 'webp'),
+  new Preset('categorylistbig', 1500, 1000, '(max-width: 1300px)', 'jpeg'),
+  new Preset('categorylistbigwebp', 1500, 1000, '(max-width: 1300px)', 'webp'),
+
   new Preset('postlists', 350, 350, '(max-width: 375px)', 'jpeg'),
   new Preset('postlistwebps', 350, 350, '(max-width: 375px)', 'webp'),
-  new Preset('postimg_ac', 1500, 1000, '(max-width: 1300px)', 'jpeg'),
-  new Preset('postimg_ac_webp', 1500, 1000, '(max-width: 1300px)', 'webp'),
+  new Preset('postlist', 1500, 1000, '(max-width: 1300px)', 'jpeg'),
+  new Preset('postlistwebp', 1500, 1000, '(max-width: 1300px)', 'webp'),
+
   new Preset('postimg_ac_s', 750, 750, '(max-width: 600px)', 'jpeg'),
   new Preset('postimg_ac_webps', 750, 740, '(max-width: 600px)', 'webp'),
+  new Preset('postimg_ac', 1500, 1000, '(max-width: 1300px)', 'jpeg'),
+  new Preset('postimg_ac_webp', 1500, 1000, '(max-width: 1300px)', 'webp'),
+
   new Preset('featcatbig', 410, null, '(min-width: 600px)', 'jpeg'),
   new Preset('featcatbigwebps', 410, null, '(min-width: 600px)', 'webp'),
   new Preset('featcat', 410, null, '(max-width: 400px)', 'jpeg'),
   new Preset('featcatbigwebps', 410, null, '(max-width: 400px)', 'webp'),
-  new Preset('coverimg', 2900, 500, '(max-width: 2000px)', 'jpeg'),
-  new Preset('coverimgwebp', 2900, 500, '(max-width: 2000px)', 'webp'),
-  new Preset('coverimgm', 1300, 300, '(max-width: 1000px)', 'jpeg'),
-  new Preset('coverimgmwebp', 1300, 300, '(max-width: 1000px)', 'webp'),
-  new Preset('coverimgs', 600, 300, '(max-width: 600px)', 'jpeg'),
-  new Preset('coverimgswebp', 600, 300, '(max-width: 600px)', 'webp'),
+
+  new Preset('coverimgswebp', 600, 300, '(max-width: 500px)', 'webp'),
+  new Preset('coverimgs', 600, 300, '(max-width: 500px)', 'jpeg'),
+  new Preset('coverimgmwebp', 1300, 300, '(max-width: 500px)', 'webp'),
+  new Preset('coverimgm', 1300, 300, '(max-width: 1300px)', 'jpeg'),
+  new Preset('coverimgwebp', 2900, 500,'(min-width: 1300px)', 'webp'),
+  new Preset('coverimg', 2900, 500, '(min-width: 1300px)', 'jpeg'),
 ]);
 exports.allPresets = allPresets;
 
