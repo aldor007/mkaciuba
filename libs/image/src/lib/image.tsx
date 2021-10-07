@@ -101,10 +101,10 @@ export const findImageForType = (images: Image[], webp: boolean) => {
 
 const addDatePrefix = (url) => {
     let prefix = '?';
-    if (url.src.indexOf('?') !== -1) {
+    if (url.indexOf('?') !== -1) {
       prefix = '&';
     }
-    return url + prefix + new Date
+    return url + prefix + 'cache=' + Date.now()
 }
 
 export const ImageComponent = React.forwardRef(({thumbnails, defaultImage, onClick, alt, className, defaultImgSizing }:ImageComponentProps, ref: RefObject<HTMLImageElement>) => {
@@ -123,12 +123,13 @@ export const ImageComponent = React.forwardRef(({thumbnails, defaultImage, onCli
     classes += ' animate-pulse bg-opacity-15	'
   }
 
-  const imageOnError = (img) => {
+  const imageOnError = (e) => {
     setTimeout(() => {
-      defaultImage.url = addDatePrefix(defaultImage.url)
-      thumbnails.forEach(e => {
-        e.url = addDatePrefix(e.url)
-      })
+      if (e.target.errorCounter > 4) {
+        return;
+      }
+      e.target.src = addDatePrefix(e.target.src)
+      e.target.errorCounter = (e.target.errorCounter || 0)+ 1
     }, 250)
   }
   return (

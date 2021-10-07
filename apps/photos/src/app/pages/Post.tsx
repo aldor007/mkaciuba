@@ -18,6 +18,7 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons/faArrowLeft';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons/faArrowRight';
 import { PostCard } from '../components/PostCard';
 import { format } from "date-fns";
+import { Tag } from '../components/Tag';
 
 const GET_POST = gql`
   query ($postSlug: String!) {
@@ -159,6 +160,10 @@ export const Post = () => {
       </div>)
 }
 
+  let coverCss = ""
+  if (post.coverImage) {
+    coverCss = "-mt-12 relative"
+  }
   return  (
     <>
           <MetaTags>
@@ -172,11 +177,13 @@ export const Post = () => {
         {prevPost && returnArrow(prevPost, showPrev, (value) => () => setShowPrev(value), 'Starsze', faArrowLeft, 'left-0 ') }
         {nextPost && returnArrow(nextPost, showNext, (value) => () => setShowNext(value), 'Nowsze', faArrowRight, 'right-0 -m-4') }
       </div>
+      <div className="w-full h-full relative">
+      <div className="post w-full h-full">
       {post.coverImage && <div className="w-full " ><ImageComponent thumbnails={post.coverImage} className="" defaultImgSizing={DefaultImgSizing.BIGGER}/></div>}
-      <div className="post-content -mt-16 w-full  max-w-screen-xl mx-auto">
-        <div className="mx-auto bg-red-400">
+      <div className={"post-content w-full  max-w-screen-xl mx-auto " + coverCss}>
+        <div className={"mx-auto bg-gradient-to-b  from-gray-50 to-white	 p-2 rounded-md"}>
         <div className="text-lg  	leading-snug font-serif  justify-center items-center  text-black">
-          <div className="container text-center  items-center mx-auto p-3">
+          <div className={"container text-center  items-center mx-auto p-3 "}>
             <div className="row">
             <h1 className="font-black text-lg 	leading-snug font-serif  md:text-3xl sm:text-1xl text-4xl text-center">{post.title}</h1>
             </div>
@@ -209,12 +216,7 @@ export const Post = () => {
       </div>
       <div className="max-w-screen-xl mx-auto ">
             {post.tags.map(t =>
-              <div className="p-3 bg-gray-300 m-1 text-gray-800 hover:underline	float-right">
-                <Link to={generatePath(AppRoutes.tag.path, {
-                  slug: t.slug,
-                })}> {t.name}
-                </Link>
-              </div>
+                <Tag tag={t} className="float-right" />
             )}
               <div className="clear-right"></div>
       <hr className="divide-y m-8 bg-gray-700" />
@@ -231,7 +233,11 @@ export const Post = () => {
       </div>
       </div>
       </div>
+      </div>
+      <div className="">
     <Footer></Footer>
+        </div>
+        </div>
     </>
   )
 }

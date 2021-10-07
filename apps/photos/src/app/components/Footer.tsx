@@ -8,6 +8,7 @@ import { generatePath, Link} from 'react-router-dom';
 import { AppRoutes } from '../routes';
 import { Loading, ErrorPage} from "@mkaciuba/ui-kit";
 import { FacebookProvider, Page } from 'react-facebook';
+import { Tag } from "./Tag";
 
 const GET_FOOTER = gql`
   query($webp: Boolean!) {
@@ -74,13 +75,7 @@ export const Footer = () => {
   // ))
 
   const tags = data.tags.map( t => (
-    <li className="leading-7 hover:underline text-lg p-2	m-1 leading-snug font-serif border-gray-300	bg-gray-300 text-xl float-right" key={t.name}>
-      <Link to={generatePath(AppRoutes.tag.path, {
-        slug: t.slug
-      })}>
-        <p>{t.name}</p>
-      </Link>
-    </li>
+    <Tag tag={t}></Tag>
   ))
 
 return (
