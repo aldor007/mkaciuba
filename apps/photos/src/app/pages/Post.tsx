@@ -178,7 +178,7 @@ export const Post = () => {
     <PostNavbar />
       <div className="w-full h-full relative">
         <div className="post w-full h-full">
-        {post.coverImage && <div className="w-full " ><ImageComponent thumbnails={post.coverImage} className="" defaultImgSizing={DefaultImgSizing.BIGGER}/></div>}
+        {post.coverImage && <div className="w-full " ><ImageComponent thumbnails={post.coverImage} className="" initialWidth={1800} defaultImgSizing={DefaultImgSizing.BIGGER}/></div>}
         <div className={"post-content w-full  max-w-screen-xl mx-auto " + coverCss}>
           <div className={"mx-auto p-2 rounded-md " + postGradient}>
           <div className="text-lg  	leading-snug font-serif  justify-center items-center  text-black">

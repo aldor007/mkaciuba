@@ -87,6 +87,7 @@ export interface ImageComponentProps {
   alt?: string
   className?: string
   defaultImgSizing?: DefaultImgSizing
+  initialWidth?: number
 }
 
 export const findImageForType = (images: Image[], webp: boolean) => {
@@ -107,10 +108,10 @@ const addDatePrefix = (url) => {
     return url + prefix + 'cache=' + Date.now()
 }
 
-export const ImageComponent = React.forwardRef(({thumbnails, defaultImage, onClick, alt, className, defaultImgSizing }:ImageComponentProps, ref: RefObject<HTMLImageElement>) => {
+export const ImageComponent = React.forwardRef(({thumbnails, defaultImage, onClick, alt, className, defaultImgSizing, initialWidth}:ImageComponentProps, ref: RefObject<HTMLImageElement>) => {
   const [loading, setLoading] = useState(true)
   const webp = useWebPSupportCheck();
-  const width = useWindowWidth({ initialWidth: 1000})
+  const width = useWindowWidth({ initialWidth})
   if (!defaultImage) {
     if (!defaultImgSizing || defaultImgSizing == DefaultImgSizing.DEFAULT) {
       defaultImage = findImageForWidth(thumbnails, width, webp)
