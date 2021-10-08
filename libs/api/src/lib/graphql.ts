@@ -328,7 +328,7 @@ export type MenuInput = {
   updated_by?: Maybe<Scalars['ID']>;
 };
 
-export type Morph = UsersPermissionsMe | UsersPermissionsMeRole | UsersPermissionsLoginPayload | UserPermissionsPasswordPayload | Image | ValidationToken | GalleryCategories | Category | CategoryConnection | CategoryAggregator | CategoryGroupBy | CategoryConnectionId | CategoryConnectionCreated_At | CategoryConnectionUpdated_At | CategoryConnectionName | CategoryConnectionSlug | CategoryConnectionSlugOverride | CategoryConnectionPublic | CategoryConnectionPublicationDate | CategoryConnectionFile | CategoryConnectionImage | CategoryConnectionGallery | CategoryConnectionKeywords | CategoryConnectionDescription | CreateCategoryPayload | UpdateCategoryPayload | DeleteCategoryPayload | Footer | UpdateFooterPayload | DeleteFooterPayload | Gallery | CreateGalleryPayload | UpdateGalleryPayload | DeleteGalleryPayload | Menu | UpdateMenuPayload | DeleteMenuPayload | PostCategory | CreatePostCategoryPayload | UpdatePostCategoryPayload | DeletePostCategoryPayload | Post | PostConnection | PostAggregator | PostGroupBy | PostConnectionId | PostConnectionCreated_At | PostConnectionUpdated_At | PostConnectionText | PostConnectionTitle | PostConnectionPublicationDate | PostConnectionGallery | PostConnectionImage | PostConnectionKeywords | PostConnectionDescription | PostConnectionCategory | PostConnectionSlug | PostConnectionPermalink | PostConnectionContent_Position | PostConnectionGallery_Template | PostConnectionCover_Image | PostConnectionPublished_At | CreatePostPayload | UpdatePostPayload | DeletePostPayload | Tag | TagConnection | TagAggregator | TagGroupBy | TagConnectionId | TagConnectionCreated_At | TagConnectionUpdated_At | TagConnectionName | TagConnectionSlug | CreateTagPayload | UpdateTagPayload | DeleteTagPayload | UploadFile | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsUser | CreateUserPayload | UpdateUserPayload | ComponentMenuConfigMenu;
+export type Morph = UsersPermissionsMe | UsersPermissionsMeRole | UsersPermissionsLoginPayload | UserPermissionsPasswordPayload | Image | ValidationToken | GalleryCategories | Category | CategoryConnection | CategoryAggregator | CategoryGroupBy | CategoryConnectionId | CategoryConnectionCreated_At | CategoryConnectionUpdated_At | CategoryConnectionName | CategoryConnectionSlug | CategoryConnectionSlugOverride | CategoryConnectionPublic | CategoryConnectionPublicationDate | CategoryConnectionFile | CategoryConnectionImage | CategoryConnectionGallery | CategoryConnectionKeywords | CategoryConnectionDescription | CreateCategoryPayload | UpdateCategoryPayload | DeleteCategoryPayload | Footer | UpdateFooterPayload | DeleteFooterPayload | Gallery | CreateGalleryPayload | UpdateGalleryPayload | DeleteGalleryPayload | Menu | UpdateMenuPayload | DeleteMenuPayload | PostCategory | PostCategoryConnection | PostCategoryAggregator | PostCategoryGroupBy | PostCategoryConnectionId | PostCategoryConnectionCreated_At | PostCategoryConnectionUpdated_At | PostCategoryConnectionName | PostCategoryConnectionSlug | PostCategoryConnectionKeywords | PostCategoryConnectionDescription | CreatePostCategoryPayload | UpdatePostCategoryPayload | DeletePostCategoryPayload | Post | PostConnection | PostAggregator | PostGroupBy | PostConnectionId | PostConnectionCreated_At | PostConnectionUpdated_At | PostConnectionText | PostConnectionTitle | PostConnectionPublicationDate | PostConnectionGallery | PostConnectionImage | PostConnectionKeywords | PostConnectionDescription | PostConnectionCategory | PostConnectionSlug | PostConnectionPermalink | PostConnectionContent_Position | PostConnectionGallery_Template | PostConnectionCover_Image | PostConnectionPublished_At | CreatePostPayload | UpdatePostPayload | DeletePostPayload | Tag | TagConnection | TagAggregator | TagGroupBy | TagConnectionId | TagConnectionCreated_At | TagConnectionUpdated_At | TagConnectionName | TagConnectionSlug | CreateTagPayload | UpdateTagPayload | DeleteTagPayload | UploadFile | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsUser | CreateUserPayload | UpdateUserPayload | ComponentMenuConfigMenu;
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -492,6 +492,72 @@ export type PostCategory = {
   slug?: Maybe<Scalars['String']>;
   keywords?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+};
+
+export type PostCategoryAggregator = {
+  __typename?: 'PostCategoryAggregator';
+  count?: Maybe<Scalars['Int']>;
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type PostCategoryConnection = {
+  __typename?: 'PostCategoryConnection';
+  values?: Maybe<Array<Maybe<PostCategory>>>;
+  groupBy?: Maybe<PostCategoryGroupBy>;
+  aggregate?: Maybe<PostCategoryAggregator>;
+};
+
+export type PostCategoryConnectionCreated_At = {
+  __typename?: 'PostCategoryConnectionCreated_at';
+  key?: Maybe<Scalars['DateTime']>;
+  connection?: Maybe<PostCategoryConnection>;
+};
+
+export type PostCategoryConnectionDescription = {
+  __typename?: 'PostCategoryConnectionDescription';
+  key?: Maybe<Scalars['String']>;
+  connection?: Maybe<PostCategoryConnection>;
+};
+
+export type PostCategoryConnectionId = {
+  __typename?: 'PostCategoryConnectionId';
+  key?: Maybe<Scalars['ID']>;
+  connection?: Maybe<PostCategoryConnection>;
+};
+
+export type PostCategoryConnectionKeywords = {
+  __typename?: 'PostCategoryConnectionKeywords';
+  key?: Maybe<Scalars['String']>;
+  connection?: Maybe<PostCategoryConnection>;
+};
+
+export type PostCategoryConnectionName = {
+  __typename?: 'PostCategoryConnectionName';
+  key?: Maybe<Scalars['String']>;
+  connection?: Maybe<PostCategoryConnection>;
+};
+
+export type PostCategoryConnectionSlug = {
+  __typename?: 'PostCategoryConnectionSlug';
+  key?: Maybe<Scalars['String']>;
+  connection?: Maybe<PostCategoryConnection>;
+};
+
+export type PostCategoryConnectionUpdated_At = {
+  __typename?: 'PostCategoryConnectionUpdated_at';
+  key?: Maybe<Scalars['DateTime']>;
+  connection?: Maybe<PostCategoryConnection>;
+};
+
+export type PostCategoryGroupBy = {
+  __typename?: 'PostCategoryGroupBy';
+  id?: Maybe<Array<Maybe<PostCategoryConnectionId>>>;
+  created_at?: Maybe<Array<Maybe<PostCategoryConnectionCreated_At>>>;
+  updated_at?: Maybe<Array<Maybe<PostCategoryConnectionUpdated_At>>>;
+  name?: Maybe<Array<Maybe<PostCategoryConnectionName>>>;
+  slug?: Maybe<Array<Maybe<PostCategoryConnectionSlug>>>;
+  keywords?: Maybe<Array<Maybe<PostCategoryConnectionKeywords>>>;
+  description?: Maybe<Array<Maybe<PostCategoryConnectionDescription>>>;
 };
 
 export type PostCategoryInput = {
@@ -665,6 +731,8 @@ export type Query = {
   categoriesConnection?: Maybe<CategoryConnection>;
   footer?: Maybe<Footer>;
   menu?: Maybe<Menu>;
+  postCategories?: Maybe<Array<Maybe<PostCategory>>>;
+  postCategoriesConnection?: Maybe<PostCategoryConnection>;
   post?: Maybe<Post>;
   posts?: Maybe<Array<Maybe<Post>>>;
   postsConnection?: Maybe<PostConnection>;
@@ -710,6 +778,23 @@ export type QueryFooterArgs = {
 
 export type QueryMenuArgs = {
   publicationState?: Maybe<PublicationState>;
+};
+
+
+export type QueryPostCategoriesArgs = {
+  sort?: Maybe<Scalars['String']>;
+  limit?: Maybe<Scalars['Int']>;
+  start?: Maybe<Scalars['Int']>;
+  where?: Maybe<Scalars['JSON']>;
+  publicationState?: Maybe<PublicationState>;
+};
+
+
+export type QueryPostCategoriesConnectionArgs = {
+  sort?: Maybe<Scalars['String']>;
+  limit?: Maybe<Scalars['Int']>;
+  start?: Maybe<Scalars['Int']>;
+  where?: Maybe<Scalars['JSON']>;
 };
 
 

@@ -10,7 +10,7 @@ export interface TagProps {
 }
 
 export const Tag = ({tag}: TagProps) => {
-    return (<div className="leading-7 hover:underline text-lg p-2	m-1 leading-snug font-serif border-gray-300	bg-gray-300 text-xl float-right" key={tag.name}>
+    return (<div className="leading-7 hover:bg-gray-700 hover:text-white text-lg p-2	text-gray-600	 m-1 leading-snug font-serif border-gray-300	bg-gray-300 text-xl float-right" key={tag.name}>
       <Link to={generatePath(AppRoutes.tag.path, {
         slug: tag.slug
       })}>

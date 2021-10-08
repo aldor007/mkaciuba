@@ -19,6 +19,7 @@ import { faArrowRight } from '@fortawesome/free-solid-svg-icons/faArrowRight';
 import { PostCard } from '../components/PostCard';
 import { format } from "date-fns";
 import { Tag } from '../components/Tag';
+import { PostNavbar } from '../components/PostNavbar';
 
 const GET_POST = gql`
   query ($postSlug: String!) {
@@ -55,7 +56,7 @@ const GET_POST = gql`
       slug
       image {
         id
-        matchingThumbnails(preset: "small") {
+        matchingThumbnails(preset: "nextpost") {
             url
             mediaQuery
             webp
@@ -161,8 +162,10 @@ export const Post = () => {
 }
 
   let coverCss = ""
+  let postGradient = ""
   if (post.coverImage) {
     coverCss = "-mt-12 relative"
+    postGradient = "mx-auto bg-gradient-to-b  from-gray-50 via-white	 to-white	 p-2 rounded-md"
   }
   return  (
     <>
@@ -172,37 +175,33 @@ export const Post = () => {
             <meta name="keywords" content={post.keywords} />
             <meta property="og:title" content={post.title} />
           </MetaTags>
-    <Header/>
-     <div className="fixed">
-        {prevPost && returnArrow(prevPost, showPrev, (value) => () => setShowPrev(value), 'Starsze', faArrowLeft, 'left-0 ') }
-        {nextPost && returnArrow(nextPost, showNext, (value) => () => setShowNext(value), 'Nowsze', faArrowRight, 'right-0 -m-4') }
-      </div>
+    <PostNavbar />
       <div className="w-full h-full relative">
-      <div className="post w-full h-full">
-      {post.coverImage && <div className="w-full " ><ImageComponent thumbnails={post.coverImage} className="" defaultImgSizing={DefaultImgSizing.BIGGER}/></div>}
-      <div className={"post-content w-full  max-w-screen-xl mx-auto " + coverCss}>
-        <div className={"mx-auto bg-gradient-to-b  from-gray-50 to-white	 p-2 rounded-md"}>
-        <div className="text-lg  	leading-snug font-serif  justify-center items-center  text-black">
-          <div className={"container text-center  items-center mx-auto p-3 "}>
-            <div className="row">
-            <h1 className="font-black text-lg 	leading-snug font-serif  md:text-3xl sm:text-1xl text-4xl text-center">{post.title}</h1>
-            </div>
-            <div className="row m-3">
-              <span className="meta-date">
-                  {format(new Date(post.publicationDate), 'dd/MM/yyyy')}
-                </span>
-              <span className="mx-3">•</span>
-              <span className="underline">
-                <Link to={generatePath(AppRoutes.postcategory.path, {
-                  slug: post.category.slug,
-                })}>
-                  {post.category.name}
-                  </Link>
+        <div className="post w-full h-full">
+        {post.coverImage && <div className="w-full " ><ImageComponent thumbnails={post.coverImage} className="" defaultImgSizing={DefaultImgSizing.BIGGER}/></div>}
+        <div className={"post-content w-full  max-w-screen-xl mx-auto " + coverCss}>
+          <div className={"mx-auto p-2 rounded-md " + postGradient}>
+          <div className="text-lg  	leading-snug font-serif  justify-center items-center  text-black">
+            <div className={"container text-center  items-center mx-auto p-3 "}>
+              <div className="row">
+              <h1 className="font-black text-lg 	leading-snug font-serif  md:text-3xl sm:text-1xl text-4xl text-center">{post.title}</h1>
+              </div>
+              <div className="row m-3">
+                <span className="meta-date">
+                    {format(new Date(post.publicationDate), 'dd/MM/yyyy')}
                   </span>
+                <span className="mx-3">•</span>
+                <span className="underline">
+                  <Link to={generatePath(AppRoutes.postcategory.path, {
+                    slug: post.category.slug,
+                  })}>
+                    {post.category.name}
+                    </Link>
+                    </span>
+              </div>
             </div>
-				  </div>
-				</div>
-    <div className="max-w-screen-xl mx-auto post-text">
+          </div>
+        <div className="max-w-screen-xl mx-auto post-text">
             <p className="m-4" dangerouslySetInnerHTML={{
               __html: post.description
               }}/>
@@ -214,9 +213,14 @@ export const Post = () => {
               __html: post.text
               }}/>}
       </div>
+      <div className="fixed">
+        {prevPost && returnArrow(prevPost, showPrev, (value) => () => setShowPrev(value), 'Starsze', faArrowLeft, 'left-0 ') }
+        {nextPost && returnArrow(nextPost, showNext, (value) => () => setShowNext(value), 'Nowsze', faArrowRight, 'right-0 -m-4') }
+      </div>
+
       <div className="max-w-screen-xl mx-auto ">
             {post.tags.map(t =>
-                <Tag tag={t} className="float-right" />
+                <Tag key={t.slug} tag={t} className="float-right" />
             )}
               <div className="clear-right"></div>
       <hr className="divide-y m-8 bg-gray-700" />

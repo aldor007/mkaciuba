@@ -8,6 +8,7 @@ import { Post  } from './app/pages/Post';
 import { PostCategory } from './app/pages/PostCategory';
 import { OldPost } from './app/pages/OldPosts';
 import { PostTag } from './app/pages/PostTag';
+import { Page } from './app/pages/Page';
 
 export const Routes = [
     {
@@ -41,6 +42,11 @@ export const Routes = [
     {
         component: PostTag,
         path: AppRoutes.tag.path
+    },
+    {
+        component: Page,
+        path: AppRoutes.page.path,
+        exact: true
     },
     {
         component: Home,

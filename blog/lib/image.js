@@ -80,6 +80,9 @@ const allPresets = presetList.concat([
   new Preset('coverimgm', 1300, 300, '(max-width: 1300px)', 'jpeg'),
   new Preset('coverimgwebp', 2900, 500,'(min-width: 1300px)', 'webp'),
   new Preset('coverimg', 2900, 500, '(min-width: 1300px)', 'jpeg'),
+
+  new Preset('nextpostwebp', 80, 150,'(min-width: 100px)', 'webp'),
+  new Preset('nextpost', 80, 150, '(min-width: 100px)', 'jpeg'),
 ]);
 exports.allPresets = allPresets;
 
@@ -102,6 +105,11 @@ const getImage = (obj, preset) => {
   return new Image(getImageUrl(obj, preset.name), preset.mediaQuery, imageDim.width, imageDim.height, preset.type);
 }
 
+const getOriginalUrl = (obj) => {
+  return `https://mort.mkaciuba.com/images/${obj.path}`
+}
+
+exports.getOriginalUrl = getOriginalUrl;
 exports.getImage = getImage;
 
 const getImageUrl = (obj, preset) => {

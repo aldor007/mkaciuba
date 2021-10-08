@@ -8,6 +8,7 @@ import { AppRoutes } from '../routes';
 import { Loading, ErrorPage } from '@mkaciuba/ui-kit'
 import { generatePath, useParams } from 'react-router-dom';
 import { Posts, POST_TYPE } from '../components/Posts';
+import { PostNavbar } from '../components/PostNavbar';
 
 const GET_POST_CATEGORY = gql`
   query ($slug: String!) {
@@ -36,7 +37,7 @@ export const PostCategory = () => {
 
   return  (
     <>
-    <Header/>
+    <PostNavbar />
     <h1 className="text-center m-5 text-4xl leading-snug font-serif ">Posty z kategorii: {category.name}</h1>
     <Posts id={category.id} type={POST_TYPE.CATGORY}/>
     <Footer></Footer>

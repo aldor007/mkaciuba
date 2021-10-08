@@ -1,7 +1,7 @@
 const { getStoragePath, base64Url } = require('../../../lib/index');
 const { AuthenticationError, ForbiddenError, UserInputError } = require('apollo-server-errors');
 const jwt = require('jsonwebtoken');
-const { getImage, presetList, allPresets } = require('../../../lib/image')
+const { getImage, presetList, allPresets, getOriginalUrl } = require('../../../lib/image')
 
 const getCacheKey = (prefix, options = {}, obj = {}) => {
   if (options.where) {
@@ -115,6 +115,29 @@ module.exports = {
           return image;
         }
       },
+      file: {
+        resolverOf: 'application::category.category.findOne',
+        resolver: async (obj, options, { context }, info) => {
+          if (!obj.public) {
+            const token = context.request.headers['x-gallery-token'];
+            info.cacheControl.setCacheHint({ maxAge: 60, scope: 'PRIVATE' });
+            if (!token) {
+              return new AuthenticationError('auth required for file')
+            }
+
+            try {
+                jwt.verify(token, obj.token);
+            } catch (e) {
+              console.error('error ', e)
+              return new ForbiddenError("invalid token parse");
+            }
+          } else {
+            info.cacheControl.setCacheHint({ maxAge: 60, scope: 'PUBLIC' });
+          }
+          obj.file.url = getOriginalUrl(obj.file);
+          return obj.file;
+        }
+      },
       medias: {
         resolverOf: 'application::category.category.findOne',
         resolver: async (obj, options, { context }, info) => {
@@ -156,7 +179,10 @@ module.exports = {
           search.gallery_null = false;
           search.public = true;
           info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
-          const categories = await strapi.services.category.find(search);
+          let categories = await strapi.services.category.find(search);
+          categories = categories.map(c => { c.file = null
+            return c;
+          })
 
           return categories;
         }
@@ -164,7 +190,7 @@ module.exports = {
       categoryBySlug: {
         resolverOf: 'application::category.category.findOne',
         resolver: async (obj, options, { context }, info) => {
-          const key = getCacheKey('categoryv2', options)
+          const key = getCacheKey('categoryv4', options)
           let category = await strapi.services.cache.get(key);
           if (!category) {
             category = await strapi.services.category.findOne({ slug: options.slug });

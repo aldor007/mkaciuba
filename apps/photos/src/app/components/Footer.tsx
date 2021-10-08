@@ -75,7 +75,7 @@ export const Footer = () => {
   // ))
 
   const tags = data.tags.map( t => (
-    <Tag tag={t}></Tag>
+    <Tag key={t.slug} tag={t}></Tag>
   ))
 
 return (

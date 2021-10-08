@@ -17,7 +17,7 @@ import {
 } from '@react-hook/window-size';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { AppRoutes } from "../routes";
-import { ErrorPage, Loading, LoadingMore } from "@mkaciuba/ui-kit";
+import { ErrorPage, Loading, LoadingMore, useQueryParams } from "@mkaciuba/ui-kit";
 import { PostCard } from "./PostCard";
 
 
@@ -110,10 +110,6 @@ export interface PostsProps {
   id?: String
   type: POST_TYPE
 
-}
-
-function useQueryParams() {
-  return new URLSearchParams(useLocation().search);
 }
 
 export const Posts = ( { id, type} : PostsProps) => {
@@ -209,7 +205,7 @@ export const Posts = ( { id, type} : PostsProps) => {
         )}
   </div>
   { hasNextPage() &&<div className="max-w-screen-xl w-full m-4 mx-auto text-center  " >
-      <button onClick={handleLoadMore}  className="w-full mx-auto text-center border-4  px-5 py-3 rounded-xl text-sm font-medium text-indigo-600 bg-white outline-none border border-indigo-600 hover:border-4 hover:border-indigo-800 hover:text-indigo-800 transition-all">
+      <button onClick={handleLoadMore}  className="w-full mx-auto text-center border-4 font-medium	 px-5 py-3 rounded-xl text-sm font-medium text-gray-600 bg-white outline-none border border-gray-600 hover:bg-gray-600 hover:border-gray-800 hover:text-white transition-all">
         Załaduj więcej</button>
   </div> }
   </>

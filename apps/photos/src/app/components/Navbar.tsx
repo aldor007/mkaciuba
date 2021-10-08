@@ -9,6 +9,7 @@ import { faGithub } from '@fortawesome/free-brands-svg-icons/faGithub';
 import { faLinkedinIn } from '@fortawesome/free-brands-svg-icons/faLinkedinIn';
 import { faTwitter } from '@fortawesome/free-brands-svg-icons/faTwitter';
 import { Loading, ErrorPage } from "@mkaciuba/ui-kit";
+import { height } from "@fortawesome/free-solid-svg-icons/faArrowRight";
 
 const ICONS = {
   [Enum_Componentmenuconfigmenu_Icon.Facebook]: faFacebook,
@@ -62,11 +63,16 @@ const createDropdownV2 = (additionalMainMenu, setDropdownOpen, dropdownOpen) => 
     `${item.id}-${item.url}`
   )
   const dropDownItems = (children) => (children.map((item, id) => (
-    <a key={generateIdKey(item)} className="block px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg dark-mode:bg-transparent dark-mode:hover:bg-gray-600 dark-mode:focus:bg-gray-600 dark-mode:focus:text-white dark-mode:hover:text-white dark-mode:text-gray-200 md:mt-0 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" href={item.url}>
+    <a key={generateIdKey(item)} className="block px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg dark-mode:bg-transparent md:mt-0 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" href={item.url}>
       {item.name}
      </a>
   )));
 
+  let dropdownHeight = '';
+  const menuHigh = additionalMainMenu.filter(m => m.children && m.children.length > 6)
+  if (menuHigh.length > 0) {
+    dropdownHeight = 'h-64'
+  }
   return (
     <div className="relative">
       {additionalMainMenu.map((m) => (
@@ -77,9 +83,9 @@ const createDropdownV2 = (additionalMainMenu, setDropdownOpen, dropdownOpen) => 
             {m.children &&  <span>{m.name}</span>}
                 {m.children && <svg fill="currentColor" viewBox="0 0 20 20" className="inline w-4 h-4 mt-1 ml-1 transition-transform duration-200 transform md:-mt-1"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>}
           </button>
-          <div    x-show="open"    className="absolute right-0 w-full mt-2 origin-top-right rounded-md shadow-lg md:w-48">
+          <div    x-show="open"    className="absolute right-0 w-full mt-2 origin-top-right rounded-md z-40 shadow-lg md:w-48">
             {m.children && dropdownOpen &&
-          <div className="overflow-y-auto h-64 bg-white rounded-md shadow dark-mode:bg-gray-800">
+          <div className={"overflow-y-auto bg-white rounded-md shadow "+ dropdownHeight}>
             {m.children && dropDownItems(m.children)}
           </div>
             }
@@ -142,7 +148,7 @@ export const Navbar = function (props: NavbarProps) {
   }
   return (
     <>
-      <div className="w-full top-0 text-gray-700 bg-black  px-2 py-3 navbar-expand-lg dark-mode:text-gray-200 dark-mode:bg-gray-800">
+      <div className="w-full top-0 text-gray-700 bg-black  px-2 py-3 navbar-expand-lg text-gray-100">
       <nav className="flex flex-col max-w-screen-xl px-4 mx-auto md:items-center md:justify-between md:flex-row md:px-6 lg:px-8">
         <div className="container px-4 mx-auto flex flex-wrap items-center justify-between">
           <div className="w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
@@ -158,10 +164,10 @@ export const Navbar = function (props: NavbarProps) {
         </div>
       </nav>
       </div>
-      <div className="w-full top-0 text-gray-700 bg-white dark-mode:text-gray-200 dark-mode:bg-gray-800 z-50">
+      <div className="w-full top-0 text-gray-600 bg-white">
         <div x-data="{ open: false }" className="flex flex-col max-w-screen-xl px-4 mx-auto md:items-center md:justify-between md:flex-row md:px-6 lg:px-8">
           <div className="p-4 flex flex-row items-center justify-between">
-            <a href="/" className="flex flex-wrap -mx-1 overflow-hidden text-lg font-semibold tracking-widest text-gray-900 rounded-lg dark-mode:text-white focus:outline-none focus:shadow-outline">
+            <a href="/" className="flex flex-wrap -mx-1 overflow-hidden text-lg font-semibold tracking-widest text-gray-900 rounded-lg focus:outline-none focus:shadow-outline">
               { brand && <img  className="py-2" width="35px" height="35px" src={brand.thumbnail.url}/>}
               <span className="px-2 py-2 mt-2">{brandName}</span>
               </a>

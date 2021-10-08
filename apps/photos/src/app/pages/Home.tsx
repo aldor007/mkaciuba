@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import  Header from '../Header';
 import { Loading } from '@mkaciuba/ui-kit';
 import MetaTags from 'react-meta-tags';
+import { PostNavbar } from '../components/PostNavbar';
 
 export const Home = () => {
 
@@ -14,7 +15,7 @@ export const Home = () => {
             <title>Marcin Kaciuba | mkaciuba.pl</title>
             <meta name="description" content="Marcin Kaciuba blog" />
           </MetaTags>
-    <Header/>
+    <PostNavbar />
     <Posts type={POST_TYPE.ALL}></Posts>
     <Footer></Footer>
     </>

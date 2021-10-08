@@ -8,6 +8,7 @@ import { findImageForWidth, ImageComponent } from "@mkaciuba/image";
 import { useWebPSupportCheck } from "react-use-webp-support-check";
 import MetaTags from 'react-meta-tags';
 import { Gallery, Query } from '@mkaciuba/api';
+import {useHistory} from "react-router-dom"
 import '../../assets/category.css';
 
 import {
@@ -15,7 +16,7 @@ import {
 } from '@react-hook/window-size';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { AppRoutes } from "../routes";
-import { ErrorPage, Loading, LoadingMore } from "@mkaciuba/ui-kit";
+import { ErrorPage, Loading, LoadingMore, useQueryParams } from "@mkaciuba/ui-kit";
 
 
 const GET_CATEGORIES = gql`
@@ -50,10 +51,18 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
   const webp = useWebPSupportCheck();
   const width = useWindowWidth();
   const [loadingMore, setLoadingMore] = useState(false);
-  const [start, setStart] = useState(0)
-  const limit = 9
+  const limit = 8
+  const history = useHistory();
+  const queryParams = useQueryParams();
+  let page = queryParams.get('page');
+  if (!page) {
+    page = '1'
+  }
+  let startPage = (parseInt(queryParams.get('page')) - 1) * limit;
+  const [start, setStart] = useState(parseInt(page) * limit)
+
   const {loading, error, data, fetchMore } = useQuery<Query>(GET_CATEGORIES, {
-    variables: { galleryId: gallery.id, start: 0, limit},
+    variables: { galleryId: gallery.id, start: startPage, limit},
     notifyOnNetworkStatusChange: true
   });
 
@@ -75,6 +84,10 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
 
   const handleLoadMore = useCallback(() => {
     setStart(start + limit)
+    history.push({
+      pathname: window.location.pathname,
+      search: '?page=' + Math.floor((start + limit) / limit)
+    })
     fetchMore({
       variables: {
          start,
@@ -94,11 +107,19 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
     return <ErrorPage code={500} message={error.message} />
    };
 
+   // first loader
+   // laoding = true and data null
    if (loading && !data) {
     return (
       <Loading/>
     );
   }
+
+  console.info(loading, data)
+  if (!data) {
+    handleLoadMore();
+  }
+
   const { categories } =  data;
   // setStart(stagccrt + limit)
   const defaultImages = categories.reduce((acc, cur) => {
@@ -118,7 +139,7 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
             <meta property="og:title" content={gallery.name} />
           </MetaTags>
       {categories && categories.map(item => (
-         <div className="mx-auto my-1 px-1 w-1/1 overflow-hidden sm:w-1/1 md:w-1/2 lg:w-1/2 xl:w-1/3" key={item.slug}>
+         <div className="mx-auto my-1 px-1 w-1/1 overflow-hidden sm:w-1/1 md:w-1/2 lg:w-1/2 xl:w-1/2" key={item.slug}>
           <Link to={generatePath(AppRoutes.photos.path, {
             gallerySlug: gallery.slug,
             categorySlug: item.slug,
