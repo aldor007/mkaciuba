@@ -34,6 +34,7 @@ export const PostCard = ({ post, inColumn }: PostCardProps) => {
     return (
       <div className={headerClass} key={`${post.title}-${post.id}`}>
         <div className="bg-cover bg-center z-0">
+      { !post.mainImage&&   <img src="https://mort.mkaciuba.com/images/files/placeholder.jpg"/>  }
         {post.mainImage && <ImageComponent thumbnails={post.mainImage} /> }
         </div>
         <div className={imageClass}>

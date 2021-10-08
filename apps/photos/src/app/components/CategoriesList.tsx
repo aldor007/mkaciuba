@@ -144,7 +144,7 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
             gallerySlug: gallery.slug,
             categorySlug: item.slug,
           })}>
-              { !item.image &&   <div className="bg-gray-700" ></div>  }
+              { !item.image &&   <img src="https://mort.mkaciuba.com/images/files/placeholder.jpg"/>  }
               { item.image &&   <ImageComponent thumbnails={item.image.matchingThumbnails} defaultImage={defaultImages[item.id]} />  }
               <div className="category-heading">
                <h2>{item.name}</h2>

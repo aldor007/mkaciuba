@@ -11,22 +11,14 @@ import { PostCategory } from './PostCategory';
 import { PostNavbar } from '../components/PostNavbar';
 
 const GET_GALLERY = gql`
-query  galleryMenu($gallerySlug: String!) {
-  galleryMenu(
-    slug: $gallerySlug
+query  pageBySlug($slug: String!) {
+  pageBySlug(
+    slug: $slug
   ) {
-    gallery {
-      id
-      name
-      slug
-      keywords
-      description
-    }
-    categories {
-      slug
-      name
-    }
+    slug
+    content
   }
+
 }`;
 
 
@@ -40,16 +32,19 @@ export const Page = () => {
     console.error('Page', error)
     return <ErrorPage code={500} message={error.message} />
    };
-  const { gallery, categories } = data.galleryMenu;
-  if (!gallery) {
-    return <ErrorPage code={404} message={'Gallery no found'} />
+  if (!data.pageBySlug) {
+    return <ErrorPage code={404} message={'Page no found'} />
   }
+  const { content } = data.pageBySlug;
 
   return  (
     <>
     <PostNavbar />
-    <>
-    </>
+        <div className="max-w-screen-xl mx-auto post-text">
+            <p className="m-4" dangerouslySetInnerHTML={{
+              __html: content
+              }}/>
+      </div>
     <Footer></Footer>
     </>
   )
