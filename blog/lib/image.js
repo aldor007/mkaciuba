@@ -52,22 +52,22 @@ const presetList = [
 exports.presetList = presetList;
 
 const allPresets = presetList.concat([
-  new Preset('categorylists', 300, 225, '(max-width: 600px)', 'jpeg'),
-  new Preset('categorylistwebps', 300, 225, '(max-width: 600px)', 'webp'),
-  new Preset('categorylist', 600, 450, '(max-width: 1000px)', 'jpeg'),
-  new Preset('categorylistwebp', 600, 450, '(max-width: 1000px)', 'webp'),
-  new Preset('categorylistbig', 1500, 1000, '(max-width: 1300px)', 'jpeg'),
   new Preset('categorylistbigwebp', 1500, 1000, '(max-width: 1300px)', 'webp'),
+  new Preset('categorylistbig', 1500, 1000, '(max-width: 1300px)', 'jpeg'),
+  new Preset('categorylistwebp', 600, 450, '(max-width: 1000px)', 'webp'),
+  new Preset('categorylist', 600, 450, '(max-width: 1000px)', 'jpeg'),
+  new Preset('categorylistwebps', 300, 225, '(max-width: 600px)', 'webp'),
+  new Preset('categorylists', 300, 225, '(max-width: 600px)', 'jpeg'),
 
-  new Preset('postlists', 350, 350, '(max-width: 375px)', 'jpeg'),
-  new Preset('postlistwebps', 350, 350, '(max-width: 375px)', 'webp'),
-  new Preset('postlist', 1500, 1000, '(max-width: 1300px)', 'jpeg'),
   new Preset('postlistwebp', 1500, 1000, '(max-width: 1300px)', 'webp'),
+  new Preset('postlist', 1500, 1000, '(max-width: 1300px)', 'jpeg'),
+  new Preset('postlistwebps', 750, 750, '(max-width: 375px)', 'webp'),
+  new Preset('postlists', 750, 750, '(max-width: 375px)', 'jpeg'),
 
-  new Preset('postimg_ac_s', 750, 750, '(max-width: 600px)', 'jpeg'),
-  new Preset('postimg_ac_webps', 750, 740, '(max-width: 600px)', 'webp'),
-  new Preset('postimg_ac', 1500, 1000, '(max-width: 1300px)', 'jpeg'),
   new Preset('postimg_ac_webp', 1500, 1000, '(max-width: 1300px)', 'webp'),
+  new Preset('postimg_ac', 1500, 1000, '(max-width: 1300px)', 'jpeg'),
+  new Preset('postimg_ac_webps', 750, 740, '(max-width: 600px)', 'webp'),
+  new Preset('postimg_ac_s', 750, 750, '(max-width: 600px)', 'jpeg'),
 
   new Preset('featcatbig', 410, null, '(min-width: 600px)', 'jpeg'),
   new Preset('featcatbigwebps', 410, null, '(min-width: 600px)', 'webp'),

@@ -152,7 +152,7 @@ export const Post = () => {
 
     return (
       <div className={direction + " hidden sm:block  cursor-pointer fixed top-1/2"}  onMouseEnter={onHover(true)} onMouseLeave={onHover(false)} >
-      <FontAwesomeIcon className={ shouldShow? "hidden": "" + "m-4 hover:hidden"} icon={icon} size='1x'  onMouseEnter={onHover(true)} onMouseLeave={onHover(false)} />
+      <FontAwesomeIcon className={ shouldShow? "hidden": "" + "m-4 -z-10 hover:hidden"} icon={icon} size='1x'  onMouseEnter={onHover(true)} onMouseLeave={onHover(false)} />
        <div className={ shouldShow ? "" : "hidden" + " transition-all	 delay-150 duration-800 ease-in-out bg-gray-300"}>
         <div className="flex leading-snug font-serif bg-gray-100 rounded shadow-xl">
           {inner}
@@ -176,8 +176,8 @@ export const Post = () => {
             <meta property="og:title" content={post.title} />
           </MetaTags>
     <PostNavbar />
-      <div className="w-full h-full relative">
-        <div className="post w-full h-full">
+      <div className="w-full h-full " >
+        <div className="post w-full">
         {post.coverImage && <div className="w-full " ><ImageComponent thumbnails={post.coverImage} className="" initialWidth={1800} defaultImgSizing={DefaultImgSizing.BIGGER}/></div>}
         <div className={"post-content w-full  max-w-screen-xl mx-auto " + coverCss}>
           <div className={"mx-auto p-2 rounded-md " + postGradient}>
@@ -238,10 +238,9 @@ export const Post = () => {
       </div>
       </div>
       </div>
-      <div className="">
-    <Footer></Footer>
-        </div>
-        </div>
+      
+      <Footer></Footer>
+       </div>
     </>
   )
 }

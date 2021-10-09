@@ -119,10 +119,16 @@ export const ImageComponent = React.forwardRef(({thumbnails, defaultImage, onCli
       defaultImage = findImageForWidthBigger(thumbnails, width, webp)
     }
   }
-  let classes = 'bg-gray-300 ' + className || '';
+  let classes = 'bg-gray-300 ' + (className || '');
   if (loading) {
     classes += ' animate-pulse bg-opacity-15	'
   }
+  
+  setTimeout(() => { 
+   if (loading) {
+    setLoading(false)
+   } 
+  }, 1500);
 
   const imageOnError = (e) => {
     setTimeout(() => {
