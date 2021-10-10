@@ -9,6 +9,8 @@ import { Loading, ErrorPage } from "@mkaciuba/ui-kit";
 import { useParams } from 'react-router-dom';
 import { PostCategory } from './PostCategory';
 import { PostNavbar } from '../components/PostNavbar';
+import ReactMarkdown from 'react-markdown'
+
 
 const GET_GALLERY = gql`
 query  pageBySlug($slug: String!) {
@@ -41,9 +43,12 @@ export const Page = () => {
     <>
     <PostNavbar />
         <div className="max-w-screen-xl mx-auto post-text">
-            <p className="m-4" dangerouslySetInnerHTML={{
-              __html: content
-              }}/>
+            <p className="m-4">
+
+          <ReactMarkdown>
+             {content}
+            </ReactMarkdown>
+             </p>
       </div>
     <Footer></Footer>
     </>

@@ -177,13 +177,18 @@ module.exports = {
           }
           const search_related = {
             id_ne: post.id,
-            publicationDate_lt: search.publicationDate_lt,
+            publicationDate_lt: post.publicationDate,
             _sort: 'id:desc',
             _limit: 4,
           }
           if (post.keywords) {
             search_related.keywords_contains = post.keywords.slice(0, 10)
           }
+
+          if (post.tags) {
+            search_related.tags_in = post.tags.map(t => t.id)
+          }
+
           const related = await strapi.services.post.find(search_related);
           return related
         }
