@@ -12,38 +12,29 @@
     ".eslintrc.json": "*"
   },
   "projects": {
-    "photos": {
-      "tags": []
-    },
-    "photos-e2e": {
-      "tags": [],
-      "implicitDependencies": [
-        "photos"
-      ]
-    },
     "api": {
       "tags": []
     },
     "image": {
       "tags": []
     },
-    "photos-ssr": {
-      "tags": [],
-      "implicitDependencies": [
-        "photos"
-      ]
-    },
-    "images": {
+    "photos": {
       "tags": []
+    },
+    "photos-e2e": {
+      "tags": [],
+      "implicitDependencies": ["photos"]
     },
     "photos-embed": {
       "tags": []
     },
     "photos-embed-e2e": {
       "tags": [],
-      "implicitDependencies": [
-        "photos-embed"
-      ]
+      "implicitDependencies": ["photos-embed"]
+    },
+    "photos-ssr": {
+      "tags": [],
+      "implicitDependencies": ["photos"]
     },
     "ui-kit": {
       "tags": []
@@ -53,16 +44,19 @@
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": [
-          "build",
-          "lint",
-          "test",
-          "e2e"
-        ]
+        "cacheableOperations": ["build", "lint", "test", "e2e"]
       }
     }
   },
   "affected": {
     "defaultBase": "master"
+  },
+  "targetDependencies": {
+    "build": [
+      {
+        "target": "build",
+        "projects": "dependencies"
+      }
+    ]
   }
 }

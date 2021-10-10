@@ -15,7 +15,7 @@ module.exports = config => {
   config.plugins.push(new WebpackManifestPlugin());
   if (process.env.AWS_ACCESS_KEY_ID) {
 
-    config.plugins.push(new S3Plugin({     
+    config.plugins.push(new S3Plugin({
        exclude: /.*\.html$/,
       s3Options: {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID,

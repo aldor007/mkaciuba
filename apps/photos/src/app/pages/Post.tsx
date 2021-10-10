@@ -20,7 +20,7 @@ import { PostCard } from '../components/PostCard';
 import { format } from "date-fns";
 import { Tag } from '../components/Tag';
 import { PostNavbar } from '../components/PostNavbar';
-import ReactMarkdown from 'react-markdown'
+import marked from 'marked';
 
 const GET_POST = gql`
   query ($postSlug: String!) {
@@ -203,10 +203,10 @@ export const Post = () => {
             </div>
           </div>
         <div className="max-w-screen-xl mx-auto post-text">
-
-          <ReactMarkdown>
+        <p className="m-4" dangerouslySetInnerHTML={{
+              __html: marked(post.description)
+              }}/>
             {post.description}
-          </ReactMarkdown>
         {post.content_position === Enum_Post_Content_Position.Top  && <p  dangerouslySetInnerHTML={{
               __html: post.text
               }}/>}

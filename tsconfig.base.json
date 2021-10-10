@@ -11,34 +11,17 @@
     "allowSyntheticDefaultImports": true,
     "target": "es2018",
     "module": "esnext",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "lib": [
-      "es2017",
-      "es2018",
-      "dom"
-    ],
+    "typeRoots": ["node_modules/@types"],
+    "lib": ["es2017", "es2018", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@mkaciuba/api": [
-        "libs/api/src/index.ts"
-      ],
-      "@mkaciuba/photos": [
-        "apps/photos/src/index.ts"
-      ],
-      "@mkaciuba/image": [
-        "libs/image/src/index.ts"
-      ],
-      "@mkaciuba/ui-kit": [
-        "libs/ui-kit/src/index.ts"
-      ]
+      "@mkaciuba/api": ["libs/api/src/index.ts"],
+      "@mkaciuba/image": ["libs/image/src/index.ts"],
+      "@mkaciuba/photos": ["apps/photos/src/index.ts"],
+      "@mkaciuba/ui-kit": ["libs/ui-kit/src/index.ts"]
     }
   },
-  "exclude": [
-    "node_modules",
-    "tmp"
-  ]
+  "exclude": ["node_modules", "tmp"]
 }
