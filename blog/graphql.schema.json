@@ -1570,6 +1570,29 @@
       },
       {
         "kind": "ENUM",
+        "name": "ENUM_POST_CONTENT_TYPE",
+        "description": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "HTML",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "MARKDOWN",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "possibleTypes": null
+      },
+      {
+        "kind": "ENUM",
         "name": "ENUM_POST_GALLERY_TEMPLATE",
         "description": null,
         "fields": null,
@@ -2987,6 +3010,11 @@
           },
           {
             "kind": "OBJECT",
+            "name": "PostConnectionContent_type",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
             "name": "PostConnectionPublished_at",
             "ofType": null
           },
@@ -4058,6 +4086,18 @@
             "deprecationReason": null
           },
           {
+            "name": "content_type",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "ENUM",
+              "name": "ENUM_POST_CONTENT_TYPE",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "published_at",
             "description": null,
             "args": [],
@@ -4982,6 +5022,41 @@
       },
       {
         "kind": "OBJECT",
+        "name": "PostConnectionContent_type",
+        "description": null,
+        "fields": [
+          {
+            "name": "key",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "connection",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "PostConnection",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
         "name": "PostConnectionCover_image",
         "description": null,
         "fields": [
@@ -5767,6 +5842,22 @@
             "deprecationReason": null
           },
           {
+            "name": "content_type",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "PostConnectionContent_type",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "published_at",
             "description": null,
             "args": [],
@@ -5980,6 +6071,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "ID",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "content_type",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "ENUM_POST_CONTENT_TYPE",
               "ofType": null
             },
             "defaultValue": null,
@@ -10753,6 +10856,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "ID",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "content_type",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "ENUM_POST_CONTENT_TYPE",
               "ofType": null
             },
             "defaultValue": null,

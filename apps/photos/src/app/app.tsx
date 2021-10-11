@@ -13,7 +13,18 @@ import { createPersistedQueryLink } from "@apollo/client/link/persisted-queries"
 import { sha256 } from 'crypto-hash';
 import { setContext } from '@apollo/client/link/context';
 import ReactGA from 'react-ga';
+import * as Sentry from "@sentry/react";
+import { Integrations } from "@sentry/tracing";
 
+Sentry.init({
+  dsn: "https://ecd32835e9764a1fb73c95896f1a6a21@o1035151.ingest.sentry.io/6001921",
+  integrations: [new Integrations.BrowserTracing()],
+
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  // We recommend adjusting this value in production
+  tracesSampleRate: 0.3,
+});
 
 export function ScrollToTop() {
   const { pathname } = useLocation();

@@ -123,11 +123,11 @@ export const ImageComponent = React.forwardRef(({thumbnails, defaultImage, onCli
   if (loading) {
     classes += ' animate-pulse bg-opacity-15	'
   }
-  
-  setTimeout(() => { 
+
+  setTimeout(() => {
    if (loading) {
     setLoading(false)
-   } 
+   }
   }, 1500);
 
   const imageOnError = (e) => {
@@ -141,10 +141,10 @@ export const ImageComponent = React.forwardRef(({thumbnails, defaultImage, onCli
   }
   return (
     <picture  ref={ref}>
-      {thumbnails.map(thumbnail => (
+      {thumbnails && thumbnails.map(thumbnail => (
           <source srcSet={thumbnail.url} key={thumbnail.url}  media={thumbnail.mediaQuery} type={thumbnail.type}/>
         ))}
-      <img  onLoad={() => setLoading(false)} onError={imageOnError} onClick={onClick} width={defaultImage.width} height={defaultImage.height}  src={defaultImage.url} className={classes} alt={alt}/>
+      {defaultImage && <img  onLoad={() => setLoading(false)} onError={imageOnError} onClick={onClick} width={defaultImage.width} height={defaultImage.height}  src={defaultImage.url} className={classes} alt={alt}/>}
      </picture>
   )
 })

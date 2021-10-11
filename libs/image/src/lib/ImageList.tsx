@@ -63,6 +63,10 @@ export interface ImageListProps {
 
 
 export const findImageForWidth = (images: Image[], width: number, webp: boolean) => {
+  if (!images) {
+    return null;
+  }
+  
   const filterPresets = images.filter(p => {
     if (p.webp == webp) {
       return p;

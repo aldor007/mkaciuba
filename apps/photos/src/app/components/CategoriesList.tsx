@@ -28,6 +28,7 @@ const GET_CATEGORIES = gql`
     id
     slug
     image {
+     id
      matchingThumbnails(preset: "categorylist") {
         url
         mediaQuery
@@ -51,18 +52,12 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
   const webp = useWebPSupportCheck();
   const width = useWindowWidth();
   const [loadingMore, setLoadingMore] = useState(false);
-  const limit = 8
+  const limit = 10;
   const history = useHistory();
-  const queryParams = useQueryParams();
-  let page = queryParams.get('page');
-  if (!page) {
-    page = '1'
-  }
-  let startPage = (parseInt(queryParams.get('page')) - 1) * limit;
-  const [start, setStart] = useState(parseInt(page) * limit)
+  const [start, setStart] = useState(limit);
 
   const {loading, error, data, fetchMore } = useQuery<Query>(GET_CATEGORIES, {
-    variables: { galleryId: gallery.id, start: startPage, limit},
+    variables: { galleryId: gallery.id, start: 0, limit},
     notifyOnNetworkStatusChange: true
   });
 
@@ -75,7 +70,7 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
       return false;
     }
 
-    if (data.categories.length == data.categoriesCount) {
+    if (data.categoriesCount - start + limit <= 0) {
       return false;
     }
 
@@ -84,10 +79,6 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
 
   const handleLoadMore = useCallback(() => {
     setStart(start + limit)
-    history.push({
-      pathname: window.location.pathname,
-      search: '?page=' + Math.floor((start + limit) / limit)
-    })
     fetchMore({
       variables: {
          start,
@@ -99,7 +90,7 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
     loading: loadingMore,
     hasNextPage: hasNextPage(),
     onLoadMore: handleLoadMore,
-    delayInMs: 250,
+    delayInMs: 450,
   })
 
   if (error) {
@@ -115,18 +106,15 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
     );
   }
 
-  console.info(loading, data)
-  if (!data) {
-    handleLoadMore();
-  }
 
   const { categories } =  data;
   // setStart(stagccrt + limit)
   const defaultImages = categories.reduce((acc, cur) => {
-    if (!cur.image) {
+    if (!cur.image ) {
       acc[cur.id] = null;
       return acc;
     }
+
     acc[cur.id] = findImageForWidth(cur.image.matchingThumbnails, width, webp)
     return acc;
   }, {})

@@ -91,6 +91,14 @@
       "plugin": "upload",
       "required": false,
       "pluginOptions": {}
+    },
+    "content_type": {
+      "type": "enumeration",
+      "enum": [
+        "HTML",
+        "MARKDOWN"
+      ],
+      "default": "HTML"
     }
   }
 }

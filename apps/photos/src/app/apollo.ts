@@ -15,26 +15,23 @@ import {
       keyArgs,
       merge(existing: any[], incoming: any[], {args, readField}) {
         if  (!args || !args.hasOwnProperty('start')) {
-          return incoming;
+          return incoming || existing;
         }
-        const merged = existing ? existing.slice(0) : [];
-        // Obtain a Set of all existing task IDs.
-        const existingIdSet = new Set(
-          merged.map(task => readField("id", task)));
-        // Remove incoming tasks already present in the existing data.
-        incoming = incoming.filter(
-          task => !existingIdSet.has(readField("id", task)));
-        // Find the index of the task just before the incoming page of tasks.
-        const afterIndex = merged.findIndex(
-          task => args.afterId === readField("id", task));
-        if (afterIndex >= 0) {
-          // If we found afterIndex, insert incoming after that index.
-          merged.splice(afterIndex + 1, 0, ...incoming);
-        } else {
-          // Otherwise insert incoming at the end of the existing data.
-          merged.push(...incoming);
+      const merged = existing ? existing.slice(0) : [];
+      if (args) {
+        // Assume an offset of 0 if args.offset omitted.
+        const { start = 0 } = args;
+        for (let i = 0; i < incoming.length; ++i) {
+          merged[start + i] = incoming[i];
         }
-        return merged;
+      } else {
+        // It's unusual (probably a mistake) for a paginated field not
+        // to receive any arguments, so you might prefer to throw an
+        // exception here, instead of recovering by appending incoming
+        // onto the existing array.
+        merged.push.apply(merged, incoming);
+      }
+      return merged;
       },
     };
   }

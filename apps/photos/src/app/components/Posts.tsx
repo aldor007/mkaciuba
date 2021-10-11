@@ -123,7 +123,7 @@ export const Posts = ( { id, type} : PostsProps) => {
   if (!page) {
     page = '1'
   }
-  let startPage = (parseInt(queryParams.get('page')) - 1) * limit;
+  let startPage = (parseInt(page) - 1) * limit;
 
 
   const [start, setStart] = useState(parseInt(page) * limit)

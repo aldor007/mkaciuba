@@ -7,7 +7,7 @@ import { Loading, ErrorPage } from "@mkaciuba/ui-kit";
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client/react';
 import gql from  'graphql-tag'
-import { Query, Post as PostType, Enum_Post_Content_Position  } from '@mkaciuba/api';
+import { Query, Post as PostType, Enum_Post_Content_Position, Enum_Post_Content_Type  } from '@mkaciuba/api';
 import { DefaultImgSizing, ImageComponent, ImageList } from '@mkaciuba/image';
 import MetaTags from 'react-meta-tags';
 import { Link } from 'react-router-dom'
@@ -93,6 +93,23 @@ const GET_POST = gql`
 }
 `;
 
+
+const renderText = (text: string, type: Enum_Post_Content_Type, className: string) => {
+  if (!type || type == Enum_Post_Content_Type.Html) {
+    return (
+        <p  className={className} dangerouslySetInnerHTML={{
+              __html: text
+           }}/>
+    )
+  } else {
+    return (
+    <p className={className}>
+      {marked(text)}
+    </p>
+    )
+  }
+
+}
 
 export const Post = () => {
   const { slug } = useParams<{slug: string}>();
@@ -203,17 +220,10 @@ export const Post = () => {
             </div>
           </div>
         <div className="max-w-screen-xl mx-auto post-text">
-        <p className="m-4" dangerouslySetInnerHTML={{
-              __html: marked(post.description)
-              }}/>
-            {post.description}
-        {post.content_position === Enum_Post_Content_Position.Top  && <p  dangerouslySetInnerHTML={{
-              __html: post.text
-              }}/>}
+          {renderText(post.description, post.content_type, "m-4")}
+        {post.content_position === Enum_Post_Content_Position.Top  && renderText(post.text, post.content_type, "")}
        {post.gallery && <ImageList categorySlug={post.gallery.slug} minSize={true} />}
-        {post.content_position === Enum_Post_Content_Position.Bottom && <p  dangerouslySetInnerHTML={{
-              __html: post.text
-              }}/>}
+        {post.content_position === Enum_Post_Content_Position.Bottom && renderText(post.text, post.content_type, "")}
       </div>
       <div className="fixed">
         {prevPost && returnArrow(prevPost, showPrev, (value) => () => setShowPrev(value), 'Starsze', faArrowLeft, 'left-0 ') }
