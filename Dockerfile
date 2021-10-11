@@ -1,5 +1,7 @@
 FROM node:16-alpine
 
+RUN apk add --update python make g++\
+   && rm -rf /var/cache/apk/*
 WORKDIR /opt/app
 COPY ./package.json /opt/app/
 ADD ./yarn.lock /opt/app/
