@@ -20,8 +20,8 @@ RUN cp /opt/app/apps/photos/src/environments/environment.prod.ts /opt/app/apps/p
 RUN cp /opt/app/apps/photos-ssr/src/environments/environment.prod.ts /opt/app/apps/photos-ssr/src/environments/environments.ts
 RUN yarn nx build photos --prod --optimization --nocache  --outputHashing=bundles
 
-ADD ./dist/apps/photos/manifest.json /opt/app/dist/apps/photos/manifest.json
 
 RUN yarn nx build photos-ssr --prod --optimization --nocache
+ADD ./dist/apps/photos/manifest.json /opt/app/dist/apps/photos/manifest.json
 RUN rm -rf node_modules && yarn --network-timeout 100000
 CMD ["node", "dist/apps/photos-ssr/main.js"]
