@@ -476,12 +476,14 @@ export type Page = {
   slug?: Maybe<Scalars['String']>;
   content?: Maybe<Scalars['String']>;
   keywords?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
 };
 
 export type PageInput = {
   slug?: Maybe<Scalars['String']>;
   content?: Maybe<Scalars['String']>;
   keywords?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
 };
@@ -1396,6 +1398,7 @@ export type EditPageInput = {
   slug?: Maybe<Scalars['String']>;
   content?: Maybe<Scalars['String']>;
   keywords?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
 };

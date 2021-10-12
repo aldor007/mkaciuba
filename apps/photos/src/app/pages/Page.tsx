@@ -10,6 +10,7 @@ import { useParams } from 'react-router-dom';
 import { PostCategory } from './PostCategory';
 import { PostNavbar } from '../components/PostNavbar';
 import ReactMarkdown from 'react-markdown';
+import MetaTags from 'react-meta-tags';
 
 const GET_GALLERY = gql`
 query  pageBySlug($slug: String!) {
@@ -37,9 +38,15 @@ export const Page = () => {
     return <ErrorPage code={404} message={'Page no found'} />
   }
   const { content } = data.pageBySlug;
+  const page = data.pageBySlug;
 
   return  (
     <>
+          <MetaTags>
+            <title>{page.title}</title>
+            <meta name="keywords" content={page.keywords} />
+            <meta property="og:title" content={page.title} />
+          </MetaTags>
     <PostNavbar />
         <div className="max-w-screen-xl mx-auto post-text">
           <ReactMarkdown className="m-4">

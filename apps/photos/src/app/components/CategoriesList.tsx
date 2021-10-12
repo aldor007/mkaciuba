@@ -122,7 +122,7 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
       <>
      <div className="flex flex-wrap mx-auto overflow-hidden">
        <MetaTags>
-            <title>{gallery.name}</title>
+            <title>{gallery.name} | mkaciuba.pl</title>
             <meta name="description" content={gallery.description} />
             <meta property="og:title" content={gallery.name} />
           </MetaTags>

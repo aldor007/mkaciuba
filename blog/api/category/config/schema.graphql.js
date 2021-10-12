@@ -190,20 +190,14 @@ module.exports = {
       categoryBySlug: {
         resolverOf: 'application::category.category.findOne',
         resolver: async (obj, options, { context }, info) => {
-          const key = getCacheKey('categoryv4', options)
-          let category = await strapi.services.cache.get(key);
-          if (!category) {
-            category = await strapi.services.category.findOne({ slug: options.slug });
-            if (category) {
-              strapi.services.cache.set(key, category, 600);
-            }
-          }
+          const category = await strapi.services.category.findOne({ slug: options.slug });
 
           if (!category) {
             return new UserInputError('unable to find category ')
           }
 
           if (!category.public) {
+            console.info('Category not public ', category.name )
             const token = context.request.headers['x-gallery-token'];
             info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PRIVATE' });
             if (!token) {
