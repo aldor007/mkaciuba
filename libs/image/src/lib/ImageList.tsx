@@ -66,7 +66,7 @@ export const findImageForWidth = (images: Image[], width: number, webp: boolean)
   if (!images) {
     return null;
   }
-  
+
   const filterPresets = images.filter(p => {
     if (p.webp == webp) {
       return p;
@@ -178,7 +178,7 @@ export const ImageList = ({ categorySlug, minSize }: ImageListProps) => {
               height={defaultImages[index].height}
               id={item.id}
               key={item.id}
-              title={item.caption}
+              title={item.caption || item.alternativeText || item.name}
             >
             {({ ref, open }) => (
                 <div className={imageClass}>
