@@ -2,7 +2,7 @@
   "kind": "collectionType",
   "collectionName": "pages",
   "info": {
-    "name": "Page",
+    "name": "CustomPage",
     "description": ""
   },
   "options": {

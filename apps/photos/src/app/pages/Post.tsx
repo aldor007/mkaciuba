@@ -20,7 +20,7 @@ import { PostCard } from '../components/PostCard';
 import { format } from "date-fns";
 import { Tag } from '../components/Tag';
 import { PostNavbar } from '../components/PostNavbar';
-import marked from 'marked';
+import ReactMarkdown from 'react-markdown';
 
 const GET_POST = gql`
   query ($postSlug: String!) {
@@ -103,9 +103,9 @@ const renderText = (text: string, type: Enum_Post_Content_Type, className: strin
     )
   } else {
     return (
-    <p className={className}>
-      {marked(text)}
-    </p>
+       <ReactMarkdown className="m-4">
+        {text}
+      </ReactMarkdown>
     )
   }
 

@@ -9,7 +9,7 @@ import { Loading, ErrorPage } from "@mkaciuba/ui-kit";
 import { useParams } from 'react-router-dom';
 import { PostCategory } from './PostCategory';
 import { PostNavbar } from '../components/PostNavbar';
-import marked from 'marked';
+import ReactMarkdown from 'react-markdown';
 
 const GET_GALLERY = gql`
 query  pageBySlug($slug: String!) {
@@ -42,9 +42,9 @@ export const Page = () => {
     <>
     <PostNavbar />
         <div className="max-w-screen-xl mx-auto post-text">
-                <p className="m-4" dangerouslySetInnerHTML={{
-              __html: marked(content)
-              }}/>
+          <ReactMarkdown className="m-4">
+            {content}
+            </ReactMarkdown>
       </div>
     <Footer></Footer>
     </>
