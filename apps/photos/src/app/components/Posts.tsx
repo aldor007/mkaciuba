@@ -116,7 +116,7 @@ export const Posts = ( { id, type} : PostsProps) => {
   const history = useHistory();
   const queryParams = useQueryParams();
   const webp = useWebPSupportCheck();
-  const width = useWindowWidth();
+  const width = useWindowWidth({initialWidth: 1800});
   const limit = 6
   const [loadingMore, setLoadingMore] = useState(false);
   let page = queryParams.get('page');

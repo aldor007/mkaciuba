@@ -15,6 +15,7 @@ import { setContext } from '@apollo/client/link/context';
 import ReactGA from 'react-ga';
 import * as Sentry from "@sentry/react";
 import { Integrations } from "@sentry/tracing";
+import usePageTracking from '../usePageTracking';
 
 Sentry.init({
   dsn: "https://ecd32835e9764a1fb73c95896f1a6a21@o1035151.ingest.sentry.io/6001921",
@@ -61,11 +62,7 @@ const authLink = setContext((_, { headers }) => {
 });
 
 export const App = ({ client }: AppsProps) => {
-  useEffect(() => {
-    ReactGA.initialize('UA-21042903-3');
-    ReactGA.pageview(window.location.pathname + window.location.search);
-  })
-
+  usePageTracking();
   if (!client) {
       let link;
       if (environment.production) {

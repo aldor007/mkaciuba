@@ -108,7 +108,7 @@ const addDatePrefix = (url) => {
     return url + prefix + 'cache=' + Date.now()
 }
 
-export const ImageComponent = React.forwardRef(({thumbnails, defaultImage, onClick, alt, className, defaultImgSizing, initialWidth}:ImageComponentProps, ref: RefObject<HTMLImageElement>) => {
+export const ImageComponent = React.forwardRef(({thumbnails, defaultImage, onClick, alt, className, defaultImgSizing, initialWidth=1900}:ImageComponentProps, ref: RefObject<HTMLImageElement>) => {
   const [loading, setLoading] = useState(true)
   const webp = useWebPSupportCheck();
   const width = useWindowWidth({ initialWidth})

@@ -10,6 +10,7 @@ import MetaTags from 'react-meta-tags';
 import { Query } from '@mkaciuba/api';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { Loading, LoadingMore, ErrorPage } from '@mkaciuba/ui-kit'
+import ReactGA from 'react-ga'
 
 
 import { Image, ImageComponent } from './image';
@@ -89,11 +90,11 @@ export const findImageForWidth = (images: Image[], width: number, webp: boolean)
 export const ImageList = ({ categorySlug, minSize }: ImageListProps) => {
   const webp = useWebPSupportCheck();
   const width = useWindowWidth({
-    initialWidth: 1000
+    initialWidth: 1900
   });
 
   const [loadingMore, setLoadingMore] = useState(false);
-  const limit = 12;
+  const limit = 20;
   const [start, setStart] = useState(limit)
   const { loading, error, data, fetchMore } = useQuery<Query>(GET_IMAGES, {
     variables: { categorySlug, limit, start: 0 },
@@ -169,7 +170,10 @@ export const ImageList = ({ categorySlug, minSize }: ImageListProps) => {
             <meta name="twitter:image" content={seoImage[0].url} />
             <meta property="og:image" content={seoImage[0].url} />
           </MetaTags>
-          <Gallery shareButton={false} id={category.slug}>
+          <Gallery shareButton={false} id={category.slug} onOpen={() => ReactGA.event({
+          category: 'photoswipe',
+          action: 'open'
+          })}>
             {images.map( (item, index) => (
             <Item
               original={defaultImages[index].url}
