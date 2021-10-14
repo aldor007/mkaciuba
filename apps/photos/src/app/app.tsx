@@ -16,6 +16,7 @@ import ReactGA from 'react-ga';
 import * as Sentry from "@sentry/react";
 import { Integrations } from "@sentry/tracing";
 import usePageTracking from '../usePageTracking';
+import { Tracking } from './components/Tracking';
 
 Sentry.init({
   dsn: "https://ecd32835e9764a1fb73c95896f1a6a21@o1035151.ingest.sentry.io/6001921",
@@ -62,7 +63,6 @@ const authLink = setContext((_, { headers }) => {
 });
 
 export const App = ({ client }: AppsProps) => {
-  usePageTracking();
   if (!client) {
       let link;
       if (environment.production) {
@@ -109,6 +109,7 @@ export const App = ({ client }: AppsProps) => {
   }
   return (
       <ApolloProvider client={client}>
+        <Tracking />
         <ScrollToTop />
         {renderRoutes(Routes)}
       </ApolloProvider>
