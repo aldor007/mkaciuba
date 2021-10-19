@@ -176,7 +176,7 @@ export const Posts = ( { id, type} : PostsProps) => {
 
    if (loading && !data) {
     return (
-      <Loading/>
+      <LoadingMore/>
     );
   }
   const { posts } =  data;

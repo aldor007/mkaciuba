@@ -6,7 +6,7 @@ import { Query } from '@mkaciuba/api';
 import { toImage, ImageComponent } from "@mkaciuba/image";
 import { generatePath, Link} from 'react-router-dom';
 import { AppRoutes } from '../routes';
-import { Loading, ErrorPage} from "@mkaciuba/ui-kit";
+import { Loading, ErrorPage, LoadingMore} from "@mkaciuba/ui-kit";
 import { FacebookProvider, Page } from 'react-facebook';
 import { Tag } from "./Tag";
 
@@ -41,7 +41,7 @@ export const Footer = () => {
   const {loading, error, data} = useQuery<Query>(GET_FOOTER, {
     variables: { webp }
   });
-  if (loading) return <Loading/>;
+  if (loading) return <LoadingMore/>;
   if (error) {
     console.error('Footer', error)
     return <ErrorPage code={500} message={error.message} />

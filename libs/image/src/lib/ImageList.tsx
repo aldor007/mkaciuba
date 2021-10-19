@@ -143,7 +143,7 @@ export const ImageList = ({ categorySlug, minSize }: ImageListProps) => {
 
   if (loading && !data) {
    return (
-     <Loading/>
+     <LoadingMore/>
    );
   }
 
