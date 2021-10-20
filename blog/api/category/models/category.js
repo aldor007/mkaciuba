@@ -13,7 +13,7 @@ module.exports = {
   lifecycles: {
     async beforeCreate(data) {
       if (data.name) {
-        data.slug = `${slugify(data.title, {lower: true})}-${Math.random()}`;
+        data.slug = `${slugify(data.name, {lower: true})}-${Math.random()}`;
       }
     },
     async beforeUpdate(params, data) {
