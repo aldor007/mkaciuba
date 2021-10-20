@@ -110,7 +110,7 @@ module.exports = {
             if (post.publicationDate < new Date()) {
               info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
             } else {
-              info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PRIVATe' });
+              info.cacheControl.setCacheHint({ maxAge: 60, scope: 'PRIVATE' });
             }
           }
           // post.gallery = await strapi.services.gallery.findOne({ id: post.gallery.id})
@@ -145,7 +145,7 @@ module.exports = {
           info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
           post = await strapi.services.post.findOne(search);
           if (!post) {
-            return null;
+            return [];
           }
           const search_lt = {
             id_lt: post.id,
@@ -173,7 +173,7 @@ module.exports = {
           info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
           post = await strapi.services.post.findOne(search);
           if (!post) {
-            return null;
+            return [];
           }
           const search_related = {
             id_ne: post.id,
