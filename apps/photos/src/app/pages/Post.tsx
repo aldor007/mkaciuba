@@ -125,7 +125,11 @@ export const Post = () => {
    };
 
   const post = data.postBySlug;
-  const [prevPost, nextPost] = data.prevNextPost;
+  if (!post) {
+    console.error('Post', 'not-fount')
+    return <ErrorPage code={404} message={'Post not found'} />
+  }
+  const [prevPost, nextPost] = data.prevNextPost || [];
 
   const returnArrow = (post: PostType, shouldShow: boolean, onHover, headingText, icon, direction: string) => {
     let title = post.title.substring(0, 13);

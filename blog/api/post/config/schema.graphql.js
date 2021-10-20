@@ -104,15 +104,15 @@ module.exports = {
         resolverOf: 'application::post.post.find',
         resolver: async (obj, options, { context }, info) => {
           const search = {};
-          search.publicationDate_lt = new Date();
           search.slug = options.slug
-          const key = getCacheKey('post' + options.slug, options);
-          let post = await strapi.services.cache.get(key)
-          // info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
-          if (post) {
-            return post;
-          }
           post = await strapi.services.post.findOne(search);
+          if (post) {
+            if (post.publicationDate < new Date()) {
+              info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
+            } else {
+              info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PRIVATe' });
+            }
+          }
           // post.gallery = await strapi.services.gallery.findOne({ id: post.gallery.id})
           return post;
         }
