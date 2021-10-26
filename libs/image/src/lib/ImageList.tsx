@@ -16,6 +16,7 @@ import ReactGA from 'react-ga'
 import { Image, ImageComponent } from './image';
 
 import { Gallery, Item } from 'react-photoswipe-gallery'
+import { findImageForWidthBigger } from "..";
 
 
 const GET_IMAGES = gql`
@@ -154,6 +155,7 @@ export const ImageList = ({ categorySlug, minSize }: ImageListProps) => {
    const images = data.categoryBySlug.medias ;
    const category = data.categoryBySlug;
    const defaultImages = images.map((item) => findImageForWidth(item.thumbnails, width, webp));
+   const defaultImagesFull = images.map((item) => findImageForWidthBigger(item.thumbnails, width, webp));
    let seoImage = defaultImages;
    if (category.image) {
     seoImage = images.map((item) => findImageForWidth(category.image.thumbnails, 1024, false));
@@ -176,11 +178,11 @@ export const ImageList = ({ categorySlug, minSize }: ImageListProps) => {
           })}>
             {images.map( (item, index) => (
             <Item
-              original={defaultImages[index].url}
+              original={defaultImagesFull[index].url}
               thumbnail={defaultImages[index].url}
               width={defaultImages[index].width}
               height={defaultImages[index].height}
-              id={item.id}
+              // id={item.id}
               key={item.id}
               title={item.caption || item.alternativeText || item.name}
             >
