@@ -90,9 +90,10 @@ export const findImageForWidth = (images: Image[], width: number, webp: boolean)
 
 export const ImageList = ({ categorySlug, minSize }: ImageListProps) => {
   const webp = useWebPSupportCheck();
-  const width = useWindowWidth({
-    initialWidth: 1900
-  });
+  let width = 1900;
+  if (document) {
+    width = document.documentElement.clientWidth;
+  }
 
   const [loadingMore, setLoadingMore] = useState(false);
   const limit = 20;
