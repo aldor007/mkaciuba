@@ -90,10 +90,7 @@ export const findImageForWidth = (images: Image[], width: number, webp: boolean)
 
 export const ImageList = ({ categorySlug, minSize }: ImageListProps) => {
   const webp = useWebPSupportCheck();
-  let width = 1900;
-  if (document) {
-    width = document.documentElement.clientWidth;
-  }
+  const width = typeof document === 'undefined' ? 1900 :  document.documentElement.clientWidth,
 
   const [loadingMore, setLoadingMore] = useState(false);
   const limit = 29;
@@ -123,7 +120,12 @@ export const ImageList = ({ categorySlug, minSize }: ImageListProps) => {
 
   const handleLoadMore = useCallback(
     () => {
-      setStart(start + limit)
+     ReactGA.event({
+      category: 'image-load-more',
+      action: 'load',
+      label: window.location.href,
+    })
+    setStart(start + limit)
     fetchMore({
       variables: {
          start,
@@ -175,7 +177,8 @@ export const ImageList = ({ categorySlug, minSize }: ImageListProps) => {
           </MetaTags>
           <Gallery shareButton={false} id={category.slug} onOpen={() => ReactGA.event({
           category: 'photoswipe',
-          action: 'open'
+          action: 'open',
+          label: window.location.href,
           })}>
             {images.map( (item, index) => (
             <Item
