@@ -96,7 +96,7 @@ export const ImageList = ({ categorySlug, minSize }: ImageListProps) => {
   }
 
   const [loadingMore, setLoadingMore] = useState(false);
-  const limit = 20;
+  const limit = 29;
   const [start, setStart] = useState(limit)
   const { loading, error, data, fetchMore } = useQuery<Query>(GET_IMAGES, {
     variables: { categorySlug, limit, start: 0 },

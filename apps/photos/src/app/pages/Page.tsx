@@ -48,7 +48,7 @@ export const Page = () => {
             <meta property="og:title" content={page.title} />
           </MetaTags>
     <PostNavbar />
-        <div className="max-w-screen-xl mx-auto post-text">
+        <div className="max-w-screen-xl mx-auto post-text prose">
           <ReactMarkdown className="m-4">
             {content}
             </ReactMarkdown>

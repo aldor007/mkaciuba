@@ -9,6 +9,7 @@ import { PostCategory } from './app/pages/PostCategory';
 import { OldPost } from './app/pages/OldPosts';
 import { PostTag } from './app/pages/PostTag';
 import { Page } from './app/pages/Page';
+import { GalleryBlog, GalleryBlogCategory } from './app/pages/GalleryBlog';
 
 export const Routes = [
     {
@@ -46,6 +47,21 @@ export const Routes = [
     {
         component: Page,
         path: AppRoutes.page.path,
+        exact: true
+    },
+    {
+        component: GalleryBlog,
+        path: AppRoutes.oldphotos.path,
+        exact: true
+    },
+    {
+        component: GalleryBlogCategory,
+        path: AppRoutes.oldgalleryblog.path,
+        exact: true
+    },
+    {
+        component: GalleryBlogCategory,
+        path:'/galeria/fotografie',
         exact: true
     },
     {

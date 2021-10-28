@@ -5,6 +5,12 @@ export const AppRoutes = {
     'photos' : {
         path: '/gallery/:gallerySlug/:categorySlug',
     },
+    'oldphotos' : {
+        path: '/galeria/blog/:slug',
+    },
+    'oldgalleryblog' : {
+        path: '/galeria/blog',
+    },
   'categoryList': {
         path: '/gallery/:gallerySlug',
     },
