@@ -46,6 +46,7 @@ const GET_POST = gql`
       description
       text
       content_position
+      content_type
       tags {
           name
           slug

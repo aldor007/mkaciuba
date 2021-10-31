@@ -17,6 +17,8 @@ query  pageBySlug($slug: String!) {
   pageBySlug(
     slug: $slug
   ) {
+    title
+    keywords
     slug
     content
   }
