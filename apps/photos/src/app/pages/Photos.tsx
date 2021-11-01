@@ -9,7 +9,7 @@ import { useQuery,  } from '@apollo/client/react';
 import gql from  'graphql-tag';
 import { Query } from '@mkaciuba/api';
 import { AppRoutes } from '../routes';
-import { Loading, ErrorPage } from '@mkaciuba/ui-kit'
+import { Loading, ErrorPage, LoadingMore } from '@mkaciuba/ui-kit'
 import MetaTags from 'react-meta-tags';
 
 const GET_PHOTOS = gql`
@@ -50,7 +50,7 @@ export const Photos = () => {
   const { loading, error, data } = useQuery<Query>(GET_PHOTOS, {
     variables: { categorySlug, gallerySlug},
   });
-  if (loading) return <Loading/>;
+  if (loading) return <LoadingMore/>;
   let authRequired = false;
   if (error && error.graphQLErrors.some(g => g.extensions?.code == 'UNAUTHENTICATED')) {
     authRequired = true;

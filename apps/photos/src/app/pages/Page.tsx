@@ -5,7 +5,7 @@ import  Header from '../Header';
 import { useQuery } from '@apollo/client/react';
 import gql from  'graphql-tag';
 import { Query } from '@mkaciuba/api';
-import { Loading, ErrorPage } from "@mkaciuba/ui-kit";
+import { Loading, ErrorPage, LoadingMore } from "@mkaciuba/ui-kit";
 import { useParams } from 'react-router-dom';
 import { PostCategory } from './PostCategory';
 import { PostNavbar } from '../components/PostNavbar';
@@ -31,7 +31,7 @@ export const Page = () => {
   const { loading, error, data } = useQuery<Query>(GET_GALLERY, {
     variables: { slug },
   });
-  if (loading) return <Loading/>;
+  if (loading) return <LoadingMore/>;
   if (error) {
     console.error('Page', error)
     return <ErrorPage code={500} message={error.message} />
