@@ -104,11 +104,9 @@ const renderText = (text: string, type: Enum_Post_Content_Type, className: strin
     )
   } else {
     return (
-      <div className="prose">
        <ReactMarkdown className="m-4">
         {text}
       </ReactMarkdown>
-      </div>
     )
   }
 
