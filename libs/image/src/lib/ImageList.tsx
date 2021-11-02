@@ -183,16 +183,17 @@ export const ImageList = ({ categorySlug, minSize }: ImageListProps) => {
             {images.map( (item, index) => (
             <Item
               original={defaultImagesFull[index].url}
-              thumbnail={defaultImages[index].url}
-              width={defaultImages[index].width}
-              height={defaultImages[index].height}
+              thumbnail={defaultImagesFull[index].url}
+              width={defaultImagesFull[index].width}
+              height={defaultImagesFull[index].height}
               // id={item.id}
+
               key={item.id}
               title={item.caption || item.alternativeText || item.name}
             >
             {({ ref, open }) => (
                 <div className={imageClass}>
-               <ImageComponent ref={ref as RefObject<HTMLImageElement>} onClick={open} thumbnails={item.thumbnails} defaultImage={defaultImages[index]} alt={item.alternativeText || item.name} />
+               <ImageComponent ref={ref as RefObject<HTMLImageElement>} onClick={open} thumbnails={item.thumbnails} defaultImage={defaultImagesFull[index]} alt={item.alternativeText || item.name} />
                   <div className="hidden overflow-hidden">
                     <div className="text-white text-lg">{item.alternativeText || item.name}</div>
                   </div>

@@ -44,8 +44,8 @@ const presetList = [
   new Preset('big', 700, null, '(max-width: 1000px)', 'jpeg'),
   new Preset('small', 80, null, '(max-width: 100px)', 'jpeg'),
   new Preset('smallwebp', 80, null, '(max-width: 100px)', 'webp'),
-  // new Preset('big300', 300, null, '(max-width: 300px)', 'jpeg'),
-  // new Preset('big300webp', 300, null, '(max-width: 300px)', 'webp'),
+  new Preset('big300', 300, null, '(max-width: 300px)', 'jpeg'),
+  new Preset('big300webp', 300, null, '(max-width: 300px)', 'webp'),
   new Preset('big1000', 1000, null, '(max-width: 1300px)', 'jpeg'),
   new Preset('big1300', 1300, null, '(max-width: 1600px)', 'jpeg'),
 ]
