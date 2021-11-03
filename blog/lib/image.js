@@ -81,6 +81,13 @@ const allPresets = presetList.concat([
   new Preset('coverimgwebp', 2900, 500,'(min-width: 1300px)', 'webp'),
   new Preset('coverimg', 2900, 500, '(min-width: 1300px)', 'jpeg'),
 
+  new Preset('cover_s_imgswebp', 600, 300, '(max-width: 500px)', 'webp'),
+  new Preset('cover_s_imgs', 600, 300, '(max-width: 500px)', 'jpeg'),
+  new Preset('cover_s_imgmwebp', 1300, 300, '(max-width: 500px)', 'webp'),
+  new Preset('cover_s_imgm', 1300, 300, '(max-width: 1300px)', 'jpeg'),
+  new Preset('cover_s_imgwebp', 2900, 500,'(min-width: 1300px)', 'webp'),
+  new Preset('cover_s_img', 2900, 500, '(min-width: 1300px)', 'jpeg'),
+
   new Preset('nextpostwebp', 80, 150,'(min-width: 100px)', 'webp'),
   new Preset('nextpost', 80, 150, '(min-width: 100px)', 'jpeg'),
 ]);
