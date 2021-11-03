@@ -221,6 +221,11 @@ export enum Enum_Post_Content_Type {
   Markdown = 'MARKDOWN'
 }
 
+export enum Enum_Post_Cover_Image_Preset {
+  Coverimg = 'coverimg',
+  CoverimgS = 'coverimg_s'
+}
+
 export enum Enum_Post_Gallery_Template {
   Normal = 'normal',
   Description = 'description'
@@ -766,6 +771,7 @@ export type PostInput = {
   tags?: Maybe<Array<Maybe<Scalars['ID']>>>;
   post_image_preset?: Maybe<Enum_Post_Post_Image_Preset>;
   cover_image?: Maybe<Scalars['ID']>;
+  cover_image_preset?: Maybe<Enum_Post_Cover_Image_Preset>;
   content_type?: Maybe<Enum_Post_Content_Type>;
   published_at?: Maybe<Scalars['DateTime']>;
   created_by?: Maybe<Scalars['ID']>;
@@ -1428,6 +1434,7 @@ export type EditPostInput = {
   tags?: Maybe<Array<Maybe<Scalars['ID']>>>;
   post_image_preset?: Maybe<Enum_Post_Post_Image_Preset>;
   cover_image?: Maybe<Scalars['ID']>;
+  cover_image_preset?: Maybe<Enum_Post_Cover_Image_Preset>;
   content_type?: Maybe<Enum_Post_Content_Type>;
   published_at?: Maybe<Scalars['DateTime']>;
   created_by?: Maybe<Scalars['ID']>;

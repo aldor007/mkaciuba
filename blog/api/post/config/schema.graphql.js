@@ -47,7 +47,7 @@ module.exports = {
           if (!obj.cover_image) {
             return null
           }
-          return getImagesFromPreset(obj.cover_image, 'coverimg')
+          return getImagesFromPreset(obj.cover_image, obj.cover_image_preset || 'coverimg')
         }
       }
     },

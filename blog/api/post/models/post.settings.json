@@ -92,6 +92,15 @@
       "required": false,
       "pluginOptions": {}
     },
+    "cover_image_preset": {
+      "type": "enumeration",
+      "enum": [
+        "coverimg",
+        "coverimg_s"
+      ],
+      "private": true,
+      "default": "postlist"
+    },
     "content_type": {
       "type": "enumeration",
       "enum": [

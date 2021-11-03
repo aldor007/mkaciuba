@@ -1593,6 +1593,29 @@
       },
       {
         "kind": "ENUM",
+        "name": "ENUM_POST_COVER_IMAGE_PRESET",
+        "description": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "coverimg",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "coverimg_s",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "possibleTypes": null
+      },
+      {
+        "kind": "ENUM",
         "name": "ENUM_POST_GALLERY_TEMPLATE",
         "description": null,
         "fields": null,
@@ -6095,6 +6118,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "ID",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "cover_image_preset",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "ENUM_POST_COVER_IMAGE_PRESET",
               "ofType": null
             },
             "defaultValue": null,
@@ -10892,6 +10927,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "ID",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "cover_image_preset",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "ENUM_POST_COVER_IMAGE_PRESET",
               "ofType": null
             },
             "defaultValue": null,
