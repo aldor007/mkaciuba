@@ -96,7 +96,7 @@
       "type": "enumeration",
       "enum": [
         "coverimg",
-        "coverimg_s"
+        "cover_s"
       ],
       "private": true,
       "default": "postlist"
