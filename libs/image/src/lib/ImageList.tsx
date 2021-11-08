@@ -172,8 +172,8 @@ export const ImageList = ({ categorySlug, minSize }: ImageListProps) => {
      <>
         <div className="flex flex-wrap -mx-1 overflow-hidden" >
           <MetaTags>
-            <meta name="twitter:card" content={seoImage[0].url} />
             <meta name="twitter:image" content={seoImage[0].url} />
+            <meta name="twitter:card" content="summary_large_image" />
             <meta property="og:image" content={seoImage[0].url} />
           </MetaTags>
           <Gallery shareButton={false} id={category.slug} onOpen={() => ReactGA.event({
