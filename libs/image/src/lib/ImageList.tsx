@@ -172,6 +172,7 @@ export const ImageList = ({ categorySlug, minSize }: ImageListProps) => {
      <>
         <div className="flex flex-wrap -mx-1 overflow-hidden" >
           <MetaTags>
+            <meta name="twitter:card" content={seoImage[0].url} />
             <meta name="twitter:image" content={seoImage[0].url} />
             <meta property="og:image" content={seoImage[0].url} />
           </MetaTags>

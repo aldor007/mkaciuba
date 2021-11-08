@@ -195,8 +195,11 @@ export const Post = () => {
           <MetaTags>
             <title>{post.title}</title>
             <meta name="description" content={post.description} />
+            <meta name="twitter:description" content={post.description} />
+            <meta name="twitter:title" content={post.title} />
             <meta name="keywords" content={post.keywords} />
             <meta property="og:title" content={post.title} />
+
           </MetaTags>
     <PostNavbar />
       <div className="w-full h-full " >
