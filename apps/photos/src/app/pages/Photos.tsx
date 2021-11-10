@@ -95,7 +95,7 @@ export const Photos = () => {
   return  (
     <>
           <MetaTags>
-            <title>{category.name}</title>
+            <title>{category.name} | mkaciuba.pl</title>
             <meta name="description" content={category.description} />
             <meta property="og:title" content={category.name} />
           </MetaTags>

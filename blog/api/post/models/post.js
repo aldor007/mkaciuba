@@ -6,6 +6,7 @@
  */
 
 const slugify = require('slugify');
+const { makeid } = require('../../../lib');
 module.exports = {
   /**
    * Triggered before user creation.
@@ -13,7 +14,7 @@ module.exports = {
   lifecycles: {
     async beforeCreate(data) {
       if (data.title) {
-        data.slug = `${slugify(data.title, {lower: true})}-${Math.random()}`;
+        data.slug = `${slugify(data.title, {lower: true})}-${makeid(4)}`;
       }
     },
   },

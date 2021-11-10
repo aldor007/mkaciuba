@@ -45,7 +45,7 @@ export const Page = () => {
   return  (
     <>
           <MetaTags>
-            <title>{page.title}</title>
+            <title>{page.title} | mkaciuba.pl </title>
             <meta name="keywords" content={page.keywords} />
             <meta property="og:title" content={page.title} />
           </MetaTags>

@@ -29,9 +29,7 @@
       "model": "file",
       "via": "related",
       "allowedTypes": [
-        "files",
         "images",
-        "videos"
       ],
       "plugin": "upload",
       "required": true,
@@ -59,14 +57,16 @@
       "enum": [
         "top",
         "bottom"
-      ]
+      ],
+      "default": "top"
     },
     "gallery_template": {
       "type": "enumeration",
       "enum": [
         "normal",
         "description"
-      ]
+      ],
+      "default": "normal"
     },
     "tags": {
       "collection": "tag",
@@ -107,7 +107,7 @@
         "HTML",
         "MARKDOWN"
       ],
-      "default": "HTML"
+      "default": "MARKDOWN"
     }
   }
 }

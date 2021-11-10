@@ -7,7 +7,6 @@ import {useHistory} from "react-router-dom"
 import { Link } from 'react-router-dom'
 import { generatePath, useLocation } from "react-router";
 import { findImageForWidth, ImageComponent } from "@mkaciuba/image";
-import { useWebPSupportCheck } from "react-use-webp-support-check";
 import MetaTags from 'react-meta-tags';
 import { Gallery, Query, Post } from '@mkaciuba/api';
 import '../../assets/category.css';
@@ -115,7 +114,7 @@ export interface PostsProps {
 export const Posts = ( { id, type} : PostsProps) => {
   const history = useHistory();
   const queryParams = useQueryParams();
-  const webp = useWebPSupportCheck();
+  const webp = false;//useWebPSupportCheck();
   const width = useWindowWidth({initialWidth: 1800});
   const limit = 6
   const [loadingMore, setLoadingMore] = useState(false);

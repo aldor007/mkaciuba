@@ -223,7 +223,7 @@ export enum Enum_Post_Content_Type {
 
 export enum Enum_Post_Cover_Image_Preset {
   Coverimg = 'coverimg',
-  CoverimgS = 'coverimg_s'
+  CoverS = 'cover_s'
 }
 
 export enum Enum_Post_Gallery_Template {
@@ -516,6 +516,7 @@ export type Post = {
   tags?: Maybe<Array<Maybe<Tag>>>;
   mainImage?: Maybe<Array<Maybe<Image>>>;
   coverImage?: Maybe<Array<Maybe<Image>>>;
+  seoDescription?: Maybe<Scalars['String']>;
 };
 
 

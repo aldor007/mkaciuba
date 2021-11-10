@@ -3,6 +3,7 @@ const slugify = require('slugify');
 const { AuthenticationError, ForbiddenError, UserInputError } = require('apollo-server-errors');
 const jwt = require('jsonwebtoken');
 const { getImage, getImagesFromPreset } = require('../../../lib/image');
+const removeMd = require('remove-markdown');
 
 const getCacheKey = (prefix, options = {}, obj = {}) => {
   if (options.where) {
@@ -28,6 +29,7 @@ module.exports = {
     extend type Post {
       mainImage: [Image]
       coverImage: [Image]
+      seoDescription: String
     }
   `,
   resolver: {
@@ -49,7 +51,18 @@ module.exports = {
           }
           return getImagesFromPreset(obj.cover_image, obj.cover_image_preset || 'coverimg')
         }
+      },
+      seoDescription: {
+        resolverOf: 'application::post.post.find',
+        resolver: async (obj, options, { context }, info) => {
+          if (obj.content_type == "MARKDOWN") {
+            return removeMd(obj.description);
+          }
+
+          return obj.description.replace(/&nbsp;/g, ' ').replace(/<.*?>/g, '')
+        }
       }
+
     },
     Query: {
       post: {

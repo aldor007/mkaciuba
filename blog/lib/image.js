@@ -122,7 +122,7 @@ exports.getImage = getImage;
 const getImageUrl = (obj, preset) => {
   const parent = base64Url(obj.path);
   let caption = obj.caption || obj.alternativeText || obj.name;
-  caption = caption.replace(/_/g, '-').replace(/\./g, '-').replace(/ /g, '-').replace(':', '').replace(')', '').replace('(', '')
+  caption = caption.replace(/_/g, '-').replace(/\./g, '-').replace(/ /g, '-').replace(':', '').replace(')', '').replace('(', '').replace('\'', '').replace('"', '').replace('`', '')
   caption = slugify(caption);
   return `https://mort.mkaciuba.com/images/transform/${parent}/photo_${caption}_${preset}${obj.ext}`
 }

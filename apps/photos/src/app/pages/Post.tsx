@@ -44,6 +44,7 @@ const GET_POST = gql`
         slug
       }
       description
+      seoDescription
       text
       content_position
       content_type
@@ -193,9 +194,9 @@ export const Post = () => {
   return  (
     <>
           <MetaTags>
-            <title>{post.title}</title>
-            <meta name="description" content={post.description} />
-            <meta name="twitter:description" content={post.description} />
+            <title>{post.title} | mkaciuba.pl</title>
+            <meta name="description" content={post.seoDescription} />
+            <meta name="twitter:description" content={post.seoDescription} />
             <meta name="twitter:title" content={post.title} />
             <meta name="keywords" content={post.keywords} />
             <meta property="og:title" content={post.title} />

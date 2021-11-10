@@ -211,7 +211,11 @@ module.exports = {
               return new ForbiddenError("invalid token parse");
             }
           } else {
-            info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
+            if (category.publicationDate < new Date()) {
+              info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
+            } else {
+              info.cacheControl.setCacheHint({ maxAge: 60, scope: 'PRIVATE' });
+            }
           }
           return category;
         }

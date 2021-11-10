@@ -5,7 +5,6 @@ import gql from  'graphql-tag';
 import { Link } from 'react-router-dom'
 import { generatePath } from "react-router";
 import { findImageForWidth, ImageComponent } from "@mkaciuba/image";
-import { useWebPSupportCheck } from "react-use-webp-support-check";
 import MetaTags from 'react-meta-tags';
 import { Gallery, Query } from '@mkaciuba/api';
 import {useHistory} from "react-router-dom"
@@ -49,7 +48,7 @@ export interface CategoriesListProps {
 }
 
 export const CategoriesList = ({ gallery}: CategoriesListProps) => {
-  const webp = useWebPSupportCheck();
+  const webp = false;// useWebPSupportCheck();
   const width = useWindowWidth();
   const [loadingMore, setLoadingMore] = useState(false);
   const limit = 10;

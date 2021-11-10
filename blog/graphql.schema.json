@@ -1606,7 +1606,7 @@
             "deprecationReason": null
           },
           {
-            "name": "coverimg_s",
+            "name": "cover_s",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -4249,6 +4249,18 @@
                 "name": "Image",
                 "ofType": null
               }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "seoDescription",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null

@@ -38,7 +38,7 @@ export const PostTag = () => {
   return  (
     <>
           <MetaTags>
-            <title>{tag.name}</title>
+            <title>Tag - {tag.name} | mkaciuba.pl</title>
           </MetaTags>
     <Header/>
     <h1 className="text-center m-5 text-4xl leading-snug font-serif ">Posty z tagu: {tag.name}</h1>
