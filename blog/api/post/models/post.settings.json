@@ -29,7 +29,7 @@
       "model": "file",
       "via": "related",
       "allowedTypes": [
-        "images",
+        "images"
       ],
       "plugin": "upload",
       "required": true,
