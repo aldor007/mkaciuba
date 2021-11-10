@@ -1,6 +1,6 @@
 FROM node:14-alpine
 WORKDIR /opt/app
-RUN apk --update add make g++ python
+RUN apk --update add make g++ python3
 RUN apk add libimagequant-dev --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main
 RUN apk add vips-dev --repository=http://dl-cdn.alpinelinux.org/alpine/edge/communit
 COPY ./package.json /opt/app/
