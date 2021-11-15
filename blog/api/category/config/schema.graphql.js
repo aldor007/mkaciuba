@@ -245,7 +245,7 @@ module.exports = {
     Mutation: {
       validateTokenForCategory: {
         resolverOf: 'application::category.category.findOne', // Will apply the same policy on the custom resolver as the controller's action `findByCategories`.
-        resolver: async (obj, options, { context }) => {
+        resolver: async (obj, options, { context }, info) => {
           info.cacheControl.setCacheHint({ maxAge: 0, scope: 'PRIVATE' });
           const category = await strapi.services.category.findOne({ slug: options.categorySlug})
           if (!category) {
