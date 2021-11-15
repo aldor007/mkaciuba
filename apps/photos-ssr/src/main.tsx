@@ -137,7 +137,7 @@ app.get('*', (req, res) => {
           res.setHeader('x-browser-cache-control', 'public, max-age=160');
       }
     } else {
-      res.setHeader('cache-control', 'privte, max-age=60')
+      res.setHeader('cache-control', 'private, max-age=60')
     }
 
     renderToNodeStream(html).pipe(res);

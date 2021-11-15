@@ -196,10 +196,11 @@ module.exports = {
             return new UserInputError('unable to find category ')
           }
 
+           info.cacheControl.setCacheHint({ maxAge: 60, scope: 'PRIVATE' });
           if (!category.public) {
             console.info('Category not public ', category.name )
             const token = context.request.headers['x-gallery-token'];
-            info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PRIVATE' });
+            info.cacheControl.setCacheHint({ maxAge: 60, scope: 'PRIVATE' });
             if (!token) {
               return new AuthenticationError('auth required')
             }
