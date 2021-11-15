@@ -245,6 +245,7 @@ module.exports = {
       validateTokenForCategory: {
         resolverOf: 'application::category.category.findOne', // Will apply the same policy on the custom resolver as the controller's action `findByCategories`.
         resolver: async (obj, options, { context }) => {
+          info.cacheControl.setCacheHint({ maxAge: 0, scope: 'PRIVATE' });
           const category = await strapi.services.category.findOne({ slug: options.categorySlug})
           if (!category) {
             return new UserInputError('unable to find gallery')
