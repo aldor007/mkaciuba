@@ -202,6 +202,7 @@ module.exports = {
             const token = context.request.headers['x-gallery-token'];
             info.cacheControl.setCacheHint({ maxAge: 60, scope: 'PRIVATE' });
             if (!token) {
+              info.cacheControl.setCacheHint({ maxAge: 0, scope: 'PRIVATE' });
               return new AuthenticationError('auth required')
             }
 
