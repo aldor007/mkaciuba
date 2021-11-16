@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 export default function useToken() {
   const getToken = () => {
-    if (sessionStorage) {
+    if (typeof sessionStorage !== 'undefined') {
       const tokenString = sessionStorage.getItem('token');
       return tokenString;
     }
@@ -13,7 +13,7 @@ export default function useToken() {
   const [token, setToken] = useState(getToken());
 
   const saveToken = userToken => {
-    if (sessionStorage) {
+    if (typeof sessionStorage !== 'undefined') {
       sessionStorage.setItem('token', userToken);
     }
 
