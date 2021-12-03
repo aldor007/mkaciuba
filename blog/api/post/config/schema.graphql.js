@@ -120,7 +120,7 @@ module.exports = {
           search.slug = options.slug
           post = await strapi.services.post.findOne(search);
           if (post) {
-            if (post.publicationDate < new Date()) {
+            if (new Date(post.publicationDate).getTime() < new Date().getTime()) {
               info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
             } else {
               info.cacheControl.setCacheHint({ maxAge: 60, scope: 'PRIVATE' });
