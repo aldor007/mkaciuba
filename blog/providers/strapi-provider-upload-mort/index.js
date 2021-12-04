@@ -9,7 +9,7 @@ module.exports = {
       ...config,
     });
     const getStoragePath = (file) => (
-      `files/sources/${file.hash}${file.ext}`
+      `files/sources/${new Date().getFullYear()}/${file.hash}${file.ext}`
     )
 
 
@@ -25,6 +25,7 @@ module.exports = {
               ACL: 'private',
               StorageClass: config.storageClass,
               ContentType: file.mime,
+              StorageClass: 'STANDARD_IA',
               ...customParams,
             },
             (err, data) => {
@@ -48,7 +49,7 @@ module.exports = {
           // delete file on S3 bucket
           S3.deleteObject(
             {
-              Key: getStoragePath(file),
+              Key: file.path,
               ...customParams,
             },
             (err, data) => {
