@@ -119,14 +119,14 @@ export const ImageList = ({ categorySlug, minSize }: ImageListProps) => {
   }
 
   const handleLoadMore = useCallback(
-    () => {
+    async () => {
      ReactGA.event({
       category: 'image-load-more',
       action: 'load',
       label: window.location.href,
     })
     setStart(start + limit)
-    fetchMore({
+    await fetchMore({
       variables: {
          start,
          limit
@@ -194,7 +194,12 @@ export const ImageList = ({ categorySlug, minSize }: ImageListProps) => {
             >
             {({ ref, open }) => (
                 <div className={imageClass}>
-               <ImageComponent ref={ref as RefObject<HTMLImageElement>} onClick={open} thumbnails={item.thumbnails} defaultImage={defaultImagesFull[index]} alt={item.alternativeText || item.name} />
+               <ImageComponent ref={ref as RefObject<HTMLImageElement>} onClick={async () => {
+                 if (hasNextPage()) {
+                  await handleLoadMore()
+                 }
+                setTimeout(open, 50)
+               }} thumbnails={item.thumbnails} defaultImage={defaultImagesFull[index]} alt={item.alternativeText || item.name} />
                   <div className="hidden overflow-hidden">
                     <div className="text-white text-lg">{item.alternativeText || item.name}</div>
                   </div>
