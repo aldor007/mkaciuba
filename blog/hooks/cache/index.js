@@ -14,14 +14,23 @@ class Cache {
       return val;
     }
 
-    val = await Redis.get(key);
-    lruCache.set(val)
-    return val;
+    try {
+      val = await Redis.get(key);
+      lruCache.set(val)
+      return val;
+    } catch (e) {
+      console.error('Cache error', e)
+      return null;
+    }
   }
 
   async set(key, val, ttl) {
     lruCache.set(key, val);
-    return await Redis.set(key, val, ttl || 120)
+    try {
+      await Redis.set(key, val, ttl || 120)
+    } catch (e) {
+      console.error('Cache error', e)
+    }
   }
 }
 
@@ -45,6 +54,7 @@ module.exports = function(strapi) {
         poolOptions: {
           min: 3,
           max: 10,
+          acquireTimeoutMillis: 100,
         },
         // logger: strapi.log
       })
