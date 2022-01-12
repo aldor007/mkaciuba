@@ -33,11 +33,16 @@ export const PostNavbar = () => {
         name: item.name,
       }
   })
-  const menu = [{
+
+  let menu = [{
     name: 'Kategorie',
     url: '#',
     children,
   }]
+
+  if (children.length  < 2) {
+    menu = null;
+  }
 
   return (
       <Navbar additionalMainMenu={menu} />

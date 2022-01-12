@@ -122,7 +122,7 @@ export const Navbar = function (props: NavbarProps) {
   const topMenuList = topMenu.map((item, id) => (
     <li className="nav-item" key={id}>
       <a
-        className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
+        className="px-3 py-2 flex items-center text-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
         href={item.url}
       >
         <span>{item.name}</span>
@@ -152,7 +152,7 @@ export const Navbar = function (props: NavbarProps) {
       <nav className="flex flex-col max-w-screen-xl px-4 mx-auto md:items-center md:justify-between md:flex-row md:px-6 lg:px-8">
         <div className="container px-4 mx-auto flex flex-wrap items-center justify-between">
           <div className="w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
-            <ul className="flex flex-row list-none mx-auto">
+            <ul className="flex flex-row list-none mx-auto ">
           {topMenuList}
             </ul>
           </div>
