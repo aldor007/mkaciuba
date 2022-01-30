@@ -14,6 +14,6 @@ ADD ./lib /opt/app/lib
 ADD ./api /opt/app/api
 COPY ./hooks /opt/app/hooks
 ENV NODE_ENV production
-RUN yarn build
+RUN NODE_ENV=production yarn build
 EXPOSE 1337
 CMD ["yarn", "start"]

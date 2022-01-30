@@ -33,9 +33,18 @@ import cookeParser from 'cookie-parser';
 import proxy from 'express-http-proxy';
 import fs from 'fs';
 import pkgJson from  '../../../package.json';
+import LRUCache from 'lru-cache';
 
 const assetsPath = path.join(__dirname, '../photos');
 const manifest = JSON.parse(fs.readFileSync(path.join(assetsPath, 'manifest.json'), 'utf-8'));
+const cache = new LRUCache({
+  max: 20,
+  maxAge: 1000 * 60,
+})
+
+const getCacheKey = (req) => {
+  return `${req.path}|${req.headers['x-gallery-token']}|${req.cookies.category_token}`
+}
 
 const getAssetPath = (name) => {
   if (manifest[name]) {
@@ -77,8 +86,9 @@ app.get('/_health', (req, res) => {
   res.sendStatus(200)
 });
 
-app.get('*', (req, res) => {
+app.get('*', async (req, res) => {
   const metaTagsInstance = MetaTagsServer();
+  const reqPath = req.path;
 
   const client = new ApolloClient({
     ssrMode: true,
@@ -108,45 +118,71 @@ app.get('*', (req, res) => {
     res.sendStatus(404);
     return;
   }
-  getDataFromTree(staticApp).then((content) => {
-    // Extract the entirety of the Apollo Client cache's current state
-    const initialState = client.extract();
-    const meta =    `
-      <link href="${getAssetPath('main.css')}" rel="stylesheet"/>
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <link href="${getAssetPath('assets/default-skin.css')}" rel="stylesheet"/>
-      <link href="${getAssetPath('assets/photos.css')}" rel="stylesheet"/>${metaTagsInstance.renderToString()}`
+  const cacheKey = getCacheKey(req)
+  const cacheData = cache.get(cacheKey);
+  if (cacheData) {
+      cacheData.headers['x-lru'] = 'hit'
+      res.set(cacheData.headers)
+      renderToNodeStream(cacheData.html).pipe(res);
+  } else {
+    try {
+      const content = await getDataFromTree(staticApp);
+      // Extract the entirety of the Apollo Client cache's current state
+      const initialState = client.extract();
+      const meta =    `
+        <link href="${getAssetPath('main.css')}" rel="stylesheet"/>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="${getAssetPath('assets/default-skin.css')}" rel="stylesheet"/>
+        <link href="${getAssetPath('assets/photos.css')}" rel="stylesheet"/>${metaTagsInstance.renderToString()}`
 
 
-    // Add both the page content and the cache state to a top-level component
-    const html = <Html content={content} state={initialState} meta={meta} scripts={scripts}/>;
-    if (!req.cookies.category_token) {
+      // Add both the page content and the cache state to a top-level component
+      const html = <Html content={content} state={initialState} meta={meta} scripts={scripts}/>;
+      const headers = {};
       const keys = Object.keys(initialState)
-      if (keys.length > 0 && keys[0].includes('Post')) {
-        const post = initialState[keys[0]];
-        if (post.publicationDate && (new Date(post.publicationDate as string)) < new Date()) {
-          res.setHeader('cache-control', 'public, max-age=600')
-          res.setHeader('x-browser-cache-control', 'public, max-age=160');
+      if (!req.cookies.category_token) {
+        if (keys.length > 0 && keys[0].includes('post')) {
+          const post = initialState[keys[0]];
+          if (post.publicationDate && (new Date(post.publicationDate as string)) < new Date()) {
+            headers['cache-control'] = 'public, max-age=600'
+            headers['x-browser-cache-control'] = 'public, max-age=160';
+          } else {
+            headers['cache-control'] =  'public, max-age=60'
+            headers['x-browser-cache-control'] = 'private, max-age=60';
+          }
         } else {
-          res.setHeader('cache-control', 'public, max-age=60')
-          res.setHeader('x-browser-cache-control', 'private, max-age=60');
+            headers['cache-control'] = 'public, max-age=600'
+            headers['x-browser-cache-control'] = 'public, max-age=160';
         }
       } else {
-          res.setHeader('cache-control', 'public, max-age=600')
-          res.setHeader('x-browser-cache-control', 'public, max-age=160');
+        headers['cache-control'] = 'private, max-age=60'
       }
-    } else {
-      res.setHeader('cache-control', 'private, max-age=60')
+
+      if (reqPath.includes('gallery-login')) {
+        headers['cache-control']  = 'no-cache'
+        headers['x-browser-cache-control'] =  'no-cache';
+      }
+
+      if (keys.length == 0) {
+        headers['cache-control']  = 'no-cache'
+        headers['x-browser-cache-control'] =  'no-cache';
+      }
+
+
+      res.set(headers)
+      const cacheData = {
+        headers: headers,
+        html,
+      }
+      cache.set(cacheKey, cacheData)
+      renderToNodeStream(html).pipe(res);
+    } catch (e) {
+      console.error('Error reading', e)
+      res.status(503);
+      res.send(e.message);
     }
-
-    renderToNodeStream(html).pipe(res);
-  }).catch((e) => {
-    console.error('Error reading', e)
-    res.status(503);
-    res.send(e.message);
-  });
-
+  }
 
 });
 

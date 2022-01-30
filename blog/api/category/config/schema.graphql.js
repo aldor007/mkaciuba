@@ -190,7 +190,12 @@ module.exports = {
       categoryBySlug: {
         resolverOf: 'application::category.category.findOne',
         resolver: async (obj, options, { context }, info) => {
-          const category = await strapi.services.category.findOne({ slug: options.slug });
+          const cacheKey = `categoryBySlugv2-${options.slug}|${context.request.headers['x-gallery-token']}`
+          let category = await strapi.services.cache.get(cacheKey);
+          if (!category) {
+            category = await strapi.services.category.findOne({ slug: options.slug });
+            await strapi.services.cache.set(cacheKey, category, 60);
+          }
 
           if (!category) {
             return new UserInputError('unable to find category ')
@@ -198,7 +203,6 @@ module.exports = {
 
            info.cacheControl.setCacheHint({ maxAge: 60, scope: 'PRIVATE' });
           if (!category.public) {
-            console.info('Category not public ', category.name )
             const token = context.request.headers['x-gallery-token'];
             info.cacheControl.setCacheHint({ maxAge: 60, scope: 'PRIVATE' });
             if (!token) {
@@ -209,7 +213,7 @@ module.exports = {
             try {
                 jwt.verify(token, category.token);
             } catch (e) {
-              console.error('error ', e)
+              console.error('error ', options.slug, category.public, e)
               return new ForbiddenError("invalid token parse");
             }
           } else {
