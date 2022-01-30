@@ -111,18 +111,6 @@ export interface PostsProps {
 
 }
 
-const hasDataFromSSR = () => {
-  if (typeof window === 'undefined') {
-    return false;
-  }
-
-  if (window.__APOLLO_STATE__  && Object.keys(window.__APOLLO_STATE__).length > 0) {
-    return true
-  }
-
-  return false;
-}
-
 export const Posts = ( { id, type} : PostsProps) => {
   const history = useHistory();
   const queryParams = useQueryParams();
@@ -186,12 +174,9 @@ export const Posts = ( { id, type} : PostsProps) => {
    };
 
    if (loading && !data) {
-     if (!hasDataFromSSR()) {
-        return (
-          <LoadingMore/>
-        );
-     }
-     return <></>;
+    return (
+      <LoadingMore/>
+    );
   }
   const { posts } =  data;
   const defaultImages = posts.reduce((acc, cur) => {
