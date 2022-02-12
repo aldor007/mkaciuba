@@ -1,6 +1,6 @@
 # mkaciuba.pl
 
-React photogallery/portoflio demo in Polish -> https://mkaciuba.pl/. For CSS it use tailwindcss
+React photogallery/portfolio demo in Polish -> https://mkaciuba.pl/. For CSS it use tailwindcss
 
 
 ## Project structure
