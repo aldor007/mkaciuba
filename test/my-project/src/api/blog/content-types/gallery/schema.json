@@ -1,0 +1,42 @@
+{
+  "kind": "collectionType",
+  "collectionName": "galleries",
+  "info": {
+    "name": "Gallery",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "slugOverride": {
+      "type": "string",
+      "required": false
+    },
+    "public": {
+      "type": "boolean"
+    },
+    "categories": {
+      "via": "gallery",
+      "collection": "category"
+    },
+    "keywords": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

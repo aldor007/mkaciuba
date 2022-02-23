@@ -1,0 +1,80 @@
+{
+  "kind": "collectionType",
+  "collectionName": "categories",
+  "info": {
+    "name": "Category",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": false
+    },
+    "slug": {
+      "type": "string",
+      "required": false,
+      "unique": true
+    },
+    "slugOverride": {
+      "type": "string",
+      "required": false
+    },
+    "public": {
+      "type": "boolean"
+    },
+    "publicationDate": {
+      "type": "datetime",
+      "required": true
+    },
+    "file": {
+      "model": "file",
+      "via": "related",
+      "allowedTypes": [
+        "files"
+      ],
+      "plugin": "upload",
+      "required": false,
+      "pluginOptions": {}
+    },
+    "image": {
+      "model": "file",
+      "via": "related",
+      "allowedTypes": [
+        "images"
+      ],
+      "plugin": "upload",
+      "required": true,
+      "pluginOptions": {}
+    },
+    "medias": {
+      "collection": "file",
+      "via": "related",
+      "allowedTypes": [
+        "images"
+      ],
+      "plugin": "upload",
+      "required": true,
+      "pluginOptions": {}
+    },
+    "gallery": {
+      "via": "categories",
+      "model": "gallery"
+    },
+    "keywords": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "token": {
+      "type": "password",
+      "private": true
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "kind": "singleType",
+  "collectionName": "menus",
+  "info": {
+    "name": "Menu",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "topMenu": {
+      "type": "component",
+      "repeatable": true,
+      "component": "menu-config.menu"
+    },
+    "mainMenu": {
+      "type": "component",
+      "repeatable": true,
+      "component": "menu-config.menu"
+    },
+    "brand": {
+      "model": "file",
+      "via": "related",
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos"
+      ],
+      "plugin": "upload",
+      "required": false
+    },
+    "socialIcons": {
+      "type": "component",
+      "repeatable": true,
+      "component": "menu-config.menu"
+    },
+    "brandName": {
+      "type": "string"
+    }
+  }
+}
