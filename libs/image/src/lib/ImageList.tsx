@@ -10,7 +10,7 @@ import MetaTags from 'react-meta-tags';
 import { Query } from '@mkaciuba/api';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { Loading, LoadingMore, ErrorPage } from '@mkaciuba/ui-kit'
-import ReactGA from 'react-ga'
+import ReactGA from 'react-ga4'
 
 
 import { Image, ImageComponent } from './image';

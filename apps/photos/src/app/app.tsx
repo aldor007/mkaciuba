@@ -12,7 +12,6 @@ import { startLimitPagination } from './apollo';
 import { createPersistedQueryLink } from "@apollo/client/link/persisted-queries";
 import { sha256 } from 'crypto-hash';
 import { setContext } from '@apollo/client/link/context';
-import ReactGA from 'react-ga';
 import * as Sentry from "@sentry/react";
 import { Integrations } from "@sentry/tracing";
 import usePageTracking from '../usePageTracking';
