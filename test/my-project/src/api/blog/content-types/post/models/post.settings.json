@@ -1,0 +1,113 @@
+{
+  "kind": "collectionType",
+  "collectionName": "posts",
+  "info": {
+    "name": "Post",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "text": {
+      "type": "richtext"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "publicationDate": {
+      "type": "datetime",
+      "required": true
+    },
+    "gallery": {
+      "model": "category"
+    },
+    "image": {
+      "model": "file",
+      "via": "related",
+      "allowedTypes": [
+        "images"
+      ],
+      "plugin": "upload",
+      "required": true,
+      "pluginOptions": {}
+    },
+    "keywords": {
+      "type": "string"
+    },
+    "description": {
+      "type": "richtext"
+    },
+    "category": {
+      "model": "post-category"
+    },
+    "slug": {
+      "type": "string",
+      "unique": true,
+      "private": false
+    },
+    "permalink": {
+      "type": "string"
+    },
+    "content_position": {
+      "type": "enumeration",
+      "enum": [
+        "top",
+        "bottom"
+      ],
+      "default": "top"
+    },
+    "gallery_template": {
+      "type": "enumeration",
+      "enum": [
+        "normal",
+        "description"
+      ],
+      "default": "normal"
+    },
+    "tags": {
+      "collection": "tag",
+      "via": "posts",
+      "dominant": true
+    },
+    "post_image_preset": {
+      "type": "enumeration",
+      "enum": [
+        "postlist",
+        "postimg_ac"
+      ],
+      "private": true,
+      "default": "postlist"
+    },
+    "cover_image": {
+      "model": "file",
+      "via": "related",
+      "allowedTypes": [
+        "images"
+      ],
+      "plugin": "upload",
+      "required": false,
+      "pluginOptions": {}
+    },
+    "cover_image_preset": {
+      "type": "enumeration",
+      "enum": [
+        "coverimg",
+        "cover_s"
+      ],
+      "private": true,
+      "default": "postlist"
+    },
+    "content_type": {
+      "type": "enumeration",
+      "enum": [
+        "HTML",
+        "MARKDOWN"
+      ],
+      "default": "MARKDOWN"
+    }
+  }
+}

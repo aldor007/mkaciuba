@@ -3,6 +3,7 @@ module.exports = ({ env }) => ({
     cors: {
       origin: ['*'], //allow all origins
       headers: ['*'], //allow all headers
-    }
+    },
+    cacheControl: {}
   }
 });

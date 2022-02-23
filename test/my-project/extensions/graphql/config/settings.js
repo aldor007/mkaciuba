@@ -2,7 +2,7 @@ const apolloServerPluginResponseCache = require('apollo-server-plugin-response-c
 const { RedisCache } = require('apollo-server-cache-redis')
 
 // set this to whatever you believe should be the max age for your cache control
-const MAX_AGE = 3600
+const MAX_AGE = 300
 
 module.exports = {
   federation: false,
