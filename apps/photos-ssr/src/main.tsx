@@ -38,8 +38,9 @@ import LRUCache from 'lru-cache';
 const assetsPath = path.join(__dirname, '../photos');
 const manifest = JSON.parse(fs.readFileSync(path.join(assetsPath, 'manifest.json'), 'utf-8'));
 const cache = new LRUCache({
-  max: 20,
+  max: 100,
   maxAge: 1000 * 60,
+  allowStale : true
 })
 
 const getCacheKey = (req) => {
@@ -120,11 +121,7 @@ app.get('*', async (req, res) => {
   }
   const cacheKey = getCacheKey(req)
   const cacheData = cache.get(cacheKey);
-  if (cacheData) {
-      cacheData.headers['x-lru'] = 'hit'
-      res.set(cacheData.headers)
-      renderToNodeStream(cacheData.html).pipe(res);
-  } else {
+  const renderPage = async () => {
     try {
       const content = await getDataFromTree(staticApp);
       // Extract the entirety of the Apollo Client cache's current state
@@ -171,19 +168,32 @@ app.get('*', async (req, res) => {
         headers['x-browser-cache-control'] =  'no-cache';
       }
 
-
-      res.set(headers)
-      const cacheData = {
+      return  {
         headers: headers,
         html,
       }
-      cache.set(cacheKey, cacheData)
-      renderToNodeStream(html).pipe(res);
+
     } catch (e) {
       console.error('Error reading', e)
       res.status(503);
       res.send(e.message);
     }
+  }
+  if (cacheData) {
+      cacheData.headers['x-lru'] = 'hit'
+      res.set(cacheData.headers)
+      renderToNodeStream(cacheData.html).pipe(res);
+      if (!cache.has(cacheKey)) {
+        setImmediate(async () => {
+          const cacheData = await renderPage()
+          cache.set(cacheKey, cacheData)
+        })
+      }
+  } else {
+    const cacheData = await renderPage()
+    res.set(cacheData.headers)
+    renderToNodeStream(cacheData.html).pipe(res);
+    cache.set(cacheKey, cacheData)
   }
 
 });
