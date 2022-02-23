@@ -139,7 +139,9 @@ app.get('*', async (req, res) => {
 
       // Add both the page content and the cache state to a top-level component
       const html = <Html content={content} state={initialState} meta={meta} scripts={scripts}/>;
-      const headers = {};
+      const headers = {
+        'content-type': 'text/html; charset=UTF-8',
+      };
       const keys = Object.keys(initialState)
       if (!req.cookies.category_token) {
         if (keys.length > 0 && keys[0].includes('post')) {
