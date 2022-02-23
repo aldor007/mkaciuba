@@ -120,7 +120,7 @@ app.get('*', async (req, res) => {
     return;
   }
   const cacheKey = getCacheKey(req)
-  const cacheData = cache.get(cacheKey);
+  const cacheData = cache.peek(cacheKey);
   const renderPage = async () => {
     try {
       const content = await getDataFromTree(staticApp);
@@ -183,11 +183,9 @@ app.get('*', async (req, res) => {
       cacheData.headers['x-lru'] = 'hit'
       res.set(cacheData.headers)
       renderToNodeStream(cacheData.html).pipe(res);
-      if (!cache.has(cacheKey)) {
-        setImmediate(async () => {
-          const cacheData = await renderPage()
-          cache.set(cacheKey, cacheData)
-        })
+      if (!cache.get(cacheKey)) {
+          const refreshData = await renderPage()
+          cache.set(cacheKey, refreshData)
       }
   } else {
     const cacheData = await renderPage()
