@@ -140,7 +140,7 @@ app.get('*', async (req, res) => {
         'content-type': 'text/html; charset=UTF-8',
       };
       const keys = Object.keys(initialState)
-      if (!req.cookies.category_token) {
+      if (!req.cookies.category_token || !reqPath.includes('gallery')) {
         if (keys.length > 0 && keys[0].includes('post')) {
           const post = initialState[keys[0]];
           if (post.publicationDate && (new Date(post.publicationDate as string)) < new Date()) {
