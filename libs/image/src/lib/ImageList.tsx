@@ -61,6 +61,7 @@ const GET_IMAGES = gql`
 export interface ImageListProps {
   categorySlug: string
   minSize?: boolean
+  disableSEO?: boolean
 }
 
 
@@ -88,7 +89,7 @@ export const findImageForWidth = (images: Image[], width: number, webp: boolean)
 }
 
 
-export const ImageList = ({ categorySlug, minSize }: ImageListProps) => {
+export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps) => {
   const webp = useWebPSupportCheck();
   const width = typeof document === 'undefined' ? 1900 :  document.documentElement.clientWidth
 
@@ -121,7 +122,7 @@ export const ImageList = ({ categorySlug, minSize }: ImageListProps) => {
   const handleLoadMore = useCallback(
     async () => {
      ReactGA.event({
-      category: 'image-load-more',
+      category: 'photoswipe',
       action: 'load',
       label: window.location.href,
     })
@@ -172,15 +173,16 @@ export const ImageList = ({ categorySlug, minSize }: ImageListProps) => {
      <>
         <div className="flex flex-wrap -mx-1 overflow-hidden" >
           <MetaTags>
-            <meta name="twitter:image" content={seoImage[0].url} />
-            <meta name="twitter:card" content="summary_large_image" />
-            <meta property="og:image" content={seoImage[0].url} />
+            { !disableSEO && <meta name="twitter:image" content={seoImage[0].url} /> }
+            { !disableSEO && <meta name="twitter:card" content="summary_large_image" /> }
+            { !disableSEO && <meta property="og:image" content={seoImage[0].url} /> }
           </MetaTags>
-          <Gallery shareButton={false} id={category.slug} onOpen={() => ReactGA.event({
+          <Gallery shareButton={false} id={category.slug} onOpen={() => {
+            ReactGA.event({
           category: 'photoswipe',
           action: 'open',
           label: window.location.href,
-          })}>
+          })}}>
             {images.map( (item, index) => (
             <Item
               original={defaultImagesFull[index].url}

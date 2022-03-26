@@ -6,8 +6,8 @@ const usePageTracking = () => {
   const location = useLocation();
 
   useEffect(() => {
-    ReactGA.initialize('G-E3DVVZK3EW');
-    ReactGA.pageview(location.pathname + location.search);
+    ReactGA.initialize('G-E3DVVZK3EW', {gtagOptions: {debug_mode : true}});
+    ReactGA.send('pageview')
   }, [location]);
 };
 
