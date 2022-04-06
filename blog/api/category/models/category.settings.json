@@ -73,7 +73,7 @@
       "type": "string"
     },
     "text": {
-      "type": "string"
+      "type": "richtext"
     },
     "token": {
       "type": "password",
