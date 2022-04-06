@@ -72,6 +72,9 @@
     "description": {
       "type": "string"
     },
+    "text": {
+      "type": "string"
+    },
     "token": {
       "type": "password",
       "private": true

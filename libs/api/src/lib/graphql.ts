@@ -47,6 +47,7 @@ export type Category = {
   gallery?: Maybe<Gallery>;
   keywords?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  text?: Maybe<Scalars['String']>;
   medias?: Maybe<Array<Maybe<UploadFile>>>;
   randomImage?: Maybe<UploadFile>;
   mediasCount: Scalars['Int'];
