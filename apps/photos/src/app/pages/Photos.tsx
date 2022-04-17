@@ -9,7 +9,7 @@ import { useQuery,  } from '@apollo/client/react';
 import gql from  'graphql-tag';
 import { Query } from '@mkaciuba/api';
 import { AppRoutes } from '../routes';
-import { Loading, ErrorPage, LoadingMore } from '@mkaciuba/ui-kit'
+import { Loading, ErrorPage, LoadingMore, Markdown } from '@mkaciuba/ui-kit'
 import MetaTags from 'react-meta-tags';
 import ReactMarkdown from 'react-markdown';
 
@@ -23,7 +23,7 @@ const GET_PHOTOS = gql`
     description
     public
     keywords
-
+    text
   }
   galleryMenu(
     slug: $gallerySlug
@@ -102,9 +102,7 @@ export const Photos = () => {
           </MetaTags>
     <Header mainMenu={menu}/>
     <h1 className="text-center m-5 text-4xl leading-snug font-serif ">{category.name}</h1>
-       {category.text && <ReactMarkdown className="m-4">
-        {category.text}
-      </ReactMarkdown>}
+       {category.text && <Markdown className="m-4 text-center font-serif post-text" text={category.text}/>}
     <ImageList categorySlug={categorySlug}/>
     <Footer></Footer>
     </>

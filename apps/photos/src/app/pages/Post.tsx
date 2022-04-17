@@ -3,7 +3,7 @@ import { Footer } from '../components/Footer';
 import { Posts } from '../components/Posts';
 import React, { useEffect, useState } from 'react';
 import  Header from '../Header';
-import { Loading, ErrorPage, LoadingMore } from "@mkaciuba/ui-kit";
+import { Loading, ErrorPage, LoadingMore, Markdown } from "@mkaciuba/ui-kit";
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client/react';
 import gql from  'graphql-tag'
@@ -20,7 +20,6 @@ import { PostCard } from '../components/PostCard';
 import { format } from "date-fns";
 import { Tag } from '../components/Tag';
 import { PostNavbar } from '../components/PostNavbar';
-import ReactMarkdown from 'react-markdown';
 
 const GET_POST = gql`
   query ($postSlug: String!) {
@@ -113,9 +112,7 @@ const renderText = (text: string, type: Enum_Post_Content_Type, className: strin
     )
   } else {
     return (
-       <ReactMarkdown className="m-4">
-        {text}
-      </ReactMarkdown>
+      <Markdown text={text} className="m-4"/>
     )
   }
 
