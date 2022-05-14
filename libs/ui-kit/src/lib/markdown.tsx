@@ -12,7 +12,7 @@ interface MarkdownProps {
 
 export const Markdown = ({text, className}: MarkdownProps) => {
    return (
-       <ReactMarkdown className={className} linkTarget="_blank" >
+       <ReactMarkdown className={className} linkTarget="_blank" skipHtml={true}>
         {text}
       </ReactMarkdown>
        );
