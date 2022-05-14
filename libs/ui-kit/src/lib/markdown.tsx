@@ -1,5 +1,7 @@
 
 import ReactMarkdown from 'react-markdown';
+import rehypeRaw from "rehype-raw";
+
 
 function LinkRenderer(props) {
   return <a href={props.href} target="_blank">{props.children}</a>
@@ -12,7 +14,7 @@ interface MarkdownProps {
 
 export const Markdown = ({text, className}: MarkdownProps) => {
    return (
-       <ReactMarkdown className={className} linkTarget="_blank" skipHtml={true}>
+       <ReactMarkdown className={className} linkTarget="_blank" rehypePlugins={[rehypeRaw]}>
         {text}
       </ReactMarkdown>
        );

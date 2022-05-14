@@ -67,7 +67,8 @@
     "reflect-metadata": "^0.1.13",
      "apollo": "^2.30.2",
     "apollo-server": "^2.25.3",
-    "apollo-server-express": "^2.15.1"
+    "apollo-server-express": "^2.15.1",
+    "rehype-raw": "^6.1.1"
     },
   "devDependencies": {
     "@nrwl/cli": "12.10.0",
