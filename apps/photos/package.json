@@ -1,3 +1,5 @@
 {
-    "name": "@mkaciuba/photos"
+    "name": "@mkaciuba/photos",
+    "type": "module"
+
 }
