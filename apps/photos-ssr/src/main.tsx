@@ -189,9 +189,11 @@ app.get('*', async (req, res) => {
       }
   } else {
     const cacheData = await renderPage()
-    res.set(cacheData.headers)
-    renderToNodeStream(cacheData.html).pipe(res);
-    cache.set(cacheKey, cacheData)
+    if (cacheData) {
+      res.set(cacheData.headers)
+      renderToNodeStream(cacheData.html).pipe(res);
+       cache.set(cacheKey, cacheData)
+    }
   }
 
 });
