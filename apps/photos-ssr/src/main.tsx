@@ -127,6 +127,7 @@ app.get('*', async (req, res) => {
       const content = await getDataFromTree(staticApp);
       // Extract the entirety of the Apollo Client cache's current state
       const initialState = client.extract();
+      const headTags = metaTagsInstance.renderToString().replace('<div class="react-head-temp">', '').replace('</div>')
       const meta =    `${headTags}
         <link href="${getAssetPath('main.css')}" rel="stylesheet"/>
         <meta charset="utf-8">
