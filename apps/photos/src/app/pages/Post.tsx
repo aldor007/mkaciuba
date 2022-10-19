@@ -207,9 +207,11 @@ export const Post = () => {
             <meta name="twitter:title" content={post.title} />
             <meta name="keywords" content={post.keywords} />
             <meta property="og:title" content={post.title} />
+            <meta name="og:title" content={post.title} />
             <meta name="twitter:image" content={seoImage.url} />
             <meta name="twitter:card" content="summary_large_image" />
             <meta property="og:image" content={seoImage.url} />
+            <meta name="og:image" content={seoImage.url} />
 
           </MetaTags>
     <PostNavbar />
