@@ -9,8 +9,7 @@ on:
     workflows: ["front"]
     types:
       - completed
-    branches:
-      - 'master'
+
 
 jobs:
   deployment:
