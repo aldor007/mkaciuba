@@ -9,8 +9,7 @@ on:
     workflows: ["strapi"]
     types:
       - completed
-    branches:
-      - 'master'
+
 
 jobs:
   deployment:
