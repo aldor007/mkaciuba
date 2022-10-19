@@ -203,8 +203,12 @@ export const Post = () => {
           <MetaTags>
             <meta name="og:image" content={seoImage.url} />
             <meta property="og:image" content={seoImage.url} />
+            <meta property="og:url" content={"https://mkaciuba.pl/post/"+  post.slug} />
+            <meta property="og:type" content="post" />
+            <meta property="fb:app_id" content="1724717534454966" />
             <title>{post.title} | mkaciuba.pl</title>
             <meta name="description" content={post.seoDescription} />
+            <meta property="og:description" content={post.seoDescription} />
             <meta name="twitter:description" content={post.seoDescription} />
             <meta name="twitter:title" content={post.title} />
             <meta name="keywords" content={post.keywords} />
