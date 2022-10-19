@@ -121,7 +121,6 @@ app.get('*', async (req, res) => {
   }
   const cacheKey = getCacheKey(req)
   const cacheData = cache.peek(cacheKey);
-  const headTags = metaTagsInstance.renderToString().replace('<div class="react-head-temp">', '').replace('</div>', '')
   const renderPage = async () => {
     try {
       const content = await getDataFromTree(staticApp);
