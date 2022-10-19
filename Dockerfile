@@ -23,5 +23,5 @@ RUN yarn nx build photos --prod --optimization --nocache  --outputHashing=bundle
 
 RUN yarn nx build photos-ssr --prod --optimization --nocache
 ADD ./dist/apps/photos/manifest.json /opt/app/dist/apps/photos/manifest.json
-RUN rm -rf node_modules && yarn --network-timeout 100000 
+RUN yarn --network-timeout 100000
 CMD ["node", "dist/apps/photos-ssr/main.js"]

@@ -201,6 +201,8 @@ export const Post = () => {
   return  (
     <>
           <MetaTags>
+            <meta name="og:image" content={seoImage.url} />
+            <meta property="og:image" content={seoImage.url} />
             <title>{post.title} | mkaciuba.pl</title>
             <meta name="description" content={post.seoDescription} />
             <meta name="twitter:description" content={post.seoDescription} />
@@ -210,8 +212,6 @@ export const Post = () => {
             <meta name="og:title" content={post.title} />
             <meta name="twitter:image" content={seoImage.url} />
             <meta name="twitter:card" content="summary_large_image" />
-            <meta property="og:image" content={seoImage.url} />
-            <meta name="og:image" content={seoImage.url} />
 
           </MetaTags>
     <PostNavbar />

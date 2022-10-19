@@ -126,12 +126,12 @@ app.get('*', async (req, res) => {
       const content = await getDataFromTree(staticApp);
       // Extract the entirety of the Apollo Client cache's current state
       const initialState = client.extract();
-      const meta =    `
+      const meta =    `${metaTagsInstance.renderToString()}
         <link href="${getAssetPath('main.css')}" rel="stylesheet"/>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="${getAssetPath('assets/default-skin.css')}" rel="stylesheet"/>
-        <link href="${getAssetPath('assets/photos.css')}" rel="stylesheet"/>${metaTagsInstance.renderToString()}`
+        <link href="${getAssetPath('assets/photos.css')}" rel="stylesheet"/>`
 
 
       // Add both the page content and the cache state to a top-level component
