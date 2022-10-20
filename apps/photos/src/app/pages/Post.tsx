@@ -27,6 +27,7 @@ const GET_POST = gql`
       id
       title
       publicationDate
+      slug
       mainImage {
         url
         mediaQuery
