@@ -121,7 +121,7 @@ module.exports = {
           post = await strapi.services.post.findOne(search);
           if (post) {
             if (new Date(post.publicationDate).getTime() < new Date().getTime()) {
-              info.cacheControl.setCacheHint({ maxAge: 86400, scope: 'PUBLIC' });
+              info.cacheControl.setCacheHint({ maxAge: 8640, scope: 'PUBLIC' });
             } else {
               info.cacheControl.setCacheHint({ maxAge: 60, scope: 'PRIVATE' });
             }

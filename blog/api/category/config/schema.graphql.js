@@ -218,7 +218,7 @@ module.exports = {
             }
           } else {
             if (new Date(category.publicationDate).getTime() < (new Date()).getTime()) {
-              info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
+              info.cacheControl.setCacheHint({ maxAge: 3600, scope: 'PUBLIC' });
             } else {
               info.cacheControl.setCacheHint({ maxAge: 60, scope: 'PRIVATE' });
             }

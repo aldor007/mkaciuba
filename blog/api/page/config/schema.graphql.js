@@ -11,7 +11,7 @@ module.exports = {
       pageBySlug: {
         resolverOf: 'application::post-category.post-category.find',
         resolver: async (obj, options, { context }, info) => {
-          info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
+          info.cacheControl.setCacheHint({ maxAge: 86600, scope: 'PUBLIC' });
           return await strapi.services.page.findOne({slug: options.slug});
         }
       },
