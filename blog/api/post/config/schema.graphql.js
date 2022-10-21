@@ -91,7 +91,7 @@ module.exports = {
           search._sort = options.sort || 'id:desc'
           search.publicationDate_lt = new Date();
           const key = getCacheKey('posts' + search.publicationDate_lt, options);
-          info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
+          info.cacheControl.setCacheHint({ maxAge: 3600, scope: 'PUBLIC' });
           let posts = await strapi.services.post.find(search);
           return posts;
         }
