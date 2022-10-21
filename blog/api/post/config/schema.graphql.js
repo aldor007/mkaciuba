@@ -69,7 +69,7 @@ module.exports = {
         resolverOf: 'application::post.post.find',
         resolver: async (obj, options, { context }, info) => {
           const search = options.where || {};
-          info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
+          info.cacheControl.setCacheHint({ maxAge: 86400, scope: 'PUBLIC' });
           search._limit =  options.limit;
           search._start = options.start || 0;
           search._sort = options.sort || 'id:desc'
@@ -121,7 +121,7 @@ module.exports = {
           post = await strapi.services.post.findOne(search);
           if (post) {
             if (new Date(post.publicationDate).getTime() < new Date().getTime()) {
-              info.cacheControl.setCacheHint({ maxAge: 600, scope: 'PUBLIC' });
+              info.cacheControl.setCacheHint({ maxAge: 86400, scope: 'PUBLIC' });
             } else {
               info.cacheControl.setCacheHint({ maxAge: 60, scope: 'PRIVATE' });
             }
