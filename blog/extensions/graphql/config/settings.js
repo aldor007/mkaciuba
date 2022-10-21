@@ -2,7 +2,7 @@ const apolloServerPluginResponseCache = require('apollo-server-plugin-response-c
 const { RedisCache } = require('apollo-server-cache-redis')
 
 // set this to whatever you believe should be the max age for your cache control
-const MAX_AGE = 300
+const MAX_AGE = 3600
 
 module.exports = {
   federation: false,
@@ -55,7 +55,7 @@ async function shouldReadFromCache({ context }) {
   if (context.context.request.headers['x-debug']) {
     return false;
   }
-  
+
   return true
 }
 
