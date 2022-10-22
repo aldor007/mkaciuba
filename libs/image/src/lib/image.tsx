@@ -127,6 +127,7 @@ export const ImageComponent = React.forwardRef(({thumbnails, defaultImage, onCli
   setTimeout(() => {
    if (loading) {
     setLoading(false)
+    classes = 'bg-gray-300 ' + (className || '');
    }
   }, 1500);
 
@@ -140,7 +141,7 @@ export const ImageComponent = React.forwardRef(({thumbnails, defaultImage, onCli
     }, 250)
   }
   return (
-    <picture  ref={ref}>
+    <picture  ref={ref} onLoad={() => setLoading(false)}>
       {thumbnails && thumbnails.map(thumbnail => (
           <source srcSet={thumbnail.url} key={thumbnail.url}  media={thumbnail.mediaQuery} type={thumbnail.type}/>
         ))}
