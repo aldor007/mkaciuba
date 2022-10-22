@@ -145,15 +145,15 @@ app.get('*', async (req, res) => {
         if (keys.length > 0 && keys[0].includes('post')) {
           const post = initialState[keys[0]];
           if (post.publicationDate && (new Date(post.publicationDate as string)) < new Date()) {
-            headers['cache-control'] = 'public, max-age=600'
-            headers['x-browser-cache-control'] = 'public, max-age=160';
+            headers['cache-control'] = 'public, max-age=3600'
+            headers['x-browser-cache-control'] = 'public, max-age=630';
           } else {
             headers['cache-control'] =  'public, max-age=60'
             headers['x-browser-cache-control'] = 'private, max-age=60';
           }
         } else {
-            headers['cache-control'] = 'public, max-age=600'
-            headers['x-browser-cache-control'] = 'public, max-age=160';
+            headers['cache-control'] = 'public, max-age=5600'
+            headers['x-browser-cache-control'] = 'public, max-age=3600';
         }
       } else {
         headers['cache-control'] = 'private, max-age=60'
