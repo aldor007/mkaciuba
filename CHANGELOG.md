@@ -1,3 +1,10 @@
+## [0.3.1](https://github.com/aldor007/mkaciuba/compare/photos-0.3.0...photos-0.3.1) (2022-10-22)
+
+
+### Bug Fixes
+
+* build front faster ([3535b7d](https://github.com/aldor007/mkaciuba/commit/3535b7d32db22bb2b18ed53f74d9e9de10d5a472))
+
 # [0.3.0](https://github.com/aldor007/mkaciuba/compare/photos-0.2.0...photos-0.3.0) (2022-10-22)
 
 
