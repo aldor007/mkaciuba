@@ -1,3 +1,14 @@
+## [0.3.7](https://github.com/aldor007/mkaciuba/compare/photos-0.3.6...photos-0.3.7) (2022-10-22)
+
+
+### Bug Fixes
+
+* e2e tests for front ([728edc0](https://github.com/aldor007/mkaciuba/commit/728edc0a886fb176fb82295f38ac7eef627e4edd))
+* e2e tests for front ([e28e89d](https://github.com/aldor007/mkaciuba/commit/e28e89d01f205eab15b2a09ad22f7c691428b5b9))
+* e2e tests for front ([a858abc](https://github.com/aldor007/mkaciuba/commit/a858abcf7a93918a7a0036e6c59850a8f79d9c74))
+* e2e tests for front ([7c5fc77](https://github.com/aldor007/mkaciuba/commit/7c5fc77c522127830e06e832349d8cd672d3fd15))
+* e2e tests for front ([a609a6b](https://github.com/aldor007/mkaciuba/commit/a609a6bffc21e5d0fdc69664d1d28de137d586e2))
+
 ## [0.3.6](https://github.com/aldor007/mkaciuba/compare/photos-0.3.5...photos-0.3.6) (2022-10-22)
 
 
