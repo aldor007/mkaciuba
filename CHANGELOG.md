@@ -1,3 +1,11 @@
+# [0.3.0](https://github.com/aldor007/mkaciuba/compare/photos-0.2.0...photos-0.3.0) (2022-10-22)
+
+
+### Features
+
+* build front faster ([831af38](https://github.com/aldor007/mkaciuba/commit/831af3859a28352378c8b8976a7bc13bc49842a1))
+* build front faster ([9e360f9](https://github.com/aldor007/mkaciuba/commit/9e360f99d7c1b3ac9b509f4e33310c23294b5bc1))
+
 # [0.2.0](https://github.com/aldor007/mkaciuba/compare/photos-0.1.0...photos-0.2.0) (2022-10-22)
 
 
