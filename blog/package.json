@@ -15,7 +15,11 @@
     "@graphql-codegen/introspection": "1.18.1",
     "@graphql-codegen/typescript": "1.21.1",
     "@graphql-codegen/typescript-operations": "1.17.15",
-    "@graphql-codegen/typescript-react-apollo": "^2.2.3"
+    "@graphql-codegen/typescript-react-apollo": "^2.2.3",
+    "@semantic-release/changelog": "^6.0.1",
+    "@semantic-release/commit-analyzer": "^9.0.2",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/release-notes-generator": "10.0.3"
   },
   "dependencies": {
     "agentkeepalive": "^4.1.3",

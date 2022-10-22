@@ -1,0 +1,27 @@
+name: Semantic release front
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '.github/workflows/semantic-release-front.yaml'
+      - 'apps/**/*'
+      - package.json
+      - libs/**/*
+
+concurrency:
+  group: release
+  cancel-in-progress: true
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+      - run: npm install && npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

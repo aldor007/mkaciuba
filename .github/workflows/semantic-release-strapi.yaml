@@ -1,0 +1,25 @@
+name: Semantic release strapi
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '.github/workflows/semantic-release-strapi.yaml'
+      - 'blog/**/*'
+
+concurrency:
+  group: release-strapi
+  cancel-in-progress: true
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+      - run: cd blog && npm install && npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
