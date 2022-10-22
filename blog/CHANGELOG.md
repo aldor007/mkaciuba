@@ -1,3 +1,24 @@
+# [0.3.0](https://github.com/aldor007/mkaciuba/compare/strapi-0.2.0...strapi-0.3.0) (2022-10-22)
+
+
+### Bug Fixes
+
+* build front faster ([53af2a1](https://github.com/aldor007/mkaciuba/commit/53af2a166cf7bbb1c21591ee037870ad067b6652))
+* build front faster ([3535b7d](https://github.com/aldor007/mkaciuba/commit/3535b7d32db22bb2b18ed53f74d9e9de10d5a472))
+* e2e tests for front ([a609a6b](https://github.com/aldor007/mkaciuba/commit/a609a6bffc21e5d0fdc69664d1d28de137d586e2))
+* front node env ([a37fbbf](https://github.com/aldor007/mkaciuba/commit/a37fbbfcf8e9a91387bee2e758e78378d96d5aff))
+* image loading ([fbbb03a](https://github.com/aldor007/mkaciuba/commit/fbbb03a396a244b79c778c0c7b6808d92330b5a7))
+* image loading - building front ([74be762](https://github.com/aldor007/mkaciuba/commit/74be76242084df96ed3389ec3e02283892f1e0b8))
+* image loading - building front ([ebaf104](https://github.com/aldor007/mkaciuba/commit/ebaf104b2341ce1aecc90d51aa53ded4ec4a7532))
+* image loading - building front ([e050406](https://github.com/aldor007/mkaciuba/commit/e050406a139bc822dda6699cd90aa675090d38dc))
+
+
+### Features
+
+* build front faster ([831af38](https://github.com/aldor007/mkaciuba/commit/831af3859a28352378c8b8976a7bc13bc49842a1))
+* build front faster ([9e360f9](https://github.com/aldor007/mkaciuba/commit/9e360f99d7c1b3ac9b509f4e33310c23294b5bc1))
+* build front faster ([c1c521a](https://github.com/aldor007/mkaciuba/commit/c1c521a26126a888eecc6dddbeec9e1d96410db5))
+
 # [0.2.0](https://github.com/aldor007/mkaciuba/compare/strapi-0.1.0...strapi-0.2.0) (2022-10-22)
 
 
