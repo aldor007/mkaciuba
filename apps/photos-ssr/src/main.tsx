@@ -46,7 +46,7 @@ const getCacheKey = (req) => {
 
 const getAssetPath = (name) => {
   if (manifest[name]) {
-    return process.env.ASSETS_URL + '/' + manifest[name];
+    return process.env.ASSETS_URL || '/assets' + '/' + manifest[name];
   }
 };
 

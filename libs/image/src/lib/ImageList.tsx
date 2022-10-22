@@ -88,13 +88,24 @@ export const findImageForWidth = (images: Image[], width: number, webp: boolean)
   return filterPresets[minIndex];
 }
 
+function hasSSRData() {
+  if (typeof window === undefined) {
+    return false
+  }
+
+  if (window.__APOLLO_STATE__) {
+    return true
+  }
+
+  return false
+}
 
 export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps) => {
   const webp = useWebPSupportCheck();
   const width = typeof document === 'undefined' ? 1900 :  document.documentElement.clientWidth
 
   const [loadingMore, setLoadingMore] = useState(false);
-  const limit = 29;
+  const limit = 30;
   const [start, setStart] = useState(limit)
   const { loading, error, data, fetchMore } = useQuery<Query>(GET_IMAGES, {
     variables: { categorySlug, limit, start: 0 },
@@ -146,7 +157,8 @@ export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps)
     return (<ErrorPage code={500} message={error.message}/>)
    };
 
-  if (loading && !data) {
+
+  if (!hasSSRData() && loading && !data) {
    return (
      <LoadingMore/>
    );

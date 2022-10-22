@@ -157,11 +157,11 @@
           "options": {
             "cypressConfig": "apps/photos-e2e/cypress.json",
             "tsConfig": "apps/photos-e2e/tsconfig.e2e.json",
-            "devServerTarget": "photos:serve"
+            "devServerTarget": "photos-ssr:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "photos:serve:production"
+              "devServerTarget": "photos-ssr:serve:production"
             }
           }
         },
