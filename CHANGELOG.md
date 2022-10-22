@@ -1,3 +1,10 @@
+## [0.3.5](https://github.com/aldor007/mkaciuba/compare/photos-0.3.4...photos-0.3.5) (2022-10-22)
+
+
+### Bug Fixes
+
+* image loading - building front ([ebaf104](https://github.com/aldor007/mkaciuba/commit/ebaf104b2341ce1aecc90d51aa53ded4ec4a7532))
+
 ## [0.3.4](https://github.com/aldor007/mkaciuba/compare/photos-0.3.3...photos-0.3.4) (2022-10-22)
 
 
