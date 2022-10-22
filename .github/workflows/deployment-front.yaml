@@ -14,6 +14,7 @@ on:
 jobs:
   deployment:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     environment: m39
     steps:
       -

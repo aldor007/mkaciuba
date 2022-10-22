@@ -9,6 +9,7 @@ on:
 jobs:
   multi:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       -
         name: Checkout
@@ -26,21 +27,36 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_BASE_PATH: ${{ secrets.AWS_BASE_PATH }}
-      - name: Set output
-        id: vars
-        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+      - name: git tag
+        run: git fetch --tags;  git fetch --prune --unshallow || true
+
+      - name: Extract tag name
+        id: dockerTag
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          result-encoding: string
+          script: |
+            const tagExec = await exec.getExecOutput('git', ['describe', '--tags', '--abbrev=0']);
+            let tag = tagExec.stdout || tagExec.stderr;
+            tag = tag.trim().replace('v', '');
+            return tag;
+      - name: skip-workflow
+        if: ${{ startsWith(steps.dockerTag.outputs.result, 'strapi') }}
+        id: skip-workflow # id used for referencing step
+        uses: saulmaldonado/skip-workflow@v1
+        with:
+          phrase: 'skip-workflow'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v1
-        if: ${{ startsWith(steps.vars.outputs.tag, 'photos') }}
       -
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-        if: ${{ startsWith(steps.vars.outputs.tag, 'photos') }}
       -
         name: Login to DockerHub
         uses: docker/login-action@v1
-        if: ${{ startsWith(steps.vars.outputs.tag, 'photos') }}
         with:
           username: ${{ github.actor }}
           password: ${{ secrets.GHR_TOKEN }}
@@ -48,11 +64,10 @@ jobs:
       -
         name: Build and push
         uses: docker/build-push-action@v2
-        if: ${{ startsWith(steps.vars.outputs.tag, 'photos') }}
         with:
           context: .
           file: Dockerfile
           platforms: linux/arm64,linux/amd64
           push: true
-          tags: ghcr.io/aldor007/mkaciuba:${{ steps.vars.outputs.tag }}
+          tags: ghcr.io/aldor007/mkaciuba:${{ steps.dockerTag.outputs.result }}
           cache-to: type=inline
