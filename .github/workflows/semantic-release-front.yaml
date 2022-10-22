@@ -28,7 +28,10 @@ jobs:
           node-version: "14"
       - run: cp apps/photos-ssr/src/environments/environment.e2e.ts apps/photos-ssr/src/environments/environment.ts
       - run: yarn
-      - run: yarn build  photos-ssr && yarn nx e2e photos-e2e
+      - run: yarn build  photos-ssr
+      - run: yarn start photos-ssr&
+        id: ssr
+      - run: yarn nx e2e photos-e2e --ci --skip-server && pkill -f photos-ssr
         env:
           NODE_ENV: production
       - run: npx semantic-release
