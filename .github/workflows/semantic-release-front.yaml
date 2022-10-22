@@ -26,7 +26,7 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: "14"
-      - run: cp apps/photos-ssr/src/environments/environment.e2e.ts apps/photos-ssr/src/environments/environments.ts
+      - run: cp apps/photos-ssr/src/environments/environment.e2e.ts apps/photos-ssr/src/environments/environment.ts
       - run: yarn
       - run: yarn build  photos-ssr && yarn nx e2e photos-e2e
         env:
