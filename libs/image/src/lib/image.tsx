@@ -109,7 +109,7 @@ const addDatePrefix = (url) => {
 }
 
 export const ImageComponent = React.forwardRef(({thumbnails, defaultImage, onClick, alt, className, defaultImgSizing, initialWidth=1900}:ImageComponentProps, ref: RefObject<HTMLImageElement>) => {
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(window!==undefined)
   const webp = useWebPSupportCheck();
   const width = useWindowWidth({ initialWidth})
   if (!defaultImage) {
@@ -141,7 +141,7 @@ export const ImageComponent = React.forwardRef(({thumbnails, defaultImage, onCli
     }, 250)
   }
   return (
-    <picture  ref={ref} onLoad={() => setLoading(false)}>
+    <picture  ref={ref}>
       {thumbnails && thumbnails.map(thumbnail => (
           <source srcSet={thumbnail.url} key={thumbnail.url}  media={thumbnail.mediaQuery} type={thumbnail.type}/>
         ))}

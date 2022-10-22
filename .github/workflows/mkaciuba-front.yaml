@@ -43,6 +43,9 @@ jobs:
       - run: cp apps/photos-ssr/src/environments/environment.prod.ts apps/photos-ssr/src/environments/environments.ts
       - run: yarn nx build photos-ssr --production --optimization --nocache  --outputHashing=all  --verbose
         env:
+          NODE_ENV: production
+      - run: yarn nx build photos --production --optimization --nocache  --outputHashing=all  --verbose
+        env:
           AWS_BUCKET: ${{ secrets.AWS_BUCKET }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
