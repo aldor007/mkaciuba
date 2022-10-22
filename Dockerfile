@@ -6,7 +6,6 @@ WORKDIR /opt/app
 COPY ./package.json /opt/app/
 ADD ./yarn.lock /opt/app/
 ADD ./decorate-angular-cli.js /opt/app/
-RUN yarn install --network-timeout 100000
 ADD ./apps /opt/app/apps
 ADD ./libs /opt/app/libs
 ADD ./nx.json /opt/app/nx.json
@@ -18,10 +17,6 @@ ADD ./postcss.config.js /opt/app/postcss.config.js
 ENV NODE_ENV=production
 RUN cp /opt/app/apps/photos/src/environments/environment.prod.ts /opt/app/apps/photos/src/environments/environment.ts
 RUN cp /opt/app/apps/photos-ssr/src/environments/environment.prod.ts /opt/app/apps/photos-ssr/src/environments/environments.ts
-RUN yarn nx build photos --prod --optimization --nocache  --outputHashing=bundles
-
-
-RUN yarn nx build photos-ssr --prod --optimization --nocache
-ADD ./dist/apps/photos/manifest.json /opt/app/dist/apps/photos/manifest.json
+ADD ./dist/ /opt/app/dist
 RUN yarn --network-timeout 100000
 CMD ["node", "dist/apps/photos-ssr/main.js"]
