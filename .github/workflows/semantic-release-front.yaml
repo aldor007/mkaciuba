@@ -31,7 +31,7 @@ jobs:
       - run: yarn build  photos-ssr
       - run: yarn start photos-ssr&
         id: ssr
-      - run: yarn nx e2e photos-e2e --ci --skip-server && pkill -f photos-ssr
+      - run: yarn nx e2e photos-e2e --ci --skip-serve && pkill -f photos-ssr
         env:
           NODE_ENV: production
       - run: npx semantic-release
