@@ -5,8 +5,8 @@ on:
     workflows: ["Semantic release strapi"]
     types:
       - completed
-    branches:
-      - 'master'
+    tags:
+     - "strapi-[0-9]+.[0-9]+.[0-9]+"
 
 jobs:
   multi:
