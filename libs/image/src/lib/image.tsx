@@ -109,7 +109,7 @@ const addDatePrefix = (url) => {
 }
 
 export const ImageComponent = React.forwardRef(({thumbnails, defaultImage, onClick, alt, className, defaultImgSizing, initialWidth=1900}:ImageComponentProps, ref: RefObject<HTMLImageElement>) => {
-  const [loading, setLoading] = useState(window!==undefined)
+  const [loading, setLoading] = useState(typeof window !== 'undefined')
   const webp = useWebPSupportCheck();
   const width = useWindowWidth({ initialWidth})
   if (!defaultImage) {
