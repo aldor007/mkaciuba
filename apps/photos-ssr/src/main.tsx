@@ -98,9 +98,10 @@ app.delete('/v1/purge', async (req, res) => {
     return res.sendStatus(403)
   }
   if (!req.query.path) {
+    console.info('No url', req.query)
     return res.sendStatus(400)
   }
-  const urlParts = new URL(req.query.path as string)
+  const urlParts = new URL(req.query.path as string, "https://mkaciuba.pl")
   const query = {}
   for (let [k, v] of urlParts.searchParams.entries()) {
     query[k] = v
