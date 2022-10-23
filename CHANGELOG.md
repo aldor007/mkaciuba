@@ -1,3 +1,10 @@
+## [0.3.8](https://github.com/aldor007/mkaciuba/compare/photos-0.3.7...photos-0.3.8) (2022-10-23)
+
+
+### Bug Fixes
+
+* assets path ([5b4aba5](https://github.com/aldor007/mkaciuba/commit/5b4aba5ec053ee8a0da20f89b64a83dd8664af92))
+
 ## [0.3.7](https://github.com/aldor007/mkaciuba/compare/photos-0.3.6...photos-0.3.7) (2022-10-22)
 
 
