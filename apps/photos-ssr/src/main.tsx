@@ -30,18 +30,20 @@ import cookeParser from 'cookie-parser';
 import proxy from 'express-http-proxy';
 import fs from 'fs';
 import pkgJson from  '../../../package.json';
-import LRUCache from 'lru-cache';
+import { Cache } from './redis';
+const API_KEY = process.env.API_KEY || '123'
 
 const assetsPath = path.join(__dirname, '../photos');
 const manifest = JSON.parse(fs.readFileSync(path.join(assetsPath, 'manifest.json'), 'utf-8'));
-const cache = new LRUCache({
-  max: 100,
-  maxAge: 1000 * 60,
-  allowStale : true
+const cache = new Cache()
+setImmediate(async () => {
+  if (process.env.REDIS_PORT && process.env.REDIS_DB) {
+   await cache.init(process.env.REDIS_URL, parseInt(process.env.REDIS_PORT), parseInt(process.env.REDIS_DB))
+  }
 })
 
 const getCacheKey = (req) => {
-  return `${req.path}|${req.headers['x-gallery-token']}|${req.cookies.category_token}`
+  return `v1:${req.path}|${req.headers['x-gallery-token'] || ''}|${req.cookies.category_token || ''}`
 }
 
 const getAssetPath = (name) => {
@@ -68,6 +70,13 @@ scripts = scripts.filter(x => x)
 const app = express();
 app.use(cookeParser())
 
+async function toCacheObject(cacheData) {
+  return {
+    html:await renderToString(cacheData.html),
+    headers: cacheData.headers
+  }
+}
+
 app.use('/graphql', proxy(process.env.STRAPI_URL || environment.strapiUrl, {
   proxyReqPathResolver: function (req) {
     return '/graphql' + req.url.replace('/', '');
@@ -83,6 +92,24 @@ app.use('/assets',
 app.get('/_health', (req, res) => {
   res.sendStatus(200)
 });
+
+app.delete('/_purge', async (req, res) => {
+  if (req.headers['x-api-key'] != API_KEY) {
+    return res.sendStatus(403)
+  }
+  if (!req.query.path) {
+    return res.sendStatus(400)
+  }
+  const cacheReq =  {
+    path: req.query.path,
+    headers: req.headers,
+    cookies: req.cookies
+  }
+  cacheReq.path = req.query.path as string
+  console.info('Purge cache for', getCacheKey(cacheReq))
+  await cache.delete(getCacheKey(cacheReq))
+  res.sendStatus(201)
+})
 
 app.get('*', async (req, res) => {
   const metaTagsInstance = MetaTagsServer();
@@ -117,7 +144,8 @@ app.get('*', async (req, res) => {
     return;
   }
   const cacheKey = getCacheKey(req)
-  const cacheData = cache.peek(cacheKey);
+  const cacheData = await cache.get(cacheKey);
+  let cacheTTL = 600;
   const renderPage = async () => {
     try {
       const content = await getDataFromTree(staticApp);
@@ -144,26 +172,32 @@ app.get('*', async (req, res) => {
           if (post.publicationDate && (new Date(post.publicationDate as string)) < new Date()) {
             headers['cache-control'] = 'public, max-age=3600'
             headers['x-browser-cache-control'] = 'public, max-age=630';
+            cacheTTL = 600
           } else {
             headers['cache-control'] =  'public, max-age=60'
             headers['x-browser-cache-control'] = 'private, max-age=60';
+            cacheTTL = 10
           }
         } else {
             headers['cache-control'] = 'public, max-age=5600'
             headers['x-browser-cache-control'] = 'public, max-age=3600';
+            cacheTTL = 600
         }
       } else {
         headers['cache-control'] = 'private, max-age=60'
+        cacheTTL = 10
       }
 
       if (reqPath.includes('gallery-login')) {
         headers['cache-control']  = 'no-cache'
         headers['x-browser-cache-control'] =  'no-cache';
+        cacheTTL = 10
       }
 
       if (keys.length == 0) {
         headers['cache-control']  = 'no-cache'
         headers['x-browser-cache-control'] =  'no-cache';
+        cacheTTL = 10
       }
 
       return  {
@@ -180,17 +214,17 @@ app.get('*', async (req, res) => {
   if (cacheData) {
       cacheData.headers['x-lru'] = 'hit'
       res.set(cacheData.headers)
-      renderToNodeStream(cacheData.html).pipe(res);
-      if (!cache.get(cacheKey)) {
+      res.send(cacheData.html)
+      if (!await cache.get(cacheKey)) {
           const refreshData = await renderPage()
-          cache.set(cacheKey, refreshData)
+          await cache.set(cacheKey, await toCacheObject(refreshData), cacheTTL)
       }
   } else {
     const cacheData = await renderPage()
     if (cacheData) {
       res.set(cacheData.headers)
       renderToNodeStream(cacheData.html).pipe(res);
-       cache.set(cacheKey, cacheData)
+      await cache.set(cacheKey, await toCacheObject(cacheData), cacheTTL)
     }
   }
 

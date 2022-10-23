@@ -89,7 +89,7 @@ export const findImageForWidth = (images: Image[], width: number, webp: boolean)
 }
 
 function hasSSRData() {
-  if (typeof window === undefined) {
+  if (typeof window == 'undefined') {
     return false
   }
 
