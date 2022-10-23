@@ -1,3 +1,11 @@
+## [0.4.2](https://github.com/aldor007/mkaciuba/compare/photos-0.4.1...photos-0.4.2) (2022-10-23)
+
+
+### Bug Fixes
+
+* not found on image list and cache purge ([0972aaf](https://github.com/aldor007/mkaciuba/commit/0972aafdce4ea99722598fce3cf60b6b36977c5a))
+* purge api ([6c5256e](https://github.com/aldor007/mkaciuba/commit/6c5256e92c2cc65f502a01428e0d1be5b0a41964))
+
 ## [0.4.1](https://github.com/aldor007/mkaciuba/compare/photos-0.4.0...photos-0.4.1) (2022-10-23)
 
 
