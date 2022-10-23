@@ -43,7 +43,7 @@ setImmediate(async () => {
 })
 
 const getCacheKey = (req) => {
-  return `v1:${req.path}|${req.headers['x-gallery-token'] || ''}|${req.cookies.category_token || ''}`
+  return `v2:${req.path}|${req.query.page || ''}|${req.headers['x-gallery-token'] || ''}|${req.cookies.category_token || ''}`
 }
 
 const getAssetPath = (name) => {
@@ -100,12 +100,17 @@ app.delete('/v1/purge', async (req, res) => {
   if (!req.query.path) {
     return res.sendStatus(400)
   }
-  const cacheReq =  {
-    path: req.query.path,
-    headers: req.headers,
-    cookies: req.cookies
+  const urlParts = new URL(req.query.path as string)
+  const query = {}
+  for (let [k, v] of urlParts.searchParams.entries()) {
+    query[k] = v
   }
-  cacheReq.path = req.query.path as string
+  const cacheReq =  {
+    path: urlParts.pathname,
+    headers: req.headers,
+    cookies: req.cookies,
+    query,
+  }
   console.info('Purge cache for', getCacheKey(cacheReq))
   await cache.delete(getCacheKey(cacheReq))
   res.sendStatus(201)

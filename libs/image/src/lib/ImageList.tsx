@@ -158,7 +158,7 @@ export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps)
    };
 
 
-  if (!hasSSRData() && loading && !data) {
+  if (loading && !data) {
    return (
      <LoadingMore/>
    );
