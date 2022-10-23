@@ -93,7 +93,7 @@ app.get('/_health', (req, res) => {
   res.sendStatus(200)
 });
 
-app.delete('/_purge', async (req, res) => {
+app.delete('/v1/purge', async (req, res) => {
   if (req.headers['x-api-key'] != API_KEY) {
     return res.sendStatus(403)
   }
