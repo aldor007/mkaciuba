@@ -1,3 +1,10 @@
+# [0.4.0](https://github.com/aldor007/mkaciuba/compare/photos-0.3.8...photos-0.4.0) (2022-10-23)
+
+
+### Features
+
+* new redis cache ([31f7d11](https://github.com/aldor007/mkaciuba/commit/31f7d11f28dac2ab49c9304ddcad2153ea849e18))
+
 ## [0.3.8](https://github.com/aldor007/mkaciuba/compare/photos-0.3.7...photos-0.3.8) (2022-10-23)
 
 
