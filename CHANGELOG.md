@@ -1,3 +1,10 @@
+## [0.4.1](https://github.com/aldor007/mkaciuba/compare/photos-0.4.0...photos-0.4.1) (2022-10-23)
+
+
+### Bug Fixes
+
+* purge api ([8613275](https://github.com/aldor007/mkaciuba/commit/8613275b3bf998440d12f29635616ebcb5cb7392))
+
 # [0.4.0](https://github.com/aldor007/mkaciuba/compare/photos-0.3.8...photos-0.4.0) (2022-10-23)
 
 
