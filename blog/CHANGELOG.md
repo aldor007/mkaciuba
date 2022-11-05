@@ -1,3 +1,23 @@
+# [0.4.0](https://github.com/aldor007/mkaciuba/compare/strapi-0.3.0...strapi-0.4.0) (2022-11-05)
+
+
+### Bug Fixes
+
+* assets path ([5b4aba5](https://github.com/aldor007/mkaciuba/commit/5b4aba5ec053ee8a0da20f89b64a83dd8664af92))
+* e2e tests for front ([728edc0](https://github.com/aldor007/mkaciuba/commit/728edc0a886fb176fb82295f38ac7eef627e4edd))
+* e2e tests for front ([e28e89d](https://github.com/aldor007/mkaciuba/commit/e28e89d01f205eab15b2a09ad22f7c691428b5b9))
+* e2e tests for front ([a858abc](https://github.com/aldor007/mkaciuba/commit/a858abcf7a93918a7a0036e6c59850a8f79d9c74))
+* e2e tests for front ([7c5fc77](https://github.com/aldor007/mkaciuba/commit/7c5fc77c522127830e06e832349d8cd672d3fd15))
+* not found on image list and cache purge ([0972aaf](https://github.com/aldor007/mkaciuba/commit/0972aafdce4ea99722598fce3cf60b6b36977c5a))
+* purge api ([6c5256e](https://github.com/aldor007/mkaciuba/commit/6c5256e92c2cc65f502a01428e0d1be5b0a41964))
+* purge api ([8613275](https://github.com/aldor007/mkaciuba/commit/8613275b3bf998440d12f29635616ebcb5cb7392))
+
+
+### Features
+
+* more cover presets ([c182162](https://github.com/aldor007/mkaciuba/commit/c182162339d699d760971e0bfb15ca95b3845fa3))
+* new redis cache ([31f7d11](https://github.com/aldor007/mkaciuba/commit/31f7d11f28dac2ab49c9304ddcad2153ea849e18))
+
 # [0.3.0](https://github.com/aldor007/mkaciuba/compare/strapi-0.2.0...strapi-0.3.0) (2022-10-22)
 
 
