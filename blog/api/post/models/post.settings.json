@@ -96,7 +96,12 @@
       "type": "enumeration",
       "enum": [
         "coverimg",
-        "cover_s"
+        "cover_s",
+        "cover_n",
+        "cover_e",
+        "cover_w",
+        "cover_so",
+        "cover_c"
       ],
       "private": true,
       "default": "postlist"
