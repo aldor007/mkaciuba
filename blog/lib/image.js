@@ -88,6 +88,41 @@ const allPresets = presetList.concat([
   new Preset('cover_s_imgwebp', 2900, 500,'(min-width: 1300px)', 'webp'),
   new Preset('cover_s_img', 2900, 500, '(min-width: 1300px)', 'jpeg'),
 
+  new Preset('cover_n_imgswebp', 600, 300, '(max-width: 500px)', 'webp'),
+  new Preset('cover_n_imgs', 600, 300, '(max-width: 500px)', 'jpeg'),
+  new Preset('cover_n_imgmwebp', 1300, 300, '(max-width: 500px)', 'webp'),
+  new Preset('cover_n_imgm', 1300, 300, '(max-width: 1300px)', 'jpeg'),
+  new Preset('cover_n_imgwebp', 2900, 500,'(min-width: 1300px)', 'webp'),
+  new Preset('cover_n_img', 2900, 500, '(min-width: 1300px)', 'jpeg'),
+
+  new Preset('cover_e_imgswebp', 600, 300, '(max-width: 500px)', 'webp'),
+  new Preset('cover_e_imgs', 600, 300, '(max-width: 500px)', 'jpeg'),
+  new Preset('cover_e_imgmwebp', 1300, 300, '(max-width: 500px)', 'webp'),
+  new Preset('cover_e_imgm', 1300, 300, '(max-width: 1300px)', 'jpeg'),
+  new Preset('cover_e_imgwebp', 2900, 500,'(min-width: 1300px)', 'webp'),
+  new Preset('cover_e_img', 2900, 500, '(min-width: 1300px)', 'jpeg'),
+
+  new Preset('cover_w_imgswebp', 600, 300, '(max-width: 500px)', 'webp'),
+  new Preset('cover_w_imgs', 600, 300, '(max-width: 500px)', 'jpeg'),
+  new Preset('cover_w_imgmwebp', 1300, 300, '(max-width: 500px)', 'webp'),
+  new Preset('cover_w_imgm', 1300, 300, '(max-width: 1300px)', 'jpeg'),
+  new Preset('cover_w_imgwebp', 2900, 500,'(min-width: 1300px)', 'webp'),
+  new Preset('cover_w_img', 2900, 500, '(min-width: 1300px)', 'jpeg'),
+
+  new Preset('cover_so_imgswebp', 600, 300, '(max-width: 500px)', 'webp'),
+  new Preset('cover_so_imgs', 600, 300, '(max-width: 500px)', 'jpeg'),
+  new Preset('cover_so_imgmwebp', 1300, 300, '(max-width: 500px)', 'webp'),
+  new Preset('cover_so_imgm', 1300, 300, '(max-width: 1300px)', 'jpeg'),
+  new Preset('cover_so_imgwebp', 2900, 500,'(min-width: 1300px)', 'webp'),
+  new Preset('cover_so_img', 2900, 500, '(min-width: 1300px)', 'jpeg'),
+
+  new Preset('cover_c_imgswebp', 600, 300, '(max-width: 500px)', 'webp'),
+  new Preset('cover_c_imgs', 600, 300, '(max-width: 500px)', 'jpeg'),
+  new Preset('cover_c_imgmwebp', 1300, 300, '(max-width: 500px)', 'webp'),
+  new Preset('cover_c_imgm', 1300, 300, '(max-width: 1300px)', 'jpeg'),
+  new Preset('cover_c_imgwebp', 2900, 500,'(min-width: 1300px)', 'webp'),
+  new Preset('cover_c_img', 2900, 500, '(min-width: 1300px)', 'jpeg'),
+
   new Preset('nextpostwebp', 80, 150,'(min-width: 100px)', 'webp'),
   new Preset('nextpost', 80, 150, '(min-width: 100px)', 'jpeg'),
 ]);
