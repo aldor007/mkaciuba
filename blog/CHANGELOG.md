@@ -1,3 +1,10 @@
+# [0.5.0](https://github.com/aldor007/mkaciuba/compare/strapi-0.4.0...strapi-0.5.0) (2022-11-05)
+
+
+### Features
+
+* more cover presets ([b5c86c6](https://github.com/aldor007/mkaciuba/commit/b5c86c632bf33a33d53e85e4f757761319c6f721))
+
 # [0.4.0](https://github.com/aldor007/mkaciuba/compare/strapi-0.3.0...strapi-0.4.0) (2022-11-05)
 
 
