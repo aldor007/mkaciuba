@@ -217,7 +217,6 @@ export const Post = () => {
             <meta name="og:title" content={post.title} />
             <meta name="twitter:image" content={seoImage.url} />
             <meta name="twitter:card" content="summary_large_image" />
-
           </MetaTags>
     <PostNavbar />
       <div className="w-full h-full " >
