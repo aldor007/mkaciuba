@@ -1,3 +1,20 @@
+# [0.5.0](https://github.com/aldor007/mkaciuba/compare/photos-0.4.2...photos-0.5.0) (2022-12-15)
+
+
+### Bug Fixes
+
+* fix loader ([b84c799](https://github.com/aldor007/mkaciuba/commit/b84c7998d8c934811252958e234b7cc4de696e21))
+* fix loader ([2ef8453](https://github.com/aldor007/mkaciuba/commit/2ef8453714eb4618590aafaa168332968ce33994))
+* fix loader ([97ad1e6](https://github.com/aldor007/mkaciuba/commit/97ad1e6af0d6874d1a143ad1c54274febc3ca193))
+* fix loader ([20b9a59](https://github.com/aldor007/mkaciuba/commit/20b9a59ed61ac00460e742c51074a03c72a533dc))
+* fix yarn.lock ([31d3065](https://github.com/aldor007/mkaciuba/commit/31d306574abe13a8e1cf016028319ef90787ec81))
+
+
+### Features
+
+* more cover presets ([b5c86c6](https://github.com/aldor007/mkaciuba/commit/b5c86c632bf33a33d53e85e4f757761319c6f721))
+* more cover presets ([c182162](https://github.com/aldor007/mkaciuba/commit/c182162339d699d760971e0bfb15ca95b3845fa3))
+
 ## [0.4.2](https://github.com/aldor007/mkaciuba/compare/photos-0.4.1...photos-0.4.2) (2022-10-23)
 
 
