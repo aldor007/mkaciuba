@@ -224,13 +224,11 @@ export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps)
       </Gallery>
 </div>
 
-    <div className="loader">
     {(( loading && hasNextPage()) && <LoadingMore /> )}
       {( hasNextPage()) && (
           <div ref={sentryRef}>
           </div>
         )}
-    </div>
       </>
   )
 };

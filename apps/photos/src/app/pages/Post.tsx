@@ -249,9 +249,7 @@ export const Post = () => {
           {renderText(post.description, post.content_type, "m-4")}
         {post.content_position === Enum_Post_Content_Position.Top  && renderText(post.text, post.content_type, "")}
        {post.gallery && <ImageList categorySlug={post.gallery.slug} minSize={true} disableSEO={true} />}
-       <div>
         {post.content_position === Enum_Post_Content_Position.Bottom && renderText(post.text, post.content_type, "")}
-       </div>
       </div>
       <div className="fixed">
         {prevPost && returnArrow(prevPost, showPrev, (value) => () => setShowPrev(value), 'Starsze', faArrowLeft, 'left-0 ') }
