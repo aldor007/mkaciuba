@@ -7,22 +7,22 @@ module.exports = {
    *
    * This gives you an opportunity to extend code.
    */
-   register({ strapi }) {
-    /*const extension = ({ nexus }) => ({
+  /* register({ strapi }) {
+    const extension = ({ nexus }) => ({
       types: [
         nexus.objectType({
-          …
+
         }),
       ],
       plugins: [
         nexus.plugin({
-          …
+
         })
       ]
     })
 
-    strapi.plugin('graphql').service('extension').use(extension)*/
-  },
+    strapi.plugin('graphql').service('extension').use(extension)
+  },*/
 
   /**
    * An asynchronous bootstrap function that runs before
