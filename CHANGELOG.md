@@ -1,3 +1,10 @@
+## [0.5.1](https://github.com/aldor007/mkaciuba/compare/photos-0.5.0...photos-0.5.1) (2025-12-08)
+
+
+### Bug Fixes
+
+* better error page ([fccb50c](https://github.com/aldor007/mkaciuba/commit/fccb50c275764fa3776417623999532fdf71cf8b))
+
 # [0.5.0](https://github.com/aldor007/mkaciuba/compare/photos-0.4.2...photos-0.5.0) (2022-12-15)
 
 
