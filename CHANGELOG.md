@@ -1,3 +1,10 @@
+## [0.5.2](https://github.com/aldor007/mkaciuba/compare/photos-0.5.1...photos-0.5.2) (2025-12-08)
+
+
+### Bug Fixes
+
+* handle cache error ([b2d0bed](https://github.com/aldor007/mkaciuba/commit/b2d0bedc1c5e94db47170f35211bb8a310658214))
+
 ## [0.5.1](https://github.com/aldor007/mkaciuba/compare/photos-0.5.0...photos-0.5.1) (2025-12-08)
 
 
