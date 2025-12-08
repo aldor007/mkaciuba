@@ -22,6 +22,6 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: "14"
-      - run: cd blog && yarn && npx semantic-release
+      - run: cd blog && yarn && npx semantic-release@19
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
