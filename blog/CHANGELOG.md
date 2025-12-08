@@ -1,3 +1,15 @@
+## [0.5.1](https://github.com/aldor007/mkaciuba/compare/strapi-0.5.0...strapi-0.5.1) (2025-12-08)
+
+
+### Bug Fixes
+
+* better error page ([fccb50c](https://github.com/aldor007/mkaciuba/commit/fccb50c275764fa3776417623999532fdf71cf8b))
+* fix loader ([b84c799](https://github.com/aldor007/mkaciuba/commit/b84c7998d8c934811252958e234b7cc4de696e21))
+* fix loader ([2ef8453](https://github.com/aldor007/mkaciuba/commit/2ef8453714eb4618590aafaa168332968ce33994))
+* fix loader ([97ad1e6](https://github.com/aldor007/mkaciuba/commit/97ad1e6af0d6874d1a143ad1c54274febc3ca193))
+* fix loader ([20b9a59](https://github.com/aldor007/mkaciuba/commit/20b9a59ed61ac00460e742c51074a03c72a533dc))
+* fix yarn.lock ([31d3065](https://github.com/aldor007/mkaciuba/commit/31d306574abe13a8e1cf016028319ef90787ec81))
+
 # [0.5.0](https://github.com/aldor007/mkaciuba/compare/strapi-0.4.0...strapi-0.5.0) (2022-11-05)
 
 
