@@ -25,16 +25,30 @@ export class Cache {
   async get(key:string) {
     let val = this.lruCache.get(key);
     if (val) {
-      return JSON.parse(val);
+      try {
+        return JSON.parse(val);
+      } catch (e) {
+        console.error(`Failed to parse JSON from LRU cache for key "${key}". Value preview: "${val?.substring(0, 100)}". Error: ${e.message}`);
+        this.lruCache.delete(key);
+        return null;
+      }
     }
 
     if (this.redis) {
         try {
             val = await this.redis.get(key);
             if (val) {
-                this.lruCache.set(key, val)
+                try {
+                  const parsed = JSON.parse(val);
+                  this.lruCache.set(key, val);
+                  return parsed;
+                } catch (parseError) {
+                  console.error(`Failed to parse JSON from Redis cache for key "${key}". Value preview: "${val?.substring(0, 100)}". Error: ${parseError.message}`);
+                  await this.redis.del(key);
+                  return null;
+                }
             }
-            return JSON.parse(val);
+            return null;
         } catch (e) {
             console.error('Cache error', e)
             return null;

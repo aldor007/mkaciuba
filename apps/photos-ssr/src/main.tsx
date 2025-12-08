@@ -43,7 +43,7 @@ setImmediate(async () => {
 })
 
 const getCacheKey = (req) => {
-  return `v2:${req.path}|${req.query.page || ''}|${req.headers['x-gallery-token'] || ''}|${req.cookies.category_token || ''}`
+  return `v3:${req.path}|${req.query.page || ''}|${req.headers['x-gallery-token'] || ''}|${req.cookies.category_token || ''}`
 }
 
 const getAssetPath = (name) => {
