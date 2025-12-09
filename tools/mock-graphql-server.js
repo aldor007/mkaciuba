@@ -150,13 +150,18 @@ const mockData = {
 
 // GraphQL endpoint
 app.post('/graphql', (req, res) => {
-  const { query, variables } = req.body;
+  // Handle both single and batched GraphQL requests
+  const isBatch = Array.isArray(req.body);
+  const operations = isBatch ? req.body : [req.body];
 
-  console.log('GraphQL Query:', query?.substring(0, 150));
-  console.log('Variables:', JSON.stringify(variables));
+  console.log('GraphQL Request:', isBatch ? `Batch of ${operations.length} operations` : 'Single operation');
 
-  // Simple query matching - in a real mock server, you'd parse the GraphQL query properly
-  let data = {};
+  const results = operations.map(({ query, variables }) => {
+    console.log('Query:', query?.substring(0, 150));
+    console.log('Variables:', JSON.stringify(variables));
+
+    // Simple query matching - in a real mock server, you'd parse the GraphQL query properly
+    let data = {};
 
   // Handle categoryBySlug query (used by ImageList component with fragments)
   if (query?.includes('categoryBySlug')) {
@@ -228,8 +233,12 @@ app.post('/graphql', (req, res) => {
     };
   }
 
-  console.log('Response data keys:', Object.keys(data));
-  res.json({ data });
+    console.log('Response data keys:', Object.keys(data));
+    return { data };
+  });
+
+  // Return results in the same format as received (batch or single)
+  res.json(isBatch ? results : results[0]);
 });
 
 // Health check
