@@ -4,19 +4,17 @@ import { useWebPSupportCheck } from "react-use-webp-support-check";
 import {
   useWindowWidth
 } from '@react-hook/window-size';
-// import 'photoswipe/dist/photoswipe.css'
-// import 'photoswipe/dist/default-skin/default-skin.css'
-import { Helmet } from 'react-helmet-async';;
+import { Helmet } from 'react-helmet-async';
 import { Query } from '@mkaciuba/api';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { Loading, LoadingMore, ErrorPage } from '@mkaciuba/ui-kit'
 import ReactGA from 'react-ga4'
-
-
 import { Image, ImageComponent } from './image';
-
 import { Gallery, Item } from 'react-photoswipe-gallery'
 import { findImageForWidthBigger } from "..";
+
+// import 'photoswipe/dist/photoswipe.css'
+// import 'photoswipe/dist/default-skin/default-skin.css'
 
 // Extend Window interface to include Apollo SSR state
 declare global {

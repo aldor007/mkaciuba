@@ -1,16 +1,12 @@
-
 import React, { RefObject, useCallback, useState  } from "react";
 import { useQuery } from '@apollo/client/react';
 import gql from  'graphql-tag';
-
 import {useNavigate} from "react-router-dom"
 import { Link } from 'react-router-dom'
 import { generatePath, useLocation } from "react-router";
 import { findImageForWidth, ImageComponent } from "@mkaciuba/image";
-import { Helmet } from 'react-helmet-async';;
+import { Helmet } from 'react-helmet-async';
 import { Gallery, Query, Post } from '@mkaciuba/api';
-import '../../assets/category.css';
-
 import {
   useWindowWidth
 } from '@react-hook/window-size';
@@ -18,6 +14,7 @@ import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { AppRoutes } from "../routes";
 import { ErrorPage, Loading, LoadingMore, useQueryParams } from "@mkaciuba/ui-kit";
 import { PostCard } from "./PostCard";
+import '../../assets/category.css';
 
 
 const GET_POSTS = gql`

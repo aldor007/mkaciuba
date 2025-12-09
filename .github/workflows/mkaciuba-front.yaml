@@ -14,9 +14,10 @@ jobs:
       -
         name: Checkout
         uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v4
         with:
-          node-version: '14'
+          node-version: '20'
+          cache: 'yarn'
       - name: git tag
         run: git fetch --tags;  git fetch --prune --unshallow || true
 

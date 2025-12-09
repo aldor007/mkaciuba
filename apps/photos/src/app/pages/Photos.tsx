@@ -8,7 +8,7 @@ import { useQuery, gql, ApolloError } from '@apollo/client';
 import { Query } from '@mkaciuba/api';
 import { AppRoutes } from '../routes';
 import { Loading, ErrorPage, LoadingMore, Markdown } from '@mkaciuba/ui-kit'
-import { Helmet } from 'react-helmet-async';;
+import { Helmet } from 'react-helmet-async';
 import ReactMarkdown from 'react-markdown';
 
 const GET_PHOTOS = gql`
