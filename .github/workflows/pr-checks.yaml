@@ -42,7 +42,7 @@ jobs:
         run: cp apps/photos-ssr/src/environments/environment.e2e.ts apps/photos-ssr/src/environments/environment.ts
 
       - name: Build photos-ssr
-        run: yarn build photos-ssr
+        run: yarn build photos-ssr --verbose
 
       - name: Start photos-ssr server
         run: yarn start photos-ssr&
