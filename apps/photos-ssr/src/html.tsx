@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function Html({ children, state, meta, scripts }) {
+export function Html({ content, state, meta, scripts }) {
   const scriptSrc = scripts.map(s => (
      <script key={s} src={s} defer></script>
   ))
@@ -11,7 +11,7 @@ export function Html({ children, state, meta, scripts }) {
       </head>
 
       <body>
-        <div id="root">{children}</div>
+        <div id="root" dangerouslySetInnerHTML={{ __html: content }} />
         <script dangerouslySetInnerHTML={{
           __html: `window.__APOLLO_STATE__=${JSON.stringify(state).replace(/</g, '\\u003c')};`,
         }} />
