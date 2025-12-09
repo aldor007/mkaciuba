@@ -42,7 +42,7 @@ export interface AppsProps {
 
 declare global {
   interface Window {
-    __APOLLO_STATE__: any;
+    __APOLLO_STATE__?: any;
   }
 }
 const authLink = setContext((_, { headers }) => {
