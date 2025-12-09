@@ -203,7 +203,7 @@ export const Posts = ( { id, type} : PostsProps) => {
       <>
   <div className="max-w-screen-xl mx-auto grid xl:grid-cols-2  gap-4">
         {posts && posts.map((item, index) =>
-          singlePost(item, index)
+          <div key={item.id}>{singlePost(item, index)}</div>
         )}
   </div>
   { hasNextPage() &&<div className="max-w-screen-xl w-full m-4 mx-auto text-center  " >
