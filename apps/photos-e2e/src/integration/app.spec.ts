@@ -30,6 +30,6 @@ describe('blog', () => {
 
     // Should display post content
     cy.get('.post').should('be.visible')
-    cy.get('.post-text').should('be.visible').and('contain.text', /\w+/)
+    cy.get('.post-text').should('be.visible').and('not.be.empty')
   })
 });
