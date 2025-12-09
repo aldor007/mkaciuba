@@ -1,0 +1,33 @@
+{
+  "name": "image",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/image/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/image/**/*.js",
+          "libs/image/**/*.jsx",
+          "libs/image/**/*.ts",
+          "libs/image/**/*.tsx",
+          "libs/image/**/*.spec.ts",
+          "libs/image/**/*.spec.tsx",
+          "libs/image/**/*.spec.js",
+          "libs/image/**/*.spec.jsx",
+          "libs/image/**/*.d.ts"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "libs/image/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/libs/image"]
+    }
+  }
+}
