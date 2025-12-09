@@ -140,7 +140,7 @@
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "apps/photos/jest.config.js",
+            "jestConfig": "apps/photos/jest.config.cjs",
             "passWithNoTests": true
           },
           "outputs": ["coverage/apps/photos"]
