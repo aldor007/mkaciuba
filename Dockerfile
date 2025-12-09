@@ -1,4 +1,4 @@
-FROM node:16-alpine
+FROM node:20-alpine
 
 RUN  apk add --update python3 make g++\
    && rm -rf /var/cache/apk/*
@@ -10,7 +10,6 @@ ADD ./apps /opt/app/apps
 ADD ./libs /opt/app/libs
 ADD ./nx.json /opt/app/nx.json
 ADD ./tsconfig.base.json /opt/app/tsconfig.base.json
-ADD ./workspace.json /opt/app/workspace.json
 ADD ./babel.config.json /opt/app/babel.config.json
 ADD ./tailwind.config.js /opt/app/tailwind.config.js
 ADD ./postcss.config.js /opt/app/postcss.config.js
