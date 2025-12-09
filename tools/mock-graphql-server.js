@@ -8,6 +8,32 @@ const app = express();
 
 app.use(express.json());
 
+// Helper to create thumbnail structure matching the ThumbnailFields fragment
+const createThumbnails = (baseUrl, sizes) => {
+  const thumbnails = [];
+  sizes.forEach(({ width, height, mediaQuery }) => {
+    // Non-WebP version
+    thumbnails.push({
+      url: `${baseUrl}?w=${width}&h=${height}`,
+      mediaQuery: mediaQuery || null,
+      webp: false,
+      type: 'image/jpeg',
+      width,
+      height
+    });
+    // WebP version
+    thumbnails.push({
+      url: `${baseUrl}?w=${width}&h=${height}&format=webp`,
+      mediaQuery: mediaQuery || null,
+      webp: true,
+      type: 'image/webp',
+      width,
+      height
+    });
+  });
+  return thumbnails;
+};
+
 // Mock data matching the expected structure
 const mockData = {
   posts: [
@@ -50,20 +76,34 @@ const mockData = {
     id: `${i + 1}`,
     name: `Category ${i + 1}`,
     slug: `category-${i + 1}`,
-    media: [{
-      id: `${i + 1}`,
-      url: `https://via.placeholder.com/400x300?text=Photo${i + 1}`,
-      caption: `Photo ${i + 1}`,
-      width: 400,
-      height: 300,
-      formats: {
-        thumbnail: {
-          url: `https://via.placeholder.com/245x156?text=Photo${i + 1}`,
-          width: 245,
-          height: 156
-        }
-      }
-    }]
+    description: `Description for Category ${i + 1}`,
+    keywords: `category, test, photo${i + 1}`,
+    mediasCount: 3,
+    medias: Array.from({ length: 3 }, (_, j) => ({
+      id: `${i * 3 + j + 1}`,
+      name: `photo-${i + 1}-${j + 1}.jpg`,
+      alternativeText: `Photo ${j + 1} from Category ${i + 1}`,
+      caption: `Caption for photo ${j + 1}`,
+      thumbnails: createThumbnails(
+        `https://via.placeholder.com/1200x900?text=Cat${i + 1}Photo${j + 1}`,
+        [
+          { width: 245, height: 156 },
+          { width: 400, height: 300 },
+          { width: 800, height: 600 },
+          { width: 1200, height: 900 }
+        ]
+      )
+    })),
+    image: {
+      thumbnails: createThumbnails(
+        `https://via.placeholder.com/800x600?text=Category${i + 1}`,
+        [
+          { width: 245, height: 156 },
+          { width: 400, height: 300 },
+          { width: 800, height: 600 }
+        ]
+      )
+    }
   }))
 };
 
@@ -71,12 +111,33 @@ const mockData = {
 app.post('/graphql', (req, res) => {
   const { query, variables } = req.body;
 
-  console.log('GraphQL Query:', query?.substring(0, 100));
+  console.log('GraphQL Query:', query?.substring(0, 150));
+  console.log('Variables:', JSON.stringify(variables));
 
   // Simple query matching - in a real mock server, you'd parse the GraphQL query properly
   let data = {};
 
-  if (query?.includes('posts')) {
+  // Handle categoryBySlug query (used by ImageList component with fragments)
+  if (query?.includes('categoryBySlug')) {
+    const categorySlug = variables?.categorySlug;
+    const limit = variables?.limit || 20;
+    const start = variables?.start || 0;
+
+    const category = mockData.categories.find(c => c.slug === categorySlug);
+
+    if (category) {
+      // Return category with paginated medias
+      data.categoryBySlug = {
+        ...category,
+        medias: category.medias.slice(start, start + limit)
+      };
+    } else {
+      data.categoryBySlug = null;
+    }
+  }
+
+  // Handle posts query
+  if (query?.includes('posts') && !query?.includes('relatedPosts')) {
     const limit = variables?.limit || 10;
     const start = variables?.start || 0;
     data.posts = mockData.posts.slice(start, start + limit);
@@ -85,7 +146,8 @@ app.post('/graphql', (req, res) => {
     };
   }
 
-  if (query?.includes('categories')) {
+  // Handle categories list query
+  if (query?.includes('categories') && !query?.includes('categoryBySlug')) {
     const limit = variables?.limit || 20;
     const start = variables?.start || 0;
     data.categories = mockData.categories.slice(start, start + limit);
@@ -94,10 +156,32 @@ app.post('/graphql', (req, res) => {
     };
   }
 
-  if (query?.includes('post(') || query?.includes('post ')) {
-    data.post = mockData.posts[0];
+  // Handle single post query
+  if (query?.includes('postBySlug')) {
+    data.postBySlug = mockData.posts[0];
+    data.prevNextPost = [];
+    data.relatedPosts = [];
   }
 
+  // Handle gallery menu query
+  if (query?.includes('galleryMenu')) {
+    const gallerySlug = variables?.gallerySlug;
+    data.galleryMenu = {
+      gallery: {
+        id: '1',
+        name: 'Test Gallery',
+        slug: gallerySlug || 'test-gallery',
+        keywords: 'test, gallery, photos',
+        description: 'Test gallery for E2E testing'
+      },
+      categories: mockData.categories.map(c => ({
+        slug: c.slug,
+        name: c.name
+      }))
+    };
+  }
+
+  console.log('Response data keys:', Object.keys(data));
   res.json({ data });
 });
 
