@@ -20,7 +20,7 @@ import path from 'path';
 import { Routes, App } from '@mkaciuba/photos';
 import { matchRoutes } from 'react-router-config';
 import { Html } from './html'
-import { renderToPipeableStream, renderToString } from 'react-dom/server';
+import { renderToString } from 'react-dom/server';
 import { ErrorPage } from '@mkaciuba/ui-kit';
 import { StaticRouter } from 'react-router';
 import MetaTagsServer from 'react-meta-tags/server';
@@ -347,14 +347,8 @@ app.get('*', async (req, res) => {
     const cacheData = await renderPage()
     if (cacheData) {
       res.set(cacheData.headers)
-      const { pipe } = renderToPipeableStream(cacheData.html, {
-        onShellReady() {
-          pipe(res);
-        },
-        onError(error) {
-          console.error('SSR streaming error:', error);
-        }
-      });
+      const htmlString = renderToString(cacheData.html);
+      res.send(htmlString);
       await cache.set(cacheKey, await toCacheObject(cacheData), cacheTTL)
     }
   }
