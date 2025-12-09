@@ -41,12 +41,22 @@ jobs:
       - name: Setup E2E environment
         run: cp apps/photos-ssr/src/environments/environment.e2e.ts apps/photos-ssr/src/environments/environment.ts
 
+      - name: Start mock GraphQL server
+        run: node tools/mock-graphql-server.js &
+        id: mock-server
+
+      - name: Wait for mock server
+        run: sleep 3
+
       - name: Build photos-ssr
         run: yarn build photos-ssr --verbose
 
       - name: Start photos-ssr server
         run: yarn start photos-ssr&
         id: ssr
+
+      - name: Wait for SSR server
+        run: sleep 5
 
       - name: Run photos E2E tests
         run: yarn nx e2e photos-e2e --ci --skip-serve
@@ -58,6 +68,8 @@ jobs:
         env:
           NODE_ENV: production
 
-      - name: Stop photos-ssr server
+      - name: Stop servers
         if: always()
-        run: pkill -f photos-ssr || true
+        run: |
+          pkill -f photos-ssr || true
+          pkill -f mock-graphql-server || true
