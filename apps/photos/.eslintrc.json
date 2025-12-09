@@ -44,6 +44,14 @@
         "*.jsx"
       ],
       "rules": {}
+    },
+    {
+      "files": [
+        "webpack.config.ts"
+      ],
+      "rules": {
+        "@typescript-eslint/no-var-requires": "off"
+      }
     }
   ]
 }
