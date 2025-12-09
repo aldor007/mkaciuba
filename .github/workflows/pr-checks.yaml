@@ -68,6 +68,18 @@ jobs:
         env:
           NODE_ENV: production
 
+      - name: Upload Cypress artifacts
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-artifacts
+          path: |
+            dist/cypress/apps/photos-e2e/videos/**/*
+            dist/cypress/apps/photos-e2e/screenshots/**/*
+            dist/cypress/apps/photos-embed-e2e/videos/**/*
+            dist/cypress/apps/photos-embed-e2e/screenshots/**/*
+          retention-days: 7
+
       - name: Stop servers
         if: always()
         run: |

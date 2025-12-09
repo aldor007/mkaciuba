@@ -42,7 +42,20 @@ const mockData = {
       title: 'Test Post 1',
       text: 'This is a test post content with some text',
       slug: 'test-post-1',
-      publishedAt: '2024-01-01T00:00:00.000Z',
+      publicationDate: '2024-01-01T00:00:00.000Z',
+      keywords: 'test, post, blog',
+      category: {
+        name: 'Test Category',
+        slug: 'test-category'
+      },
+      mainImage: {
+        url: 'https://via.placeholder.com/800x600',
+        mediaQuery: null,
+        webp: false,
+        type: 'image/jpeg',
+        width: 800,
+        height: 600
+      },
       media: [{
         id: '1',
         url: 'https://via.placeholder.com/800x600',
@@ -58,7 +71,6 @@ const mockData = {
           }
         }
       }],
-      categories: [],
       tags: []
     },
     {
@@ -66,12 +78,28 @@ const mockData = {
       title: 'Test Post 2',
       text: 'Another test post',
       slug: 'test-post-2',
-      publishedAt: '2024-01-02T00:00:00.000Z',
+      publicationDate: '2024-01-02T00:00:00.000Z',
+      keywords: 'test, another, blog',
+      category: {
+        name: 'Test Category',
+        slug: 'test-category'
+      },
+      mainImage: {
+        url: 'https://via.placeholder.com/600x400',
+        mediaQuery: null,
+        webp: false,
+        type: 'image/jpeg',
+        width: 600,
+        height: 400
+      },
       media: [],
-      categories: [],
       tags: []
     }
   ],
+  tags: Array.from({ length: 5 }, (_, i) => ({
+    name: `Tag ${i + 1}`,
+    slug: `tag-${i + 1}`
+  })),
   categories: Array.from({ length: 9 }, (_, i) => ({
     id: `${i + 1}`,
     name: `Category ${i + 1}`,
@@ -79,6 +107,19 @@ const mockData = {
     description: `Description for Category ${i + 1}`,
     keywords: `category, test, photo${i + 1}`,
     mediasCount: 3,
+    gallery: {
+      slug: 'test-gallery',
+      name: 'Test Gallery'
+    },
+    randomImage: {
+      id: `img-${i + 1}`,
+      caption: `Random image from Category ${i + 1}`,
+      thumbnail: {
+        url: `https://via.placeholder.com/200x150?text=Cat${i + 1}`,
+        width: 200,
+        height: 150
+      }
+    },
     medias: Array.from({ length: 3 }, (_, j) => ({
       id: `${i * 3 + j + 1}`,
       name: `photo-${i + 1}-${j + 1}.jpg`,
@@ -137,16 +178,22 @@ app.post('/graphql', (req, res) => {
   }
 
   // Handle posts query
-  if (query?.includes('posts') && !query?.includes('relatedPosts')) {
+  if (query?.includes('posts') && !query?.includes('relatedPosts') && !query?.includes('postBySlug')) {
     const limit = variables?.limit || 10;
     const start = variables?.start || 0;
     data.posts = mockData.posts.slice(start, start + limit);
+    data.postsCount = mockData.posts.length;
     data.postsConnection = {
       aggregate: { count: mockData.posts.length }
     };
   }
 
-  // Handle categories list query
+  // Handle tags query
+  if (query?.includes('tags')) {
+    data.tags = mockData.tags;
+  }
+
+  // Handle categories list query (for Footer)
   if (query?.includes('categories') && !query?.includes('categoryBySlug')) {
     const limit = variables?.limit || 20;
     const start = variables?.start || 0;
