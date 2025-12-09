@@ -1,0 +1,61 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'apps/**/*'
+      - 'libs/**/*'
+      - package.json
+      - 'yarn.lock'
+
+concurrency:
+  group: pr-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-and-e2e:
+    name: Test and E2E
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Lint affected projects
+        run: yarn nx affected:lint --base=origin/master --head=HEAD
+
+      - name: Run unit tests with race detection
+        run: yarn nx affected:test --base=origin/master --head=HEAD --race
+
+      - name: Setup E2E environment
+        run: cp apps/photos-ssr/src/environments/environment.e2e.ts apps/photos-ssr/src/environments/environment.ts
+
+      - name: Build photos-ssr
+        run: yarn build photos-ssr
+
+      - name: Start photos-ssr server
+        run: yarn start photos-ssr&
+        id: ssr
+
+      - name: Run photos E2E tests
+        run: yarn nx e2e photos-e2e --ci --skip-serve
+        env:
+          NODE_ENV: production
+
+      - name: Run photos-embed E2E tests
+        run: yarn nx e2e photos-embed-e2e --ci --skip-serve
+        env:
+          NODE_ENV: production
+
+      - name: Stop photos-ssr server
+        if: always()
+        run: pkill -f photos-ssr || true
