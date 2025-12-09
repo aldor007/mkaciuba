@@ -1,4 +1,5 @@
-const nrwlConfig = require("@nrwl/react/plugins/webpack"); // require the main @nrwl/react/plugins/webpack configuration function.
+const { composePlugins, withNx } = require('@nrwl/webpack');
+const { withReact } = require('@nrwl/react');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const TerserPlugin = require("terser-webpack-plugin");
@@ -7,12 +8,53 @@ const S3Plugin = require('webpack-s3-plugin');
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const gitsha = require('gitsha')
 
+// Plugin to fix null layer values in CSS modules for mini-css-extract-plugin compatibility
+class FixCssLayerPlugin {
+  apply(compiler) {
+    compiler.hooks.compilation.tap('FixCssLayerPlugin', (compilation) => {
+      compilation.hooks.afterOptimizeModules.tap('FixCssLayerPlugin', (modules) => {
+        for (const module of modules) {
+          if (module.layer === null) {
+            module.layer = undefined;
+          }
+        }
+      });
+    });
+  }
+}
 
-module.exports = config => {
+
+module.exports = composePlugins(withNx(), withReact(), (config) => {
+  // Fix import.meta issue for non-module builds
+  if (!config.output) config.output = {};
+  config.output.environment = {
+    ...config.output.environment,
+    dynamicImport: false,
+    module: false,
+  };
+  config.output.scriptType = 'text/javascript';
+
+  // Add plugin to fix null layer values
+  config.plugins.push(new FixCssLayerPlugin());
+
+  // Remove existing MiniCssExtractPlugin to avoid duplicates
+  config.plugins = config.plugins.filter(
+    plugin => !(plugin instanceof MiniCssExtractPlugin)
+  );
+
   config.plugins.push( new MiniCssExtractPlugin({
     filename: '[name].[hash].css',
   }));
-  config.plugins.push(new WebpackManifestPlugin());
+  config.plugins.push(new WebpackManifestPlugin({
+    generate: (seed, files, entries) => {
+      const manifest = {};
+      files.forEach(file => {
+        // Use file.name for both key and value to avoid "auto" prefix
+        manifest[file.name] = file.name;
+      });
+      return manifest;
+    }
+  }));
   if (process.env.AWS_ACCESS_KEY_ID) {
 
     config.plugins.push(new S3Plugin({
@@ -33,41 +75,40 @@ module.exports = config => {
       basePath: process.env.AWS_BASE_PATH
     }));
   }
-  const postCssLoader = {
-    loader: 'postcss-loader',
-      options: {
-        postcssOptions: {
-          plugins: [
-            require('postcss-import'),
-            require('tailwindcss')('./tailwind.config.js'),
-            require('autoprefixer'),
-          ],
-        },
-      },
-  };
-  const ssrConfig = {
-    loader: 'css-loader',
-    options: {
-      importLoaders: 1
-    }
-  };
 
-  const css = [];
-  // if (process.env.SSR) {
-    // css.push('style-loader', ssrConfig);
-  // } else {
-  // }
-
-  css.push(MiniCssExtractPlugin.loader)
-  css.push(ssrConfig);
-  css.push(postCssLoader);
-
-  config.module.rules.push(
-      {
-        test: /\.css$/,
-        use: css,
-      }
+  // Remove default Nx CSS handling to use our own
+  const cssRuleIndex = config.module.rules.findIndex(rule =>
+    rule && rule.test && rule.test.toString().includes('\\.css')
   );
+  if (cssRuleIndex !== -1) {
+    config.module.rules.splice(cssRuleIndex, 1);
+  }
+
+  // Configure CSS processing with Tailwind
+  config.module.rules.push({
+    test: /\.css$/,
+    use: [
+      MiniCssExtractPlugin.loader,
+      {
+        loader: 'css-loader',
+        options: {
+          importLoaders: 1,
+        }
+      },
+      {
+        loader: 'postcss-loader',
+        options: {
+          postcssOptions: {
+            plugins: [
+              'tailwindcss',
+              'autoprefixer',
+            ],
+          },
+        }
+      }
+    ],
+  });
+
 //   config.plugins.push(    new BundleAnalyzerPlugin())
   if (process.env.NODE_ENV == 'production') {
     config.optimization = {
@@ -83,5 +124,5 @@ module.exports = config => {
         ],
     };
   }
-  return nrwlConfig(config);
-};
+  return config;
+});

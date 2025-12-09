@@ -13,7 +13,7 @@ import {
   ): FieldPolicy<T[]> {
     return {
       keyArgs,
-      merge(existing: any[], incoming: any[], {args, readField}) {
+      merge(existing: any[], incoming: any[], {args}) {
         if  (!args || !Object.prototype.hasOwnProperty.call(args, 'start')) {
           return incoming || existing;
         }
@@ -32,6 +32,10 @@ import {
         merged.push(...incoming);
       }
       return merged;
+      },
+      read(existing: any[], {args}) {
+        // Return existing cached data - this prevents the canonizeResults warning
+        return existing;
       },
     };
   }

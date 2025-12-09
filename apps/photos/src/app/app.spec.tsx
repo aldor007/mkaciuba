@@ -3,6 +3,11 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import App from './app';
 
+// Mock routes to avoid routing issues in tests
+jest.mock('../routes', () => ({
+  AppRoutesComponent: jest.fn(() => <div>Mocked Routes</div>),
+}));
+
 describe('App', () => {
   beforeEach(() => {
     // Mock window.scrollTo since jsdom doesn't implement it

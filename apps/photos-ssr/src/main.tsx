@@ -17,14 +17,13 @@ import { getDataFromTree } from "@apollo/client/react/ssr";
 import React from 'react';
 import path from 'path';
 
-import { Routes, App } from '@mkaciuba/photos';
-import { matchRoutes } from 'react-router-config';
+import { AppRoutesComponent, App } from '@mkaciuba/photos';
 import { Html } from './html'
 import { renderToString } from 'react-dom/server';
 import { ErrorPage } from '@mkaciuba/ui-kit';
-import { StaticRouter } from 'react-router';
-import MetaTagsServer from 'react-meta-tags/server';
-import {MetaTagsContext} from 'react-meta-tags';
+import { StaticRouter } from 'react-router-dom/server';
+import { HelmetProvider } from 'react-helmet-async';
+import { FilledContext } from 'react-helmet-async';
 import { BatchHttpLink } from "@apollo/client/link/batch-http";
 import { environment } from './environments/environment';
 import cookeParser from 'cookie-parser';
@@ -217,7 +216,7 @@ app.delete('/v1/purge', async (req, res) => {
 })
 
 app.get('*', async (req, res) => {
-  const metaTagsInstance = MetaTagsServer();
+  const helmetContext = {} as FilledContext;
   const reqPath = req.path;
 
   const client = new ApolloClient({
@@ -233,28 +232,13 @@ app.get('*', async (req, res) => {
     cache: new InMemoryCache(),
   });
 
-  const context = {};
-
-  // Checks the given path, matches with component and returns array of items about to be rendered
-  const routes = matchRoutes(Routes, req.path);
   const staticApp = (
-          <StaticRouter location={req.url} context={context}>
-            <MetaTagsContext extract = {metaTagsInstance.extract}>
+          <StaticRouter location={req.url}>
+            <HelmetProvider context={helmetContext}>
               <App client={client} />
-              </MetaTagsContext>
+            </HelmetProvider>
           </StaticRouter>
   )
-  if (routes.length === 0) {
-    res.status(404);
-    res.set({
-      'cache-control': 'no-cache, no-store, must-revalidate',
-      'pragma': 'no-cache',
-      'expires': '0',
-      'content-type': 'text/html; charset=UTF-8'
-    });
-    res.send(renderErrorPage(404, 'Page not found'));
-    return;
-  }
   const cacheKey = getCacheKey(req)
   const cacheData = await cache.get(cacheKey);
   let cacheTTL = 600;
@@ -263,7 +247,16 @@ app.get('*', async (req, res) => {
       await getDataFromTree(staticApp);
       // Extract the entirety of the Apollo Client cache's current state
       const initialState = client.extract();
-      const headTags = metaTagsInstance.renderToString().replace('<div class="react-head-temp">', '').replace('</div>', '')
+
+      // Extract helmet data after rendering
+      const { helmet } = helmetContext;
+      const headTags = `
+        ${helmet?.title?.toString() || ''}
+        ${helmet?.meta?.toString() || ''}
+        ${helmet?.link?.toString() || ''}
+        ${helmet?.script?.toString() || ''}
+      `;
+
       const meta =    `${headTags}
         <link href="${getAssetPath('main.css')}" rel="stylesheet"/>
         <meta charset="utf-8">

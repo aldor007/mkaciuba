@@ -1,7 +1,6 @@
 /**
- * Polyfill stable language features. These imports will be optimized by `@babel/preset-env`.
- *
- * See: https://github.com/zloirock/core-js#babel
+ * Polyfills for modern browsers with webpack 5
+ * Most polyfills are no longer needed with modern browsers and webpack 5
  */
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
+
+// Add any specific polyfills here if needed for older browser support

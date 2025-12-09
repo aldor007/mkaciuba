@@ -1,16 +1,16 @@
 import React, { useEffect, Suspense } from 'react';
 import { useLocation } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 
 import '../assets/photos.css'
-import { renderRoutes } from 'react-router-config';
-import { Routes } from '../routes';
+import { AppRoutesComponent } from '../routes';
 import { ApolloProvider } from '@apollo/client/react';
 import {  ApolloClient, InMemoryCache, HttpLink  } from '@apollo/client/core';
 import { BatchHttpLink } from "@apollo/client/link/batch-http";
 import { environment } from '../environments/environment';
 import { startLimitPagination } from './apollo';
 import { createPersistedQueryLink } from "@apollo/client/link/persisted-queries";
-import { sha256 } from 'crypto-hash';
+import { sha256 } from 'js-sha256';
 import { setContext } from '@apollo/client/link/context';
 import * as Sentry from "@sentry/react";
 import { Integrations } from "@sentry/tracing";
@@ -101,13 +101,15 @@ export const App = ({ client }: AppsProps) => {
     }
   }
   return (
-      <ApolloProvider client={client}>
-        <Tracking />
-        <ScrollToTop />
-        <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-pulse text-lg">Loading...</div></div>}>
-          {renderRoutes(Routes)}
-        </Suspense>
-      </ApolloProvider>
+      <HelmetProvider>
+        <ApolloProvider client={client}>
+          <Tracking />
+          <ScrollToTop />
+          <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-pulse text-lg">Loading...</div></div>}>
+            <AppRoutesComponent />
+          </Suspense>
+        </ApolloProvider>
+      </HelmetProvider>
   );
 };
 

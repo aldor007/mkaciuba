@@ -5,9 +5,9 @@ import gql from  'graphql-tag';
 import { Link } from 'react-router-dom'
 import { generatePath } from "react-router";
 import { findImageForWidth, ImageComponent } from "@mkaciuba/image";
-import MetaTags from 'react-meta-tags';
+import { Helmet } from 'react-helmet-async';;
 import { Gallery, Query } from '@mkaciuba/api';
-import {useHistory} from "react-router-dom"
+import {useNavigate} from "react-router-dom"
 import '../../assets/category.css';
 
 import {
@@ -52,7 +52,7 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
   const width = useWindowWidth();
   const [loadingMore, setLoadingMore] = useState(false);
   const limit = 10;
-  const history = useHistory();
+  const navigate = useNavigate();
   const [start, setStart] = useState(limit);
 
   const {loading, error, data, fetchMore } = useQuery<Query>(GET_CATEGORIES, {
@@ -120,11 +120,11 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
     return (
       <>
      <div className="flex flex-wrap mx-auto overflow-hidden">
-       <MetaTags>
+       <Helmet>
             <title>{gallery.name} | mkaciuba.pl</title>
             <meta name="description" content={gallery.description} />
             <meta property="og:title" content={gallery.name} />
-          </MetaTags>
+          </Helmet>
       {categories && categories.map(item => (
          <div className="mx-auto my-1 px-1 w-1/1 overflow-hidden sm:w-1/1 md:w-1/2 lg:w-1/2 xl:w-1/2" key={item.slug}>
           <Link to={generatePath(AppRoutes.photos.path, {

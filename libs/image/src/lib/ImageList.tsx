@@ -6,7 +6,7 @@ import {
 } from '@react-hook/window-size';
 // import 'photoswipe/dist/photoswipe.css'
 // import 'photoswipe/dist/default-skin/default-skin.css'
-import MetaTags from 'react-meta-tags';
+import { Helmet } from 'react-helmet-async';;
 import { Query } from '@mkaciuba/api';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { Loading, LoadingMore, ErrorPage } from '@mkaciuba/ui-kit'
@@ -28,7 +28,7 @@ declare global {
 
 // Fragment for reusable thumbnail structure
 const THUMBNAIL_FRAGMENT = gql`
-  fragment ThumbnailFields on Thumbnail {
+  fragment ThumbnailFields on Image {
     url
     mediaQuery
     webp
@@ -194,11 +194,12 @@ export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps)
    return (
      <>
         <div className="flex flex-wrap -mx-1 overflow-hidden" >
-          <MetaTags>
+          <Helmet>
             { !disableSEO && <meta name="twitter:image" content={seoImage[0].url} /> }
             { !disableSEO && <meta name="twitter:card" content="summary_large_image" /> }
             { !disableSEO && <meta property="og:image" content={seoImage[0].url} /> }
-          </MetaTags>
+          </Helmet>
+          {/* @ts-expect-error - react-photoswipe-gallery types not fully compatible with React 18 */}
           <Gallery shareButton={false} id={category.slug} onOpen={() => {
             ReactGA.event({
           category: 'photoswipe',

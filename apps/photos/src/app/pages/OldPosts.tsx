@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client/react';
 import gql from  'graphql-tag'
 import { Query, Post as PostType, Enum_Post_Content_Position  } from '@mkaciuba/api';
-import { generatePath, Redirect } from "react-router";
+import { generatePath, Navigate } from "react-router-dom";
 import { AppRoutes } from "../routes";
 
 
@@ -31,6 +31,6 @@ export const OldPost = () => {
     return <ErrorPage code={500} message={error.message} />
    };
   return  (
-      <Redirect to={`${generatePath(AppRoutes.post.path, { slug: data.postByPermalink.slug })}`} />
+      <Navigate to={`${generatePath(AppRoutes.post.path, { slug: data.postByPermalink.slug })}`} replace />
     )
 }

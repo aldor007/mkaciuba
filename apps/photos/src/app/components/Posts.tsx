@@ -3,11 +3,11 @@ import React, { RefObject, useCallback, useState  } from "react";
 import { useQuery } from '@apollo/client/react';
 import gql from  'graphql-tag';
 
-import {useHistory} from "react-router-dom"
+import {useNavigate} from "react-router-dom"
 import { Link } from 'react-router-dom'
 import { generatePath, useLocation } from "react-router";
 import { findImageForWidth, ImageComponent } from "@mkaciuba/image";
-import MetaTags from 'react-meta-tags';
+import { Helmet } from 'react-helmet-async';;
 import { Gallery, Query, Post } from '@mkaciuba/api';
 import '../../assets/category.css';
 
@@ -112,7 +112,7 @@ export interface PostsProps {
 }
 
 export const Posts = ( { id, type} : PostsProps) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const queryParams = useQueryParams();
   const webp = false;//useWebPSupportCheck();
   const width = 1800;
@@ -157,7 +157,7 @@ export const Posts = ( { id, type} : PostsProps) => {
   const handleLoadMore = useCallback(() => {
     setStart(prevStart => {
       const newStart = prevStart + limit;
-      history.push({
+      navigate({
         pathname: window.location.pathname,
         search: '?page=' + Math.floor(newStart / limit)
       })
@@ -168,7 +168,7 @@ export const Posts = ( { id, type} : PostsProps) => {
          start,
          limit
       }});
-    }, [fetchMore, start, limit, history]);
+    }, [fetchMore, start, limit, navigate]);
 
 
   if (error) {

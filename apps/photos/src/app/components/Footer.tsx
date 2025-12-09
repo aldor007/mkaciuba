@@ -46,6 +46,7 @@ export const Footer = () => {
     console.error('Footer', error)
     return <ErrorPage code={500} message={error.message} />
    };
+  if (!data || !data.categories) return null;
 
   const recentPhotos = data.categories.map(c => {
       const imagePath = generatePath(AppRoutes.photos.path, {

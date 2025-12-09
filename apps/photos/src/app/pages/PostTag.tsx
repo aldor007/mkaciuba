@@ -8,7 +8,7 @@ import { AppRoutes } from '../routes';
 import { Loading, ErrorPage } from '@mkaciuba/ui-kit'
 import { generatePath, useParams } from 'react-router-dom';
 import { Posts, POST_TYPE } from '../components/Posts';
-import MetaTags from 'react-meta-tags';
+import { Helmet } from 'react-helmet-async';;
 
 const GET_POST_CATEGORY = gql`
   query ($slug: String!) {
@@ -37,9 +37,9 @@ export const PostTag = () => {
 
   return  (
     <>
-          <MetaTags>
+          <Helmet>
             <title>Tag - {tag.name} | mkaciuba.pl</title>
-          </MetaTags>
+          </Helmet>
     <Header/>
     <h1 className="text-center m-5 text-4xl leading-snug font-serif ">Posty z tagu: {tag.name}</h1>
     <Posts id={tag.id} type={POST_TYPE.TAG}/>

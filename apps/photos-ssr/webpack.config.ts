@@ -1,44 +1,42 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { composePlugins, withNx } = require('@nrwl/webpack');
 
-
-module.exports = (config, context) => {
-   const {
-    options: { outputPath, filename },
-  } = context;
+module.exports = composePlugins(withNx(), (config) => {
 
   config.module.rules.push(
-      {
-        test: /\.css$/,
-        use: [
-          {
-            // Interprets `@import` and `url()` like `import/require()` and will resolve them
-            loader: 'css-loader',
-            options: {
-              modules: {
-                exportOnlyLocals: true
-              }
+    {
+      test: /\.css$/,
+      use: [
+        {
+          // Interprets `@import` and `url()` like `import/require()` and will resolve them
+          loader: 'css-loader',
+          options: {
+            modules: {
+              exportOnlyLocals: true
             }
-          },
-          {
-            loader: 'postcss-loader',
-            options: {
-              postcssOptions: {
-                plugins: [
-                  ['tailwindcss', {
-                    purge: [
-                      './src/**/*.html',
-                      './src/**/*.jsx',
-                    ],
-                    theme: {},
-                    variants: {},
-                    plugins: [],
-                  }],
-                  require('autoprefixer'),
-                ],
-              },
+          }
+        },
+        {
+          loader: 'postcss-loader',
+          options: {
+            postcssOptions: {
+              plugins: [
+                ['tailwindcss', {
+                  purge: [
+                    './src/**/*.html',
+                    './src/**/*.jsx',
+                  ],
+                  theme: {},
+                  variants: {},
+                  plugins: [],
+                }],
+                require('autoprefixer'),
+              ],
             },
           },
-        ],
-      }
+        },
+      ],
+    }
   );
   return config;
-};
+});
