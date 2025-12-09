@@ -18,6 +18,13 @@ import { Image, ImageComponent } from './image';
 import { Gallery, Item } from 'react-photoswipe-gallery'
 import { findImageForWidthBigger } from "..";
 
+// Extend Window interface to include Apollo SSR state
+declare global {
+  interface Window {
+    __APOLLO_STATE__?: any;
+  }
+}
+
 
 // Fragment for reusable thumbnail structure
 const THUMBNAIL_FRAGMENT = gql`
