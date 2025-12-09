@@ -3,22 +3,9 @@
  * This is only a minimal backend to get started.
  */
 
-import * as Sentry from '@sentry/node';
-import '@sentry/tracing';
 import express from 'express';
 import renderer from './renderer';
 import 'cross-fetch/polyfill';
-
-// Initialize Sentry for SSR error tracking
-Sentry.init({
-  dsn: "https://ecd32835e9764a1fb73c95896f1a6a21@o1035151.ingest.sentry.io/6001921",
-  environment: process.env.NODE_ENV || 'development',
-  tracesSampleRate: 0.3,
-  integrations: [
-    // Automatically instrument Node.js libraries and frameworks
-    ...Sentry.autoDiscoverNodePerformanceMonitoringIntegrations(),
-  ],
-});
 
 import {
   ApolloProvider,
@@ -100,12 +87,6 @@ scripts.push(getAssetPath('main.js'))
 scripts = scripts.filter(x => x)
 
 const app = express();
-
-// Sentry request handler must be the first middleware
-app.use(Sentry.Handlers.requestHandler());
-// TracingHandler creates a trace for every incoming request
-app.use(Sentry.Handlers.tracingHandler());
-
 app.use(cookeParser())
 
 async function toCacheObject(cacheData) {
@@ -342,8 +323,6 @@ app.get('*', async (req, res) => {
 
     } catch (e) {
       console.error('Error rendering page', e)
-      // Send the error to Sentry
-      Sentry.captureException(e);
       res.status(500);
       res.set({
         'cache-control': 'no-cache, no-store, must-revalidate',
@@ -358,23 +337,10 @@ app.get('*', async (req, res) => {
       cacheData.headers['x-lru'] = 'hit'
       res.set(cacheData.headers)
       res.send(cacheData.html)
-
-      // Fix race condition: Use non-blocking background refresh
-      // Trigger async refresh without awaiting to avoid blocking
-      setImmediate(async () => {
-        try {
-          // Double-check cache still missing to avoid duplicate renders
-          const stillMissing = !await cache.get(cacheKey);
-          if (stillMissing) {
-            const refreshData = await renderPage();
-            if (refreshData) {
-              await cache.set(cacheKey, await toCacheObject(refreshData), cacheTTL);
-            }
-          }
-        } catch (err) {
-          console.error('Background cache refresh error:', err);
-        }
-      });
+      if (!await cache.get(cacheKey)) {
+          const refreshData = await renderPage()
+          await cache.set(cacheKey, await toCacheObject(refreshData), cacheTTL)
+      }
   } else {
     const cacheData = await renderPage()
     if (cacheData) {
@@ -385,9 +351,6 @@ app.get('*', async (req, res) => {
   }
 
 });
-
-// Sentry error handler must be registered after all controllers and before any other error middleware
-app.use(Sentry.Handlers.errorHandler());
 
 console.info('Scripts', scripts, process.env.NODE_ENV)
 console.info('Apollo url' , process.env.API_URL || environment.apiUrl);
