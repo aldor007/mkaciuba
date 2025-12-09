@@ -48,7 +48,7 @@ export const Footer = () => {
    };
 
   const recentPhotos = data.categories.map(c => {
-      let imagePath = generatePath(AppRoutes.photos.path, {
+      const imagePath = generatePath(AppRoutes.photos.path, {
             gallerySlug: c.gallery.slug,
             categorySlug: c.slug,
       });

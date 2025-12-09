@@ -1,14 +1,14 @@
-const nrwlConfig = require("@nrwl/react/plugins/webpack"); // require the main @nrwl/react/plugins/webpack configuration function.
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
-const TerserPlugin = require("terser-webpack-plugin");
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const S3Plugin = require('webpack-s3-plugin');
-const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
-const gitsha = require('gitsha')
+import nrwlConfig from "@nrwl/react/plugins/webpack"; // require the main @nrwl/react/plugins/webpack configuration function.
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
+import TerserPlugin from "terser-webpack-plugin";
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+import S3Plugin from 'webpack-s3-plugin';
+import { WebpackManifestPlugin } from 'webpack-manifest-plugin';
+import gitsha from 'gitsha';
 
 
-module.exports = config => {
+export default (config) => {
   config.plugins.push( new MiniCssExtractPlugin({
     filename: '[name].[hash].css',
   }));
@@ -37,11 +37,16 @@ module.exports = config => {
     loader: 'postcss-loader',
       options: {
         postcssOptions: {
-          plugins: [
-            require('postcss-import'),
-            require('tailwindcss')('./tailwind.config.js'),
-            require('autoprefixer'),
-          ],
+          plugins: async () => {
+            const postcssImport = (await import('postcss-import')).default;
+            const tailwindcss = (await import('tailwindcss')).default;
+            const autoprefixer = (await import('autoprefixer')).default;
+            return [
+              postcssImport,
+              tailwindcss('./tailwind.config.js'),
+              autoprefixer,
+            ];
+          },
         },
       },
   };
@@ -69,7 +74,7 @@ module.exports = config => {
       }
   );
 //   config.plugins.push(    new BundleAnalyzerPlugin())
-  if (process.env.NODE_ENV == 'production') {
+  if (process.env.NODE_ENV === 'production') {
     config.optimization = {
       splitChunks: {
         chunks: 'all',

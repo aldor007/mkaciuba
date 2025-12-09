@@ -14,7 +14,7 @@ import {
     return {
       keyArgs,
       merge(existing: any[], incoming: any[], {args, readField}) {
-        if  (!args || !args.hasOwnProperty('start')) {
+        if  (!args || !Object.prototype.hasOwnProperty.call(args, 'start')) {
           return incoming || existing;
         }
       const merged = existing ? existing.slice(0) : [];
@@ -29,7 +29,7 @@ import {
         // to receive any arguments, so you might prefer to throw an
         // exception here, instead of recovering by appending incoming
         // onto the existing array.
-        merged.push.apply(merged, incoming);
+        merged.push(...incoming);
       }
       return merged;
       },

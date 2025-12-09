@@ -63,7 +63,7 @@ export class Cache {
     if (!val) {
         return
     }
-    let valDB = JSON.stringify(val)
+    const valDB = JSON.stringify(val)
     this.lruCache.set(key, valDB, {ttl: ttl /2});
     if (!this.redis) {
         return

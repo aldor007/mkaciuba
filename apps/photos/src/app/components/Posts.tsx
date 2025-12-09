@@ -106,7 +106,7 @@ export enum POST_TYPE {
   TAG
 }
 export interface PostsProps {
-  id?: String
+  id?: string
   type: POST_TYPE
 
 }
@@ -122,7 +122,7 @@ export const Posts = ( { id, type} : PostsProps) => {
   if (!page) {
     page = '1'
   }
-  let startPage = (parseInt(page) - 1) * limit;
+  const startPage = (parseInt(page) - 1) * limit;
 
 
   const [start, setStart] = useState(parseInt(page) * limit)
