@@ -1,3 +1,10 @@
+## [0.5.3](https://github.com/aldor007/mkaciuba/compare/photos-0.5.2...photos-0.5.3) (2025-12-09)
+
+
+### Bug Fixes
+
+* more fixes ([c83c86a](https://github.com/aldor007/mkaciuba/commit/c83c86ab15523329250f4d976d08d8c00b90a3bb))
+
 ## [0.5.2](https://github.com/aldor007/mkaciuba/compare/photos-0.5.1...photos-0.5.2) (2025-12-08)
 
 
