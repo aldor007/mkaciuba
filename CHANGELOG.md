@@ -1,3 +1,49 @@
+# [0.6.0](https://github.com/aldor007/mkaciuba/compare/photos-0.5.3...photos-0.6.0) (2025-12-09)
+
+
+### Bug Fixes
+
+* add global fetch mock for Apollo Client in test ([59793e0](https://github.com/aldor007/mkaciuba/commit/59793e02f41211ea253a424cf03cd09137fb91f5))
+* add missing fields to mock GraphQL server for home page ([4095f36](https://github.com/aldor007/mkaciuba/commit/4095f3675d6e01b04315c4cee27cc24b62d255b2))
+* add missing key prop to Navbar dropdown menu map ([c31bd1b](https://github.com/aldor007/mkaciuba/commit/c31bd1b99982bf66c2c99d3923cfaccb4b59f32a))
+* add missing key prop to Posts component map ([6ff914d](https://github.com/aldor007/mkaciuba/commit/6ff914ddaf4269d540820f1e494858f01e145ba0))
+* disable no-var-requires lint rule for webpack.config.ts ([19947a5](https://github.com/aldor007/mkaciuba/commit/19947a5599eaded8a4de05a7c4c33f4d31aae07f))
+* handle batched GraphQL requests in mock server ([7c6b283](https://github.com/aldor007/mkaciuba/commit/7c6b28350305306f6b1ee6df924dd23b47a95ba1))
+* make __APOLLO_STATE__ optional to match other declarations ([7ed6739](https://github.com/aldor007/mkaciuba/commit/7ed67390cc7cc504b8bd8f91d8624a6dbf3aa0d0))
+* migrate to react-helmet-async and fix import ordering ([5fbe302](https://github.com/aldor007/mkaciuba/commit/5fbe302dd7259e4ae6f53f87ef4d1900219df0dc))
+* more fixes ([e149e20](https://github.com/aldor007/mkaciuba/commit/e149e20d7f7fdcdfb97175423ad9356bdb5d5f98))
+* remove type:module from package.json to fix webpack build ([e2c0e69](https://github.com/aldor007/mkaciuba/commit/e2c0e69dd1fb8a45335ab2d790806252919a29fa))
+* render React tree directly for proper Suspense hydration ([9021447](https://github.com/aldor007/mkaciuba/commit/9021447d5f35bcfcf94c27f3a2d48ad37708adbb))
+* render staticApp to string before embedding in Html ([f75e6bb](https://github.com/aldor007/mkaciuba/commit/f75e6bb91b4ade6a1d1e67f9d15cfdf2029ef62c))
+* resolve test failures - import, Jest config, and TypeScript types ([7c2ea8c](https://github.com/aldor007/mkaciuba/commit/7c2ea8ced0fcbbf6319b7ec957313ad14e25b25a))
+* restore package.json and use jest.config.cjs to fix build ([615cacc](https://github.com/aldor007/mkaciuba/commit/615cacc500f6cda10d14e57dd2b8eea0ac082da9))
+* revert E2E test selectors to master version ([f86996a](https://github.com/aldor007/mkaciuba/commit/f86996a2310b7ca068da6ae380d619927d621432))
+* revert Sentry changes in photos-ssr to fix server crash ([29272de](https://github.com/aldor007/mkaciuba/commit/29272de1cded85311d66586b278e4e99eaad972a))
+* revert to production API and add SSR server logging ([0c11df8](https://github.com/aldor007/mkaciuba/commit/0c11df8f4f2c0329bc4c7a461c2e9366572c615a))
+* revert webpack.config.ts to CommonJS syntax to fix build ([7347397](https://github.com/aldor007/mkaciuba/commit/7347397c35610781368a633440add13c3ea23d98))
+* run built SSR server directly instead of using yarn start ([f1ce5cd](https://github.com/aldor007/mkaciuba/commit/f1ce5cdb703a9f8b9d1385dff888bf634d88d91d))
+* simplify App test and mock window.scrollTo ([a4cda53](https://github.com/aldor007/mkaciuba/commit/a4cda536749b795536aef4789a8b24d2e7797660))
+* update E2E test selectors based on actual SSR-rendered HTML ([d8f7b3c](https://github.com/aldor007/mkaciuba/commit/d8f7b3c6a33ef96f504f274daaa880b6c40d4944))
+* update mock GraphQL server to support fragments ([5612fa5](https://github.com/aldor007/mkaciuba/commit/5612fa5ccea9c8828368d16aeb64109cda4772ae))
+* update photos test to use waitFor and screen ([c6641f9](https://github.com/aldor007/mkaciuba/commit/c6641f94d002d6af2a83e0b3f6f7dff06c4b6c98))
+* update SSR to use React 18 renderToPipeableStream ([0f3b8c5](https://github.com/aldor007/mkaciuba/commit/0f3b8c5bc0d3b683209a1711968dbf4208c718c7))
+* update upload-artifact action to v4 ([93905fc](https://github.com/aldor007/mkaciuba/commit/93905fcd5703054c5a292aff35a692da8813b414))
+* upgrade to React 18 to support Suspense in SSR ([6855c9b](https://github.com/aldor007/mkaciuba/commit/6855c9b7e894400dba0dd870cf30d78e0787a09d))
+* use correct Cypress assertion for post text validation ([0373f4e](https://github.com/aldor007/mkaciuba/commit/0373f4ecea6c416bc61c315fc3573a89b6e17250))
+* use proper keys instead of indices in Navbar menu items ([5dcb9ff](https://github.com/aldor007/mkaciuba/commit/5dcb9ff8380b2974346ef05bbe4db7d5e27901eb))
+* use renderToString instead of renderToPipeableStream ([053c670](https://github.com/aldor007/mkaciuba/commit/053c670ad96c4eebb635ca8ee8bb2132cb32e367))
+* wrap App in MemoryRouter for test context ([052e387](https://github.com/aldor007/mkaciuba/commit/052e3875731246c727021ce859b1716430742f1b))
+
+
+### Features
+
+* add mock GraphQL server for E2E tests ([1dd5461](https://github.com/aldor007/mkaciuba/commit/1dd5461bd9f085dbcdd16351d49809f60acb7a8a))
+
+
+### Reverts
+
+* go back to yarn start for SSR server ([a73f3ca](https://github.com/aldor007/mkaciuba/commit/a73f3ca5446e3f989afa8c7224fcf6eda70aec62))
+
 ## [0.5.3](https://github.com/aldor007/mkaciuba/compare/photos-0.5.2...photos-0.5.3) (2025-12-09)
 
 
