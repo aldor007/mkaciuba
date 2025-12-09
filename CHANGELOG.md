@@ -1,3 +1,10 @@
+## [0.6.1](https://github.com/aldor007/mkaciuba/compare/photos-0.6.0...photos-0.6.1) (2025-12-09)
+
+
+### Bug Fixes
+
+* update Dockerfile for Nx 12 and Node 20 ([2e55246](https://github.com/aldor007/mkaciuba/commit/2e55246b00c03df19e3104adaa686ce545ef3bbc))
+
 # [0.6.0](https://github.com/aldor007/mkaciuba/compare/photos-0.5.3...photos-0.6.0) (2025-12-09)
 
 
