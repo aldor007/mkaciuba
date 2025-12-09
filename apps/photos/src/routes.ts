@@ -1,15 +1,19 @@
-import { Home } from './app/pages/Home';
-import { Categories } from './app/pages/Categories';
-import { Photos } from './app/pages/Photos';
-import { Login } from './app/pages/Login';
-import { IframePhotos } from './app/pages/IframePhotos';
+import { lazy } from 'react';
 import { AppRoutes } from './app/routes';
-import { Post  } from './app/pages/Post';
-import { PostCategory } from './app/pages/PostCategory';
-import { OldPost } from './app/pages/OldPosts';
-import { PostTag } from './app/pages/PostTag';
-import { Page } from './app/pages/Page';
-import { GalleryBlog, GalleryBlogCategory } from './app/pages/GalleryBlog';
+
+// Lazy load route components for code splitting
+const Home = lazy(() => import('./app/pages/Home').then(m => ({ default: m.Home })));
+const Categories = lazy(() => import('./app/pages/Categories').then(m => ({ default: m.Categories })));
+const Photos = lazy(() => import('./app/pages/Photos').then(m => ({ default: m.Photos })));
+const Login = lazy(() => import('./app/pages/Login').then(m => ({ default: m.Login })));
+const IframePhotos = lazy(() => import('./app/pages/IframePhotos').then(m => ({ default: m.IframePhotos })));
+const Post = lazy(() => import('./app/pages/Post').then(m => ({ default: m.Post })));
+const PostCategory = lazy(() => import('./app/pages/PostCategory').then(m => ({ default: m.PostCategory })));
+const OldPost = lazy(() => import('./app/pages/OldPosts').then(m => ({ default: m.OldPost })));
+const PostTag = lazy(() => import('./app/pages/PostTag').then(m => ({ default: m.PostTag })));
+const Page = lazy(() => import('./app/pages/Page').then(m => ({ default: m.Page })));
+const GalleryBlog = lazy(() => import('./app/pages/GalleryBlog').then(m => ({ default: m.GalleryBlog })));
+const GalleryBlogCategory = lazy(() => import('./app/pages/GalleryBlog').then(m => ({ default: m.GalleryBlogCategory })));
 
 export const Routes = [
     {

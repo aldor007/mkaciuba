@@ -77,13 +77,13 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
   }
 
   const handleLoadMore = useCallback(() => {
-    setStart(start + limit)
+    setStart(prevStart => prevStart + limit)
     fetchMore({
       variables: {
          start,
          limit
       }});
-    }, [fetchMore, start, limit ]);
+    }, [fetchMore, start, limit]);
 
   const [sentryRef ]= useInfiniteScroll({
     loading: loadingMore,

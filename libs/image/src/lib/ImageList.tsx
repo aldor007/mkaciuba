@@ -19,8 +19,21 @@ import { Gallery, Item } from 'react-photoswipe-gallery'
 import { findImageForWidthBigger } from "..";
 
 
+// Fragment for reusable thumbnail structure
+const THUMBNAIL_FRAGMENT = gql`
+  fragment ThumbnailFields on Thumbnail {
+    url
+    mediaQuery
+    webp
+    type
+    width
+    height
+  }
+`;
+
 const GET_IMAGES = gql`
-  query categoryBySlug($categorySlug: String!, $start: Int!, $limit: Int) {
+  ${THUMBNAIL_FRAGMENT}
+  query categoryBySlug($categorySlug: String!, $start: Int!, $limit: Int, $includeImage: Boolean = false) {
   categoryBySlug (
     slug: $categorySlug
   ) {
@@ -30,14 +43,9 @@ const GET_IMAGES = gql`
     slug
     keywords
     mediasCount
-    image {
+    image @include(if: $includeImage) {
      thumbnails {
-        url
-        mediaQuery
-        webp
-        type
-        width
-        height
+        ...ThumbnailFields
      }
     }
     medias(start: $start, limit: $limit, sort: "id:desc") {
@@ -46,12 +54,7 @@ const GET_IMAGES = gql`
      name
      caption
      thumbnails {
-        url
-        mediaQuery
-        webp
-        type
-        width
-        height
+        ...ThumbnailFields
       }
     }
   }
@@ -137,7 +140,7 @@ export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps)
       action: 'load',
       label: window.location.href,
     })
-    setStart(start + limit)
+    setStart(prevStart => prevStart + limit)
     await fetchMore({
       variables: {
          start,

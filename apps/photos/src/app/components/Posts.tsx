@@ -155,17 +155,20 @@ export const Posts = ( { id, type} : PostsProps) => {
   }
 
   const handleLoadMore = useCallback(() => {
-    setStart(start + limit)
-    history.push({
-      pathname: window.location.pathname,
-      search: '?page=' + Math.floor((start + limit) / limit)
+    setStart(prevStart => {
+      const newStart = prevStart + limit;
+      history.push({
+        pathname: window.location.pathname,
+        search: '?page=' + Math.floor(newStart / limit)
+      })
+      return newStart;
     })
     fetchMore({
       variables: {
          start,
          limit
       }});
-    }, [fetchMore, start, limit ]);
+    }, [fetchMore, start, limit, history]);
 
 
   if (error) {

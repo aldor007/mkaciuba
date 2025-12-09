@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import '../assets/photos.css'
@@ -63,22 +63,16 @@ const authLink = setContext((_, { headers }) => {
 
 export const App = ({ client }: AppsProps) => {
   if (!client) {
-      let link;
-      if (environment.production) {
-        link = createPersistedQueryLink({ sha256, useGETForHashedQueries: true }).concat(authLink).concat(new HttpLink({
-          uri: environment.apiUrl,
-          // batchMax: 12, // No more than 5 operations per batch
-          // batchInterval: 50, // Wait no more than 20ms after first batched operation
-          useGETForQueries: true
-        }));
-      } else {
-        link = (authLink).concat(new HttpLink({
-          uri: environment.apiUrl,
-          // batchMax: 12, // No more than 5 operations per batch
-          // batchInterval: 50, // Wait no more than 20ms after first batched operation
-          useGETForQueries: false
-        }));
-      }
+      // Enable persisted queries in all environments for bandwidth savings
+      const link = createPersistedQueryLink({
+        sha256,
+        useGETForHashedQueries: environment.production
+      }).concat(authLink).concat(new HttpLink({
+        uri: environment.apiUrl,
+        // batchMax: 12, // No more than 5 operations per batch
+        // batchInterval: 50, // Wait no more than 20ms after first batched operation
+        useGETForQueries: environment.production
+      }));
       const cache = new InMemoryCache({
         typePolicies: {
           Category: {
@@ -110,7 +104,9 @@ export const App = ({ client }: AppsProps) => {
       <ApolloProvider client={client}>
         <Tracking />
         <ScrollToTop />
-        {renderRoutes(Routes)}
+        <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-pulse text-lg">Loading...</div></div>}>
+          {renderRoutes(Routes)}
+        </Suspense>
       </ApolloProvider>
   );
 };

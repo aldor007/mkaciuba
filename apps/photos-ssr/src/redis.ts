@@ -6,9 +6,11 @@ export class Cache {
    redis: Redis
    lruCache: LRUCache<string, string>
    constructor() {
-        this.lruCache = new LRUCache({max: 10,
-  ttl: 1000 * 60,
-  allowStale : true })
+        this.lruCache = new LRUCache({
+          max: 100,  // Increased from 10 to 100 for better hit rate
+          ttl: 1000 * 60,
+          allowStale: true
+        })
    }
    async init(redisUrl?: string, redisPort?: number, redisDB?: number) {
         if (!redisUrl) {

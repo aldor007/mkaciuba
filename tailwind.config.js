@@ -1,6 +1,7 @@
 module.exports = {
-  purge: [
-    './apps/photos/**/*.{js,ts,jsx,tsx}',
+  content: [
+    './apps/photos/**/*.{js,ts,jsx,tsx,html}',
+    './apps/photos-ssr/**/*.{js,ts,jsx,tsx,html}',
     './libs/image/**/*.{js,ts,jsx,tsx}',
     './libs/ui-kit/**/*.{js,ts,jsx,tsx}',
   ],
