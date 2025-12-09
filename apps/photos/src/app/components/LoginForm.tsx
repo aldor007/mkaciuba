@@ -1,7 +1,7 @@
 import React from "react";
 import { useMutation} from '@apollo/client/react';
 import gql from  'graphql-tag';
-import  { Redirect } from 'react-router-dom'
+import  { Navigate } from 'react-router-dom'
 import { Mutation } from '@mkaciuba/api';
 import useToken from '../useToken';
 
@@ -42,7 +42,7 @@ export function LoginForm(props: LoginFormProps) {
       const redirectUrl = `/gallery/${props.gallerySlug}/${props.categorySlug}`
       setToken(data.validateTokenForCategory.token)
     return (
-      <Redirect to={redirectUrl}  />
+      <Navigate to={redirectUrl} replace />
    )
   } else if (data) {
     info = (
@@ -56,7 +56,7 @@ export function LoginForm(props: LoginFormProps) {
     <div className="container mx-auto pt-8 pb-4 ">
             {info && info}
         <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6 mb-4">
-            {mutationError && <div>Error: {mutationError}</div>}
+            {mutationError && <div>Error: {String(mutationError)}</div>}
         </div>
         <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6 mb-4">
           <form className="w-full max-w-sm" onSubmit={handleSubmit}>

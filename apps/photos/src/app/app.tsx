@@ -1,16 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense } from 'react';
 import { useLocation } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 
 import '../assets/photos.css'
-import { renderRoutes } from 'react-router-config';
-import { Routes } from '../routes';
+import { AppRoutesComponent } from '../routes';
 import { ApolloProvider } from '@apollo/client/react';
 import {  ApolloClient, InMemoryCache, HttpLink  } from '@apollo/client/core';
 import { BatchHttpLink } from "@apollo/client/link/batch-http";
 import { environment } from '../environments/environment';
 import { startLimitPagination } from './apollo';
 import { createPersistedQueryLink } from "@apollo/client/link/persisted-queries";
-import { sha256 } from 'crypto-hash';
+import { sha256 } from 'js-sha256';
 import { setContext } from '@apollo/client/link/context';
 import * as Sentry from "@sentry/react";
 import { Integrations } from "@sentry/tracing";
@@ -42,7 +42,7 @@ export interface AppsProps {
 
 declare global {
   interface Window {
-    __APOLLO_STATE__: any;
+    __APOLLO_STATE__?: any;
   }
 }
 const authLink = setContext((_, { headers }) => {
@@ -63,22 +63,16 @@ const authLink = setContext((_, { headers }) => {
 
 export const App = ({ client }: AppsProps) => {
   if (!client) {
-      let link;
-      if (environment.production) {
-        link = createPersistedQueryLink({ sha256, useGETForHashedQueries: true }).concat(authLink).concat(new HttpLink({
-          uri: environment.apiUrl,
-          // batchMax: 12, // No more than 5 operations per batch
-          // batchInterval: 50, // Wait no more than 20ms after first batched operation
-          useGETForQueries: true
-        }));
-      } else {
-        link = (authLink).concat(new HttpLink({
-          uri: environment.apiUrl,
-          // batchMax: 12, // No more than 5 operations per batch
-          // batchInterval: 50, // Wait no more than 20ms after first batched operation
-          useGETForQueries: false
-        }));
-      }
+      // Enable persisted queries in all environments for bandwidth savings
+      const link = createPersistedQueryLink({
+        sha256,
+        useGETForHashedQueries: environment.production
+      }).concat(authLink).concat(new HttpLink({
+        uri: environment.apiUrl,
+        // batchMax: 12, // No more than 5 operations per batch
+        // batchInterval: 50, // Wait no more than 20ms after first batched operation
+        useGETForQueries: environment.production
+      }));
       const cache = new InMemoryCache({
         typePolicies: {
           Category: {
@@ -107,11 +101,15 @@ export const App = ({ client }: AppsProps) => {
     }
   }
   return (
-      <ApolloProvider client={client}>
-        <Tracking />
-        <ScrollToTop />
-        {renderRoutes(Routes)}
-      </ApolloProvider>
+      <HelmetProvider>
+        <ApolloProvider client={client}>
+          <Tracking />
+          <ScrollToTop />
+          <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-pulse text-lg">Loading...</div></div>}>
+            <AppRoutesComponent />
+          </Suspense>
+        </ApolloProvider>
+      </HelmetProvider>
   );
 };
 

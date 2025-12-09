@@ -1,5 +1,8 @@
-const nrwlConfig = require("@nrwl/react/plugins/webpack"); // require the main @nrwl/react/plugins/webpack configuration function.
-module.exports = config => {
+import nrwlConfig from "@nrwl/react/plugins/webpack";
+import tailwindcss from 'tailwindcss';
+import autoprefixer from 'autoprefixer';
+
+export default (config) => {
   config.module.rules.push(
       {
         test: /\.css$/,
@@ -9,8 +12,8 @@ module.exports = config => {
             options: {
               ident: 'postcss',
               plugins: [
-                require('tailwindcss'),
-                require('autoprefixer'),
+                tailwindcss,
+                autoprefixer,
               ],
             },
           },

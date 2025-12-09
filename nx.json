@@ -1,7 +1,6 @@
 {
   "npmScope": "mkaciuba",
   "implicitDependencies": {
-    "workspace.json": "*",
     "package.json": {
       "dependencies": "*",
       "devDependencies": "*"
@@ -10,35 +9,6 @@
     "nx.json": "*",
     "tsconfig.base.json": "*",
     ".eslintrc.json": "*"
-  },
-  "projects": {
-    "api": {
-      "tags": []
-    },
-    "image": {
-      "tags": []
-    },
-    "photos": {
-      "tags": []
-    },
-    "photos-e2e": {
-      "tags": [],
-      "implicitDependencies": ["photos"]
-    },
-    "photos-embed": {
-      "tags": []
-    },
-    "photos-embed-e2e": {
-      "tags": [],
-      "implicitDependencies": ["photos-embed"]
-    },
-    "photos-ssr": {
-      "tags": [],
-      "implicitDependencies": ["photos"]
-    },
-    "ui-kit": {
-      "tags": []
-    }
   },
   "tasksRunnerOptions": {
     "default": {

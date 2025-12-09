@@ -1,11 +1,19 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 
-import Image from './image';
+import { ImageComponent } from './image';
 
-describe(' Image', () => {
+describe('ImageComponent', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<Image />);
+    const mockThumbnails = [
+      {
+        url: 'https://example.com/image.jpg',
+        webp: false,
+        width: 800,
+        height: 600
+      }
+    ];
+    const { baseElement } = render(<ImageComponent thumbnails={mockThumbnails} />);
     expect(baseElement).toBeTruthy();
   });
 });

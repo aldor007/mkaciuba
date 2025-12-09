@@ -17,7 +17,7 @@ export interface PostCardProps {
   inColumn?: boolean
 }
 
-export const PostCard = ({ post, inColumn }: PostCardProps) => {
+export const PostCard = React.memo(({ post, inColumn }: PostCardProps) => {
     const webp = useWebPSupportCheck();
     const width = useWindowWidth();
     let headerClass ="relative  mx-auto max-w-screen-xl "
@@ -34,7 +34,7 @@ export const PostCard = ({ post, inColumn }: PostCardProps) => {
     return (
       <div className={headerClass} key={`${post.title}-${post.id}`}>
         <div className="bg-cover bg-center z-0">
-      { !post.mainImage&&   <img src="https://mort.mkaciuba.com/images/files/placeholder.jpg"/>  }
+      { !post.mainImage&&   <img src="https://mort.mkaciuba.com/images/files/placeholder.jpg" loading="lazy" alt="Placeholder"/>  }
         {post.mainImage && <ImageComponent thumbnails={post.mainImage} /> }
         </div>
         <div className={imageClass}>
@@ -63,4 +63,4 @@ export const PostCard = ({ post, inColumn }: PostCardProps) => {
 				</div>
         </div>
     )
-}
+})

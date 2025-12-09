@@ -1,16 +1,12 @@
-
 import React, { RefObject, useCallback, useState  } from "react";
 import { useQuery } from '@apollo/client/react';
 import gql from  'graphql-tag';
-
-import {useHistory} from "react-router-dom"
+import {useNavigate} from "react-router-dom"
 import { Link } from 'react-router-dom'
 import { generatePath, useLocation } from "react-router";
 import { findImageForWidth, ImageComponent } from "@mkaciuba/image";
-import MetaTags from 'react-meta-tags';
+import { Helmet } from 'react-helmet-async';
 import { Gallery, Query, Post } from '@mkaciuba/api';
-import '../../assets/category.css';
-
 import {
   useWindowWidth
 } from '@react-hook/window-size';
@@ -18,6 +14,7 @@ import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { AppRoutes } from "../routes";
 import { ErrorPage, Loading, LoadingMore, useQueryParams } from "@mkaciuba/ui-kit";
 import { PostCard } from "./PostCard";
+import '../../assets/category.css';
 
 
 const GET_POSTS = gql`
@@ -106,13 +103,13 @@ export enum POST_TYPE {
   TAG
 }
 export interface PostsProps {
-  id?: String
+  id?: string
   type: POST_TYPE
 
 }
 
 export const Posts = ( { id, type} : PostsProps) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const queryParams = useQueryParams();
   const webp = false;//useWebPSupportCheck();
   const width = 1800;
@@ -122,7 +119,7 @@ export const Posts = ( { id, type} : PostsProps) => {
   if (!page) {
     page = '1'
   }
-  let startPage = (parseInt(page) - 1) * limit;
+  const startPage = (parseInt(page) - 1) * limit;
 
 
   const [start, setStart] = useState(parseInt(page) * limit)
@@ -155,17 +152,20 @@ export const Posts = ( { id, type} : PostsProps) => {
   }
 
   const handleLoadMore = useCallback(() => {
-    setStart(start + limit)
-    history.push({
-      pathname: window.location.pathname,
-      search: '?page=' + Math.floor((start + limit) / limit)
+    setStart(prevStart => {
+      const newStart = prevStart + limit;
+      navigate({
+        pathname: window.location.pathname,
+        search: '?page=' + Math.floor(newStart / limit)
+      })
+      return newStart;
     })
     fetchMore({
       variables: {
          start,
          limit
       }});
-    }, [fetchMore, start, limit ]);
+    }, [fetchMore, start, limit, navigate]);
 
 
   if (error) {
@@ -200,7 +200,7 @@ export const Posts = ( { id, type} : PostsProps) => {
       <>
   <div className="max-w-screen-xl mx-auto grid xl:grid-cols-2  gap-4">
         {posts && posts.map((item, index) =>
-          singlePost(item, index)
+          <div key={item.id}>{singlePost(item, index)}</div>
         )}
   </div>
   { hasNextPage() &&<div className="max-w-screen-xl w-full m-4 mx-auto text-center  " >

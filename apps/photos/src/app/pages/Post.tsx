@@ -1,4 +1,3 @@
-
 import { Footer } from '../components/Footer';
 import { Posts } from '../components/Posts';
 import React, { useEffect, useState } from 'react';
@@ -9,7 +8,7 @@ import { useQuery } from '@apollo/client/react';
 import gql from  'graphql-tag'
 import { Query, Post as PostType, Enum_Post_Content_Position, Enum_Post_Content_Type  } from '@mkaciuba/api';
 import { DefaultImgSizing, ImageComponent, ImageList, findImageForWidth, findImageForWidthBigger } from '@mkaciuba/image';
-import MetaTags from 'react-meta-tags';
+import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom'
 import { generatePath } from "react-router";
 import { AppRoutes } from "../routes";
@@ -201,7 +200,7 @@ export const Post = () => {
   const seoImage = findImageForWidthBigger(post.mainImage, 1024, false);
   return  (
     <>
-          <MetaTags>
+          <Helmet>
             <meta name="og:image" content={seoImage.url} />
             <meta property="og:image" content={seoImage.url} />
             <meta property="og:url" content={"https://mkaciuba.pl/post/"+  post.slug} />
@@ -217,7 +216,7 @@ export const Post = () => {
             <meta name="og:title" content={post.title} />
             <meta name="twitter:image" content={seoImage.url} />
             <meta name="twitter:card" content="summary_large_image" />
-          </MetaTags>
+          </Helmet>
     <PostNavbar />
       <div className="w-full h-full " >
         <div className="post w-full">

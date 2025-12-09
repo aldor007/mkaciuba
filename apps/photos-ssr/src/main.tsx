@@ -17,14 +17,13 @@ import { getDataFromTree } from "@apollo/client/react/ssr";
 import React from 'react';
 import path from 'path';
 
-import { Routes, App } from '@mkaciuba/photos';
-import { matchRoutes } from 'react-router-config';
+import { AppRoutesComponent, App } from '@mkaciuba/photos';
 import { Html } from './html'
-import { renderToNodeStream, renderToString } from 'react-dom/server';
+import { renderToString } from 'react-dom/server';
 import { ErrorPage } from '@mkaciuba/ui-kit';
-import { StaticRouter } from 'react-router';
-import MetaTagsServer from 'react-meta-tags/server';
-import {MetaTagsContext} from 'react-meta-tags';
+import { StaticRouter } from 'react-router-dom/server';
+import { HelmetProvider } from 'react-helmet-async';
+import { FilledContext } from 'react-helmet-async';
 import { BatchHttpLink } from "@apollo/client/link/batch-http";
 import { environment } from './environments/environment';
 import cookeParser from 'cookie-parser';
@@ -91,14 +90,15 @@ app.use(cookeParser())
 
 async function toCacheObject(cacheData) {
   return {
-    html:await renderToString(cacheData.html),
+    html: renderToString(cacheData.html),
     headers: cacheData.headers
   }
 }
 
 function renderErrorPage(code: number, message?: string) {
+  const errorContent = renderToString(<ErrorPage code={code} message={message} />);
   const errorHtml = <Html
-    content={<ErrorPage code={code} message={message} />}
+    content={errorContent}
     state={{}}
     meta={`
       <meta charset="utf-8">
@@ -216,7 +216,7 @@ app.delete('/v1/purge', async (req, res) => {
 })
 
 app.get('*', async (req, res) => {
-  const metaTagsInstance = MetaTagsServer();
+  const helmetContext = {} as FilledContext;
   const reqPath = req.path;
 
   const client = new ApolloClient({
@@ -232,37 +232,31 @@ app.get('*', async (req, res) => {
     cache: new InMemoryCache(),
   });
 
-  const context = {};
-
-  // Checks the given path, matches with component and returns array of items about to be rendered
-  const routes = matchRoutes(Routes, req.path);
   const staticApp = (
-          <StaticRouter location={req.url} context={context}>
-            <MetaTagsContext extract = {metaTagsInstance.extract}>
+          <StaticRouter location={req.url}>
+            <HelmetProvider context={helmetContext}>
               <App client={client} />
-              </MetaTagsContext>
+            </HelmetProvider>
           </StaticRouter>
   )
-  if (routes.length === 0) {
-    res.status(404);
-    res.set({
-      'cache-control': 'no-cache, no-store, must-revalidate',
-      'pragma': 'no-cache',
-      'expires': '0',
-      'content-type': 'text/html; charset=UTF-8'
-    });
-    res.send(renderErrorPage(404, 'Page not found'));
-    return;
-  }
   const cacheKey = getCacheKey(req)
   const cacheData = await cache.get(cacheKey);
   let cacheTTL = 600;
   const renderPage = async () => {
     try {
-      const content = await getDataFromTree(staticApp);
+      await getDataFromTree(staticApp);
       // Extract the entirety of the Apollo Client cache's current state
       const initialState = client.extract();
-      const headTags = metaTagsInstance.renderToString().replace('<div class="react-head-temp">', '').replace('</div>', '')
+
+      // Extract helmet data after rendering
+      const { helmet } = helmetContext;
+      const headTags = `
+        ${helmet?.title?.toString() || ''}
+        ${helmet?.meta?.toString() || ''}
+        ${helmet?.link?.toString() || ''}
+        ${helmet?.script?.toString() || ''}
+      `;
+
       const meta =    `${headTags}
         <link href="${getAssetPath('main.css')}" rel="stylesheet"/>
         <meta charset="utf-8">
@@ -270,9 +264,10 @@ app.get('*', async (req, res) => {
         <link href="${getAssetPath('assets/default-skin.css')}" rel="stylesheet"/>
         <link href="${getAssetPath('assets/photos.css')}" rel="stylesheet"/>`
 
-
+      // Render the app content to string (forces lazy components to load)
+      const appContent = renderToString(staticApp);
       // Add both the page content and the cache state to a top-level component
-      const html = <Html content={content} state={initialState} meta={meta} scripts={scripts}/>;
+      const html = <Html state={initialState} meta={meta} scripts={scripts} content={appContent} />;
       const headers = {
         'content-type': 'text/html; charset=UTF-8',
       };
@@ -345,7 +340,8 @@ app.get('*', async (req, res) => {
     const cacheData = await renderPage()
     if (cacheData) {
       res.set(cacheData.headers)
-      renderToNodeStream(cacheData.html).pipe(res);
+      const htmlString = renderToString(cacheData.html);
+      res.send(htmlString);
       await cache.set(cacheKey, await toCacheObject(cacheData), cacheTTL)
     }
   }

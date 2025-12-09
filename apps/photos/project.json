@@ -1,0 +1,85 @@
+{
+  "name": "photos",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/photos/src",
+  "projectType": "application",
+  "generators": {},
+  "targets": {
+    "build": {
+      "executor": "@nrwl/webpack:webpack",
+      "options": {
+        "outputPath": "dist/apps/photos",
+        "index": "apps/photos/src/index.html",
+        "main": "apps/photos/src/main.tsx",
+        "tsConfig": "apps/photos/tsconfig.app.json",
+        "assets": ["apps/photos/src/favicon.ico", "apps/photos/src/assets"],
+        "styles": [],
+        "scripts": [],
+        "webpackConfig": "apps/photos/webpack.config.ts",
+        "buildLibsFromSource": true,
+        "statsJson": true
+      },
+      "configurations": {
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/photos/src/environments/environment.ts",
+              "with": "apps/photos/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "extractCss": true,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "2mb",
+              "maximumError": "5mb"
+            }
+          ]
+        }
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "serve": {
+      "executor": "@nrwl/web:dev-server",
+      "options": {
+        "buildTarget": "photos:build",
+        "proxyConfig": "apps/photos/proxy.conf.json"
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "photos:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/photos/**/*.js",
+          "apps/photos/**/*.jsx",
+          "apps/photos/**/*.ts",
+          "apps/photos/**/*.tsx",
+          "apps/photos/**/*.spec.ts",
+          "apps/photos/**/*.spec.tsx",
+          "apps/photos/**/*.spec.js",
+          "apps/photos/**/*.spec.jsx",
+          "apps/photos/**/*.d.ts"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "apps/photos/jest.config.cjs",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/apps/photos"]
+    }
+  }
+}

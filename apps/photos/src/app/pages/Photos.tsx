@@ -2,15 +2,13 @@
 import { Footer } from '../components/Footer';
 import React from 'react';
 import  Header from '../Header';
-import { generatePath, Redirect, useParams } from 'react-router-dom';
+import { generatePath, Navigate, useParams } from 'react-router-dom';
 import { ImageList } from '@mkaciuba/image';
-import { ApolloError  } from '@apollo/client';
-import { useQuery,  } from '@apollo/client/react';
-import gql from  'graphql-tag';
+import { useQuery, gql, ApolloError } from '@apollo/client';
 import { Query } from '@mkaciuba/api';
 import { AppRoutes } from '../routes';
 import { Loading, ErrorPage, LoadingMore, Markdown } from '@mkaciuba/ui-kit'
-import MetaTags from 'react-meta-tags';
+import { Helmet } from 'react-helmet-async';
 import ReactMarkdown from 'react-markdown';
 
 const GET_PHOTOS = gql`
@@ -64,7 +62,7 @@ export const Photos = () => {
 
   if (authRequired) {
     return  (
-      <Redirect to={`${generatePath(AppRoutes.login.path)}?gallery=${gallerySlug}&category=${categorySlug}`} />
+      <Navigate to={`${generatePath(AppRoutes.login.path)}?gallery=${gallerySlug}&category=${categorySlug}`} replace />
     )
   }
 
@@ -95,11 +93,11 @@ export const Photos = () => {
 
   return  (
     <>
-          <MetaTags>
+          <Helmet>
             <title>{category.name} | mkaciuba.pl</title>
             <meta name="description" content={category.description} />
             <meta property="og:title" content={category.name} />
-          </MetaTags>
+          </Helmet>
     <Header mainMenu={menu}/>
     <h1 className="text-center m-5 text-4xl leading-snug font-serif ">{category.name}</h1>
        {category.text && <Markdown className="m-4 text-center font-serif post-text" text={category.text}/>}

@@ -1,6 +1,6 @@
 
 import { UploadFile } from '@mkaciuba/api';
-import React, { RefObject, useState} from 'react';
+import React, { RefObject, useState, useEffect, useCallback, useRef} from 'react';
 import { findImageForWidth } from '..';
 import { useWebPSupportCheck } from "react-use-webp-support-check";
 import {
@@ -110,8 +110,10 @@ const addDatePrefix = (url) => {
 
 export const ImageComponent = React.forwardRef(({thumbnails, defaultImage, onClick, alt, className, defaultImgSizing, initialWidth=1900}:ImageComponentProps, ref: RefObject<HTMLImageElement>) => {
   const [loading, setLoading] = useState(true)
+  const errorCounterRef = useRef(0);
   const webp = useWebPSupportCheck();
   const width = useWindowWidth({ initialWidth})
+
   if (!defaultImage) {
     if (!defaultImgSizing || defaultImgSizing == DefaultImgSizing.DEFAULT) {
       defaultImage = findImageForWidth(thumbnails, width, webp)
@@ -119,33 +121,55 @@ export const ImageComponent = React.forwardRef(({thumbnails, defaultImage, onCli
       defaultImage = findImageForWidthBigger(thumbnails, width, webp)
     }
   }
-  let classes = 'bg-gray-300 ' + (className || '');
-  if (loading) {
-    classes += ' animate-pulse bg-opacity-15	'
-  }
 
-  setTimeout(() => {
-   if (loading) {
-    setLoading(false)
-    classes = 'bg-gray-300 ' + (className || '');
-   }
-  }, 1500);
+  // Fix memory leak: Use useEffect with cleanup for loading timeout
+  useEffect(() => {
+    if (loading) {
+      const timeoutId = setTimeout(() => {
+        setLoading(false);
+      }, 1500);
 
-  const imageOnError = (e) => {
-    setTimeout(() => {
-      if (e.target.errorCounter > 4) {
+      return () => clearTimeout(timeoutId);
+    }
+  }, [loading]);
+
+  // Fix memory leak: Use useCallback for imageOnError to prevent recreating on every render
+  const imageOnError = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
+    const timeoutId = setTimeout(() => {
+      if (errorCounterRef.current > 4) {
         return;
       }
-      e.target.src = addDatePrefix(e.target.src)
-      e.target.errorCounter = (e.target.errorCounter || 0)+ 1
-    }, 250)
-  }
+      const target = e.target as HTMLImageElement;
+      target.src = addDatePrefix(target.src);
+      errorCounterRef.current += 1;
+    }, 250);
+
+    // Note: Individual error timeouts are intentionally not cleaned up
+    // as they represent retry attempts
+  }, []);
+
+  const handleLoad = useCallback(() => {
+    setLoading(false);
+  }, []);
+
+  const classes = `bg-gray-300 ${className || ''} ${loading ? 'animate-pulse bg-opacity-15' : ''}`;
+
   return (
-    <picture  ref={ref}>
+    <picture ref={ref}>
       {thumbnails && thumbnails.map(thumbnail => (
-          <source srcSet={thumbnail.url} key={thumbnail.url}  media={thumbnail.mediaQuery} type={thumbnail.type}/>
+          <source srcSet={thumbnail.url} key={thumbnail.url} media={thumbnail.mediaQuery} type={thumbnail.type}/>
         ))}
-      {defaultImage && <img  onLoad={() => setLoading(false)} onError={imageOnError} onClick={onClick} width={defaultImage.width} height={defaultImage.height}  src={defaultImage.url} className={classes} alt={alt}/>}
+      {defaultImage && <img
+        onLoad={handleLoad}
+        onError={imageOnError}
+        onClick={onClick}
+        width={defaultImage.width}
+        height={defaultImage.height}
+        src={defaultImage.url}
+        className={classes}
+        alt={alt}
+        loading="lazy"
+      />}
      </picture>
   )
 })

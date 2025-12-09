@@ -1,0 +1,87 @@
+{
+  "name": "photos-embed",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/photos-embed/src",
+  "projectType": "application",
+  "generators": {},
+  "targets": {
+    "build": {
+      "executor": "@nrwl/web:build",
+      "options": {
+        "outputPath": "dist/apps/photos-embed",
+        "index": "apps/photos-embed/src/index.html",
+        "main": "apps/photos-embed/src/main.tsx",
+        "polyfills": "apps/photos-embed/src/polyfills.ts",
+        "tsConfig": "apps/photos-embed/tsconfig.app.json",
+        "assets": [
+          "apps/photos-embed/src/favicon.ico",
+          "apps/photos-embed/src/assets"
+        ],
+        "styles": [],
+        "scripts": [],
+        "webpackConfig": "apps/photos-embed/webpack.config.ts",
+        "buildLibsFromSource": true
+      },
+      "configurations": {
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/photos-embed/src/environments/environment.ts",
+              "with": "apps/photos-embed/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "extractCss": true,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "2mb",
+              "maximumError": "5mb"
+            }
+          ]
+        }
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "serve": {
+      "executor": "@nrwl/web:dev-server",
+      "options": {
+        "buildTarget": "photos-embed:build"
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "photos-embed:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/photos-embed/**/*.js",
+          "apps/photos-embed/**/*.jsx",
+          "apps/photos-embed/**/*.ts",
+          "apps/photos-embed/**/*.tsx",
+          "apps/photos-embed/**/*.spec.ts",
+          "apps/photos-embed/**/*.spec.tsx",
+          "apps/photos-embed/**/*.spec.js",
+          "apps/photos-embed/**/*.spec.jsx",
+          "apps/photos-embed/**/*.d.ts"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "apps/photos-embed/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/apps/photos-embed"]
+    }
+  }
+}

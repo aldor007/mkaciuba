@@ -10,7 +10,7 @@ import { useParams } from 'react-router-dom';
 import { PostCategory } from './PostCategory';
 import { PostNavbar } from '../components/PostNavbar';
 import ReactMarkdown from 'react-markdown';
-import MetaTags from 'react-meta-tags';
+import { Helmet } from 'react-helmet-async';;
 
 const GET_GALLERY = gql`
 query  pageBySlug($slug: String!) {
@@ -44,11 +44,11 @@ export const Page = () => {
 
   return  (
     <>
-          <MetaTags>
+          <Helmet>
             <title>{page.title} | mkaciuba.pl </title>
             <meta name="keywords" content={page.keywords} />
             <meta property="og:title" content={page.title} />
-          </MetaTags>
+          </Helmet>
     <PostNavbar />
         <div className="max-w-screen-xl mx-auto post-text prose">
           <ReactMarkdown className="m-4">

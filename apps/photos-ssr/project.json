@@ -1,0 +1,61 @@
+{
+  "name": "photos-ssr",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/photos-ssr/src",
+  "projectType": "application",
+  "prefix": "photos-ssr",
+  "generators": {},
+  "targets": {
+    "build": {
+      "executor": "@nrwl/webpack:webpack",
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/photos-ssr",
+        "main": "apps/photos-ssr/src/main.tsx",
+        "tsConfig": "apps/photos-ssr/tsconfig.app.json",
+        "webpackConfig": "apps/photos-ssr/webpack.config.ts",
+        "assets": ["apps/photos-ssr/src/assets"],
+        "buildLibsFromSource": true
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false,
+          "fileReplacements": [
+            {
+              "replace": "apps/photos-ssr/src/environments/environment.ts",
+              "with": "apps/photos-ssr/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "photos-ssr:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/photos-ssr/**/*.ts",
+          "apps/photos-ssr/**/*.spec.ts",
+          "apps/photos-ssr/**/*.d.ts"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "apps/photos-ssr/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/apps/photos-ssr"]
+    }
+  }
+}

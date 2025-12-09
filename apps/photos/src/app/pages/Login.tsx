@@ -7,7 +7,7 @@ import { useLocation } from 'react-router-dom';
 function parseQuery<T>(queryString: string) {
     const query: T = {} as T;
     const pairs = queryString.substr(1).split('&');
-    for (var i = 0; i < pairs.length; i++) {
+    for (let i = 0; i < pairs.length; i++) {
         const pair = pairs[i].split('=');
         query[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || '');
     }
@@ -15,7 +15,7 @@ function parseQuery<T>(queryString: string) {
 }
 
 export const Login = () => {
-  let location = useLocation();
+  const location = useLocation();
   const {gallery, category} = parseQuery<{gallery: string, category: string}>(location.search)
   return  (
     <>

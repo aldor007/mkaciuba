@@ -4,23 +4,41 @@ import { useWebPSupportCheck } from "react-use-webp-support-check";
 import {
   useWindowWidth
 } from '@react-hook/window-size';
-// import 'photoswipe/dist/photoswipe.css'
-// import 'photoswipe/dist/default-skin/default-skin.css'
-import MetaTags from 'react-meta-tags';
+import { Helmet } from 'react-helmet-async';
 import { Query } from '@mkaciuba/api';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { Loading, LoadingMore, ErrorPage } from '@mkaciuba/ui-kit'
 import ReactGA from 'react-ga4'
-
-
 import { Image, ImageComponent } from './image';
-
 import { Gallery, Item } from 'react-photoswipe-gallery'
 import { findImageForWidthBigger } from "..";
 
+// import 'photoswipe/dist/photoswipe.css'
+// import 'photoswipe/dist/default-skin/default-skin.css'
+
+// Extend Window interface to include Apollo SSR state
+declare global {
+  interface Window {
+    __APOLLO_STATE__?: any;
+  }
+}
+
+
+// Fragment for reusable thumbnail structure
+const THUMBNAIL_FRAGMENT = gql`
+  fragment ThumbnailFields on Image {
+    url
+    mediaQuery
+    webp
+    type
+    width
+    height
+  }
+`;
 
 const GET_IMAGES = gql`
-  query categoryBySlug($categorySlug: String!, $start: Int!, $limit: Int) {
+  ${THUMBNAIL_FRAGMENT}
+  query categoryBySlug($categorySlug: String!, $start: Int!, $limit: Int, $includeImage: Boolean = false) {
   categoryBySlug (
     slug: $categorySlug
   ) {
@@ -30,14 +48,9 @@ const GET_IMAGES = gql`
     slug
     keywords
     mediasCount
-    image {
+    image @include(if: $includeImage) {
      thumbnails {
-        url
-        mediaQuery
-        webp
-        type
-        width
-        height
+        ...ThumbnailFields
      }
     }
     medias(start: $start, limit: $limit, sort: "id:desc") {
@@ -46,12 +59,7 @@ const GET_IMAGES = gql`
      name
      caption
      thumbnails {
-        url
-        mediaQuery
-        webp
-        type
-        width
-        height
+        ...ThumbnailFields
       }
     }
   }
@@ -137,7 +145,7 @@ export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps)
       action: 'load',
       label: window.location.href,
     })
-    setStart(start + limit)
+    setStart(prevStart => prevStart + limit)
     await fetchMore({
       variables: {
          start,
@@ -184,11 +192,12 @@ export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps)
    return (
      <>
         <div className="flex flex-wrap -mx-1 overflow-hidden" >
-          <MetaTags>
+          <Helmet>
             { !disableSEO && <meta name="twitter:image" content={seoImage[0].url} /> }
             { !disableSEO && <meta name="twitter:card" content="summary_large_image" /> }
             { !disableSEO && <meta property="og:image" content={seoImage[0].url} /> }
-          </MetaTags>
+          </Helmet>
+          {/* @ts-expect-error - react-photoswipe-gallery types not fully compatible with React 18 */}
           <Gallery shareButton={false} id={category.slug} onOpen={() => {
             ReactGA.event({
           category: 'photoswipe',

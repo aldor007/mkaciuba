@@ -1,0 +1,30 @@
+{
+  "name": "photos-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/photos-e2e/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "@nrwl/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/photos-e2e/cypress.config.ts",
+        "tsConfig": "apps/photos-e2e/tsconfig.e2e.json",
+        "devServerTarget": "photos-ssr:serve:production"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "photos-ssr:serve:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/photos-e2e/src/**/*.ts",
+          "apps/photos-e2e/src/**/*.js"
+        ]
+      }
+    }
+  }
+}
