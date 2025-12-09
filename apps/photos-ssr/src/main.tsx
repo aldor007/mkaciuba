@@ -21,6 +21,7 @@ import { Routes, App } from '@mkaciuba/photos';
 import { matchRoutes } from 'react-router-config';
 import { Html } from './html'
 import { renderToNodeStream, renderToString } from 'react-dom/server';
+import { ErrorPage } from '@mkaciuba/ui-kit';
 import { StaticRouter } from 'react-router';
 import MetaTagsServer from 'react-meta-tags/server';
 import {MetaTagsContext} from 'react-meta-tags';
@@ -31,10 +32,28 @@ import proxy from 'express-http-proxy';
 import fs from 'fs';
 import pkgJson from  '../../../package.json';
 import { Cache } from './redis';
-const API_KEY = process.env.API_KEY || '123'
+const API_KEY = process.env.API_KEY || '123';
+const CLOUDFLARE_ZONE_ID = process.env.CLOUDFLARE_ZONE_ID;
+const CLOUDFLARE_API_TOKEN = process.env.CLOUDFLARE_API_TOKEN;
 
 const assetsPath = path.join(__dirname, '../photos');
-const manifest = JSON.parse(fs.readFileSync(path.join(assetsPath, 'manifest.json'), 'utf-8'));
+const manifestPath = path.join(assetsPath, 'manifest.json');
+let manifest;
+try {
+  const manifestContent = fs.readFileSync(manifestPath, 'utf-8');
+  try {
+    manifest = JSON.parse(manifestContent);
+  } catch (parseError) {
+    console.error(`Failed to parse JSON from manifest file at "${manifestPath}". Content preview: "${manifestContent?.substring(0, 200)}...". Error: ${parseError.message}`);
+    throw new Error(`Invalid JSON in manifest file: ${parseError.message}`);
+  }
+} catch (readError) {
+  if (readError.message.includes('Invalid JSON')) {
+    throw readError;
+  }
+  console.error(`Failed to read manifest file at "${manifestPath}". Error: ${readError.message}`);
+  throw new Error(`Cannot read manifest file: ${readError.message}`);
+}
 const cache = new Cache()
 setImmediate(async () => {
   if (process.env.REDIS_PORT && process.env.REDIS_DB) {
@@ -77,6 +96,21 @@ async function toCacheObject(cacheData) {
   }
 }
 
+function renderErrorPage(code: number, message?: string) {
+  const errorHtml = <Html
+    content={<ErrorPage code={code} message={message} />}
+    state={{}}
+    meta={`
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link href="${getAssetPath('main.css')}" rel="stylesheet"/>
+      <title>${code} Error | mkaciuba.pl</title>
+    `}
+    scripts={scripts}
+  />;
+  return renderToString(errorHtml);
+}
+
 app.use('/graphql', proxy(process.env.STRAPI_URL || environment.strapiUrl, {
   proxyReqPathResolver: function (req) {
     return '/graphql' + req.url.replace('/', '');
@@ -95,10 +129,20 @@ app.get('/_health', (req, res) => {
 
 app.delete('/v1/purge', async (req, res) => {
   if (req.headers['x-api-key'] != API_KEY) {
+    res.set({
+      'cache-control': 'no-cache, no-store, must-revalidate',
+      'pragma': 'no-cache',
+      'expires': '0'
+    });
     return res.sendStatus(403)
   }
   if (!req.query.path) {
     console.info('No url', req.query)
+    res.set({
+      'cache-control': 'no-cache, no-store, must-revalidate',
+      'pragma': 'no-cache',
+      'expires': '0'
+    });
     return res.sendStatus(400)
   }
   const urlParts = new URL(req.query.path as string, "https://mkaciuba.pl")
@@ -113,8 +157,62 @@ app.delete('/v1/purge', async (req, res) => {
     query,
   }
   console.info('Purge cache for', getCacheKey(cacheReq))
+
+  // Purge internal cache (LRU + Redis)
   await cache.delete(getCacheKey(cacheReq))
-  res.sendStatus(201)
+
+  // Purge Cloudflare cache
+  if (CLOUDFLARE_ZONE_ID && CLOUDFLARE_API_TOKEN) {
+    try {
+      const response = await fetch(
+        `https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/purge_cache`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${CLOUDFLARE_API_TOKEN}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            files: [req.query.path as string]
+          })
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        console.error('Cloudflare purge failed:', result);
+        return res.status(500).json({
+          error: 'Cloudflare cache purge failed',
+          details: result
+        });
+      }
+
+      console.info('Cloudflare cache purged successfully for', req.query.path);
+      res.status(201).json({
+        success: true,
+        purged: {
+          internal: getCacheKey(cacheReq),
+          cloudflare: req.query.path
+        }
+      });
+    } catch (error) {
+      console.error('Cloudflare purge error:', error);
+      return res.status(500).json({
+        error: 'Cloudflare cache purge failed',
+        message: error.message
+      });
+    }
+  } else {
+    console.warn('Cloudflare credentials not configured, skipping CDN purge');
+    res.status(201).json({
+      success: true,
+      purged: {
+        internal: getCacheKey(cacheReq),
+        cloudflare: 'skipped (no credentials)'
+      }
+    });
+  }
 })
 
 app.get('*', async (req, res) => {
@@ -146,7 +244,14 @@ app.get('*', async (req, res) => {
           </StaticRouter>
   )
   if (routes.length === 0) {
-    res.sendStatus(404);
+    res.status(404);
+    res.set({
+      'cache-control': 'no-cache, no-store, must-revalidate',
+      'pragma': 'no-cache',
+      'expires': '0',
+      'content-type': 'text/html; charset=UTF-8'
+    });
+    res.send(renderErrorPage(404, 'Page not found'));
     return;
   }
   const cacheKey = getCacheKey(req)
@@ -176,16 +281,19 @@ app.get('*', async (req, res) => {
         if (keys.length > 0 && keys[0].includes('post')) {
           const post = initialState[keys[0]];
           if (post.publicationDate && (new Date(post.publicationDate as string)) < new Date()) {
-            headers['cache-control'] = 'public, max-age=3600'
+            headers['cdn-cache-control'] = 'public, max-age=3600';
+            headers['cache-control'] = 'public, max-age=3600';
             headers['x-browser-cache-control'] = 'public, max-age=630';
             cacheTTL = 600
           } else {
-            headers['cache-control'] =  'public, max-age=60'
+            headers['cdn-cache-control'] = 'public, max-age=60';
+            headers['cache-control'] = 'public, max-age=60';
             headers['x-browser-cache-control'] = 'private, max-age=60';
             cacheTTL = 10
           }
         } else {
-            headers['cache-control'] = 'public, max-age=5600'
+            headers['cdn-cache-control'] = 'public, max-age=5600';
+            headers['cache-control'] = 'public, max-age=5600';
             headers['x-browser-cache-control'] = 'public, max-age=3600';
             cacheTTL = 600
         }
@@ -195,14 +303,16 @@ app.get('*', async (req, res) => {
       }
 
       if (reqPath.includes('gallery-login')) {
-        headers['cache-control']  = 'no-cache'
-        headers['x-browser-cache-control'] =  'no-cache';
+        headers['cdn-cache-control'] = 'no-cache';
+        headers['cache-control'] = 'no-cache';
+        headers['x-browser-cache-control'] = 'no-cache';
         cacheTTL = 10
       }
 
       if (keys.length == 0) {
-        headers['cache-control']  = 'no-cache'
-        headers['x-browser-cache-control'] =  'no-cache';
+        headers['cdn-cache-control'] = 'no-cache';
+        headers['cache-control'] = 'no-cache';
+        headers['x-browser-cache-control'] = 'no-cache';
         cacheTTL = 10
       }
 
@@ -212,9 +322,15 @@ app.get('*', async (req, res) => {
       }
 
     } catch (e) {
-      console.error('Error reading', e)
-      res.status(503);
-      res.send(e.message);
+      console.error('Error rendering page', e)
+      res.status(500);
+      res.set({
+        'cache-control': 'no-cache, no-store, must-revalidate',
+        'pragma': 'no-cache',
+        'expires': '0',
+        'content-type': 'text/html; charset=UTF-8'
+      });
+      res.send(renderErrorPage(500, e.message));
     }
   }
   if (cacheData) {
