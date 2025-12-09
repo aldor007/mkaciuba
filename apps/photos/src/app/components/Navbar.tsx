@@ -108,8 +108,8 @@ export const Navbar = function (props: NavbarProps) {
    };
   const social = data.menu.socialIcons;
   const { topMenu, mainMenu, brandName, brand } = data.menu;
-  const socialIcons = social.map((icon, id) => (
-    <li className="nav-item" key={id}>
+  const socialIcons = social.map((icon) => (
+    <li className="nav-item" key={icon.url}>
       <a
         className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
         href={icon.url}
@@ -119,8 +119,8 @@ export const Navbar = function (props: NavbarProps) {
     </li>
   ))
 
-  const topMenuList = topMenu.map((item, id) => (
-    <li className="nav-item" key={id}>
+  const topMenuList = topMenu.map((item) => (
+    <li className="nav-item" key={item.url}>
       <a
         className="px-3 py-2 flex items-center text-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
         href={item.url}
