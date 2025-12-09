@@ -1,4 +1,4 @@
-import { cleanup, getByText, render, wait } from '@testing-library/react';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import App from './app';
 
@@ -15,7 +15,7 @@ describe('App', () => {
       })
     });
 
-    const { baseElement } = render(<App />);
-    await wait(() => getByText(baseElement, 'my message'));
+    render(<App />);
+    await waitFor(() => screen.getByText('my message'));
   });
 });
