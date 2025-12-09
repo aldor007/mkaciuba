@@ -46,7 +46,7 @@ jobs:
 
       - name: Start photos-ssr server
         run: |
-          node dist/apps/photos-ssr/main.js > photos-ssr.log 2>&1 &
+          yarn start photos-ssr > photos-ssr.log 2>&1 &
           echo $! > photos-ssr.pid
         id: ssr
 
