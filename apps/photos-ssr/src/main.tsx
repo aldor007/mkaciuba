@@ -91,14 +91,13 @@ app.use(cookeParser())
 
 async function toCacheObject(cacheData) {
   return {
-    html:await renderToString(cacheData.html),
+    html: renderToString(cacheData.html),
     headers: cacheData.headers
   }
 }
 
 function renderErrorPage(code: number, message?: string) {
   const errorHtml = <Html
-    content={<ErrorPage code={code} message={message} />}
     state={{}}
     meta={`
       <meta charset="utf-8">
@@ -107,7 +106,9 @@ function renderErrorPage(code: number, message?: string) {
       <title>${code} Error | mkaciuba.pl</title>
     `}
     scripts={scripts}
-  />;
+  >
+    <ErrorPage code={code} message={message} />
+  </Html>;
   return renderToString(errorHtml);
 }
 
@@ -259,7 +260,7 @@ app.get('*', async (req, res) => {
   let cacheTTL = 600;
   const renderPage = async () => {
     try {
-      const content = await getDataFromTree(staticApp);
+      await getDataFromTree(staticApp);
       // Extract the entirety of the Apollo Client cache's current state
       const initialState = client.extract();
       const headTags = metaTagsInstance.renderToString().replace('<div class="react-head-temp">', '').replace('</div>', '')
@@ -270,9 +271,8 @@ app.get('*', async (req, res) => {
         <link href="${getAssetPath('assets/default-skin.css')}" rel="stylesheet"/>
         <link href="${getAssetPath('assets/photos.css')}" rel="stylesheet"/>`
 
-
       // Add both the page content and the cache state to a top-level component
-      const html = <Html content={content} state={initialState} meta={meta} scripts={scripts}/>;
+      const html = <Html state={initialState} meta={meta} scripts={scripts}>{staticApp}</Html>;
       const headers = {
         'content-type': 'text/html; charset=UTF-8',
       };
