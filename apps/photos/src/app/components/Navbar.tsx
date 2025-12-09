@@ -76,21 +76,21 @@ const createDropdownV2 = (additionalMainMenu, setDropdownOpen, dropdownOpen) => 
   return (
     <div className="relative">
       {additionalMainMenu.map((m) => (
-        <>
+        <React.Fragment key={m.name}>
           <button className="flex flex-row items-center w-full px-4 py-2 mt-2 text-sm font-semibold text-left bg-transparent rounded-lg md:w-auto md:inline md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
           onClick={ m.children ? () => setDropdownOpen(!dropdownOpen) : undefined}>
             {!m.children && <a href={m.url} ><span>{m.name}</span></a>}
             {m.children &&  <span>{m.name}</span>}
                 {m.children && <svg fill="currentColor" viewBox="0 0 20 20" className="inline w-4 h-4 mt-1 ml-1 transition-transform duration-200 transform md:-mt-1"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>}
           </button>
-          <div  key={m.name}  x-show="open"    className="absolute right-0 w-full mt-2 origin-top-right rounded-md z-40 shadow-lg md:w-48">
+          <div x-show="open" className="absolute right-0 w-full mt-2 origin-top-right rounded-md z-40 shadow-lg md:w-48">
             {m.children && dropdownOpen &&
           <div className={"overflow-y-auto bg-white rounded-md shadow "+ dropdownHeight}>
             {m.children && dropDownItems(m.children)}
           </div>
             }
         </div>
-      </>
+      </React.Fragment>
       ))}
     </div>
   )
