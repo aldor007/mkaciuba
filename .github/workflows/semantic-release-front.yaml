@@ -27,6 +27,25 @@ jobs:
         with:
           node-version: "20"
           cache: 'yarn'
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            */*/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+      - name: Cache Nx
+        uses: actions/cache@v3
+        with:
+          path: |
+            .nx/cache
+            node_modules/.cache/nx
+          key: ${{ runner.os }}-nx-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('**/workspace.json', '**/nx.json', '**/project.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nx-${{ hashFiles('**/yarn.lock') }}-
+            ${{ runner.os }}-nx-
       - run: cp apps/photos-ssr/src/environments/environment.e2e.ts apps/photos-ssr/src/environments/environment.ts
       - run: yarn
       - run: yarn build  photos-ssr
