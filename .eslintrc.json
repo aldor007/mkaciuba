@@ -58,7 +58,8 @@
         "*.spec.tsx"
       ],
       "rules": {
-        "@nrwl/nx/enforce-module-boundaries": "off"
+        "@nrwl/nx/enforce-module-boundaries": "off",
+        "@typescript-eslint/ban-types": "off"
       }
     }
   ]
