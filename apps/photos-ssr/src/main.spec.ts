@@ -7,22 +7,22 @@ describe('SSR Server - Cache Utilities', () => {
         {
           description: 'basic path without query or tokens',
           req: { path: '/post/test', query: {}, headers: {}, cookies: {} },
-          expected: 'v3:/post/test|||',
+          expected: 'v4:/post/test|||',
         },
         {
           description: 'path with page query',
           req: { path: '/posts', query: { page: '2' }, headers: {}, cookies: {} },
-          expected: 'v3:/posts|2||',
+          expected: 'v4:/posts|2||',
         },
         {
           description: 'path with gallery token header',
           req: { path: '/gallery/test', query: {}, headers: { 'x-gallery-token': 'token123' }, cookies: {} },
-          expected: 'v3:/gallery/test||token123|',
+          expected: 'v4:/gallery/test||token123|',
         },
         {
           description: 'path with category token cookie',
           req: { path: '/gallery/cat', query: {}, headers: {}, cookies: { category_token: 'cattoken456' } },
-          expected: 'v3:/gallery/cat|||cattoken456',
+          expected: 'v4:/gallery/cat|||cattoken456',
         },
         {
           description: 'path with all parameters',
@@ -32,12 +32,12 @@ describe('SSR Server - Cache Utilities', () => {
             headers: { 'x-gallery-token': 'header_token' },
             cookies: { category_token: 'cookie_token' },
           },
-          expected: 'v3:/gallery/test|3|header_token|cookie_token',
+          expected: 'v4:/gallery/test|3|header_token|cookie_token',
         },
         {
           description: 'path with special characters',
           req: { path: '/post/test-title-123', query: {}, headers: {}, cookies: {} },
-          expected: 'v3:/post/test-title-123|||',
+          expected: 'v4:/post/test-title-123|||',
         },
       ];
 
@@ -55,7 +55,7 @@ describe('SSR Server - Cache Utilities', () => {
         cookies: {},
       };
       const result = getCacheKey(req as any);
-      expect(result).toBe('v3:/home|||');
+      expect(result).toBe('v4:/home|||');
     });
 
     test('should handle undefined query.page', () => {
@@ -66,7 +66,7 @@ describe('SSR Server - Cache Utilities', () => {
         cookies: {},
       };
       const result = getCacheKey(req as any);
-      expect(result).toBe('v3:/posts|||');
+      expect(result).toBe('v4:/posts|||');
     });
   });
 });
