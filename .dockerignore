@@ -4,7 +4,8 @@ npm-debug.log
 yarn-error.log
 
 # Build outputs
-dist
+dist/*
+!dist/.gitkeep
 .nx
 
 # IDE
