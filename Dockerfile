@@ -20,7 +20,10 @@ RUN --mount=type=cache,target=/usr/local/share/.cache/yarn-v2 \
 # Copy only necessary config files
 COPY nx.json tsconfig.base.json babel.config.json tailwind.config.js postcss.config.js ./
 
-# Copy source files
+# Copy pre-built dist if exists (from GitHub Actions), otherwise copy source to build
+# This allows using the exact manifest.json from the workflow that uploaded CSS to S3
+# Note: dist/ contains only JS/CSS/HTML (platform-agnostic), safe for multi-arch builds
+COPY --chown=node:node dist* ./dist 2>/dev/null || true
 COPY apps ./apps
 COPY libs ./libs
 
@@ -28,12 +31,17 @@ COPY libs ./libs
 RUN cp apps/photos/src/environments/environment.prod.ts apps/photos/src/environments/environment.ts && \
     cp apps/photos-ssr/src/environments/environment.prod.ts apps/photos-ssr/src/environments/environments.ts
 
-# Build applications
+# Build applications only if dist doesn't exist
 # Disable Nx daemon in Docker to avoid polling issues
 ENV NODE_ENV=production
 ENV NX_DAEMON=false
-RUN yarn nx build photos --configuration=production && \
-    yarn nx build photos-ssr --configuration=production
+RUN if [ ! -d "dist/apps/photos" ] || [ ! -f "dist/apps/photos/manifest.json" ]; then \
+      echo "Building from source..." && \
+      yarn nx build photos --configuration=production && \
+      yarn nx build photos-ssr --configuration=production; \
+    else \
+      echo "Using pre-built artifacts from workflow (manifest.json preserved)"; \
+    fi
 
 # Validate CSS files are emitted (combined with build for fewer layers)
 RUN CSS_FILE=$(find dist/apps/photos/ -name "main*.css" -type f -not -path "*/assets/*" | head -1) && \
