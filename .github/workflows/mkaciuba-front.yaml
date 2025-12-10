@@ -42,9 +42,7 @@ jobs:
       - run: yarn
       - run: cp apps/photos/src/environments/environment.prod.ts apps/photos/src/environments/environment.ts
       - run: cp apps/photos-ssr/src/environments/environment.prod.ts apps/photos-ssr/src/environments/environments.ts
-      - run: yarn nx build photos-ssr --production --optimization --nocache  --outputHashing=all  --verbose
-        env:
-          NODE_ENV: production
+      # Build photos FIRST - generates CSS and uploads to S3
       - run: yarn nx build photos --production --optimization --nocache  --outputHashing=all  --verbose
         env:
           AWS_BUCKET: ${{ secrets.AWS_BUCKET }}
@@ -52,6 +50,10 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_BASE_PATH: ${{ secrets.AWS_BASE_PATH }}
+          NODE_ENV: production
+      # Build photos-ssr SECOND - uses photos manifest.json
+      - run: yarn nx build photos-ssr --production --optimization --nocache  --outputHashing=all  --verbose
+        env:
           NODE_ENV: production
       -
         name: Set up QEMU
@@ -75,4 +77,7 @@ jobs:
           platforms: linux/arm64,linux/amd64
           push: true
           tags: ghcr.io/aldor007/mkaciuba:${{ steps.dockerTag.outputs.result }}
-          cache-to: type=inline
+          cache-from: type=registry,ref=ghcr.io/aldor007/mkaciuba:buildcache
+          cache-to: type=registry,ref=ghcr.io/aldor007/mkaciuba:buildcache,mode=max
+          build-args: |
+            BUILDKIT_INLINE_CACHE=1
