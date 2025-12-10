@@ -27,9 +27,50 @@ jobs:
         with:
           node-version: "20"
           cache: 'yarn'
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            */*/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+      - name: Cache Nx
+        uses: actions/cache@v3
+        with:
+          path: |
+            .nx/cache
+            node_modules/.cache/nx
+          key: ${{ runner.os }}-nx-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('**/workspace.json', '**/nx.json', '**/project.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nx-${{ hashFiles('**/yarn.lock') }}-
+            ${{ runner.os }}-nx-
       - run: cp apps/photos-ssr/src/environments/environment.e2e.ts apps/photos-ssr/src/environments/environment.ts
       - run: yarn
       - run: yarn build  photos-ssr
+      - name: Validate CSS files are emitted
+        run: |
+          echo "Checking for CSS files in build output..."
+
+          # Check for main.css (with or without hash)
+          CSS_FILE=$(find dist/apps/photos-ssr/assets/ -name "main*.css" -type f | head -1)
+          if [ -z "$CSS_FILE" ]; then
+            echo "ERROR: No main CSS file found (checked main.css and main.*.css)"
+            echo "Available files:"
+            ls -la dist/apps/photos-ssr/assets/ || echo "Assets directory not found"
+            exit 1
+          fi
+
+          # Check for manifest.json
+          if [ ! -f "dist/apps/photos-ssr/assets/manifest.json" ]; then
+            echo "ERROR: manifest.json not found in dist/apps/photos-ssr/assets/"
+            exit 1
+          fi
+
+          echo "✓ CSS files validated successfully"
+          echo "  - CSS file: $(basename $CSS_FILE) ($(wc -c < $CSS_FILE) bytes)"
+          echo "  - manifest.json: found"
       - run: yarn start photos-ssr&
         id: ssr
       - run: yarn nx e2e photos-e2e --ci --skip-serve && pkill -f photos-ssr

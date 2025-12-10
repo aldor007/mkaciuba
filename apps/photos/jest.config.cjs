@@ -1,6 +1,7 @@
 module.exports = {
   preset: "../../jest.preset.js",
   testEnvironment: "jsdom",
+  setupFilesAfterEnv: ["<rootDir>/src/test-setup.ts"],
   transform: {
     "^(?!.*\\.(js|jsx|ts|tsx|css|json)$)": "@nrwl/react/plugins/jest",
     "^.+\\.[tj]sx?$": "ts-jest",

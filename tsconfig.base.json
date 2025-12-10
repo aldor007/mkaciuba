@@ -20,6 +20,7 @@
       "@mkaciuba/api": ["libs/api/src/index.ts"],
       "@mkaciuba/image": ["libs/image/src/index.ts"],
       "@mkaciuba/photos": ["apps/photos/src/index.ts"],
+      "@mkaciuba/types": ["libs/types/src/index.ts"],
       "@mkaciuba/ui-kit": ["libs/ui-kit/src/index.ts"]
     }
   },

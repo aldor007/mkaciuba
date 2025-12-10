@@ -5,7 +5,7 @@ import {
   useWindowWidth
 } from '@react-hook/window-size';
 import { Helmet } from 'react-helmet-async';
-import { Query } from '@mkaciuba/api';
+import { Query } from '@mkaciuba/types';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { Loading, LoadingMore, ErrorPage } from '@mkaciuba/ui-kit'
 import ReactGA from 'react-ga4'
@@ -36,7 +36,7 @@ const THUMBNAIL_FRAGMENT = gql`
   }
 `;
 
-const GET_IMAGES = gql`
+export const GET_IMAGES = gql`
   ${THUMBNAIL_FRAGMENT}
   query categoryBySlug($categorySlug: String!, $start: Int!, $limit: Int, $includeImage: Boolean = false) {
   categoryBySlug (

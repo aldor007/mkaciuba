@@ -1,0 +1,42 @@
+{
+  "viewports": {
+    "mobile": {
+      "width": 375,
+      "height": 667
+    },
+    "tablet": {
+      "width": 768,
+      "height": 1024
+    },
+    "desktop": {
+      "width": 1920,
+      "height": 1080
+    }
+  },
+  "testData": {
+    "gallery": {
+      "publicGallery": "portfolio",
+      "publicCategory": "test-category",
+      "privateGallery": "private-gallery",
+      "privateCategory": "private-category",
+      "privatePassword": "test-password"
+    },
+    "posts": {
+      "publishedPost": "test-post",
+      "draftPost": "draft-post"
+    },
+    "categories": {
+      "testCategory": "technology",
+      "natureCategory": "nature"
+    },
+    "tags": {
+      "testTag": "javascript",
+      "photoTag": "photography"
+    }
+  },
+  "timeouts": {
+    "short": 1000,
+    "medium": 5000,
+    "long": 10000
+  }
+}

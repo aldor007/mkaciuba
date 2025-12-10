@@ -16,7 +16,7 @@ import { ErrorPage, Loading, LoadingMore, useQueryParams } from "@mkaciuba/ui-ki
 import '../../assets/category.css';
 
 
-const GET_CATEGORIES = gql`
+export const GET_CATEGORIES = gql`
   query categories($galleryId: String!, $start: Int, $limit: Int) {
   categories (where: {
     gallery: $galleryId

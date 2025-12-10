@@ -5,7 +5,7 @@ import  { Navigate } from 'react-router-dom'
 import { Mutation } from '@mkaciuba/api';
 import useToken from '../useToken';
 
-const VALIDATE_TOKEN = gql`
+export const VALIDATE_TOKEN = gql`
   mutation validateTokenForCategory($token: String!, $categorySlug: String!) {
     validateTokenForCategory(token: $token, categorySlug: $categorySlug) {
         token

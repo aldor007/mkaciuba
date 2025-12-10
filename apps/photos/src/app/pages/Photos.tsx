@@ -11,7 +11,7 @@ import { Loading, ErrorPage, LoadingMore, Markdown } from '@mkaciuba/ui-kit'
 import { Helmet } from 'react-helmet-async';
 import ReactMarkdown from 'react-markdown';
 
-const GET_PHOTOS = gql`
+export const GET_PHOTOS = gql`
   query ($categorySlug: String!, $gallerySlug: String!) {
   categoryBySlug (
     slug: $categorySlug
