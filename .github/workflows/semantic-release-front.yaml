@@ -50,8 +50,12 @@ jobs:
             ${{ runner.os }}-nx-
       - run: cp apps/photos-ssr/src/environments/environment.e2e.ts apps/photos-ssr/src/environments/environment.ts
       - run: yarn
-      - run: yarn build photos
-      - run: yarn build photos-ssr
+      - run: yarn nx build photos --production --optimization
+        env:
+          NODE_ENV: production
+      - run: yarn nx build photos-ssr --production --optimization
+        env:
+          NODE_ENV: production
       - name: Validate CSS files are emitted
         run: |
           echo "Checking for CSS files in build output..."
