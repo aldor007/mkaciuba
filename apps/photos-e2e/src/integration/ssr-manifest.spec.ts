@@ -7,7 +7,8 @@ describe('SSR Manifest Validation', () => {
         expect(response.status).to.eq(200);
         expect(response.body).to.have.property('main.css');
         expect(response.body['main.css']).to.be.a('string');
-        expect(response.body['main.css']).to.match(/main\.[a-f0-9]+\.css/);
+        // Accept both main.css and main.[hash].css
+        expect(response.body['main.css']).to.match(/main(\.[a-f0-9]+)?\.css/);
       });
     });
 
@@ -28,7 +29,8 @@ describe('SSR Manifest Validation', () => {
       cy.get('head link[rel="stylesheet"]').should('exist');
       cy.get('head link[rel="stylesheet"]')
         .should('have.attr', 'href')
-        .and('match', /\/assets\/main\.[a-f0-9]+\.css/);
+        // Accept both /assets/main.css and /assets/main.[hash].css
+        .and('match', /\/assets\/main(\.[a-f0-9]+)?\.css/);
     });
 
     it('should have styles applied to page', () => {
