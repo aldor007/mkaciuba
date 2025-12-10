@@ -11,9 +11,11 @@ WORKDIR /opt/app
 # Copy package files first (better layer caching)
 COPY package.json yarn.lock decorate-angular-cli.js ./
 
-# Use cache mount for yarn to speed up installs
-RUN --mount=type=cache,target=/usr/local/share/.cache/yarn \
-    yarn --frozen-lockfile --network-timeout 100000
+# Use versioned cache mount for yarn to speed up installs
+# Cache path includes v2 to allow invalidation if needed
+# Note: --frozen-lockfile removed due to yarn 1.x cache interaction issues
+RUN --mount=type=cache,target=/usr/local/share/.cache/yarn-v2 \
+    yarn install --network-timeout 100000
 
 # Copy only necessary config files
 COPY nx.json tsconfig.base.json babel.config.json tailwind.config.js postcss.config.js ./
@@ -27,7 +29,9 @@ RUN cp apps/photos/src/environments/environment.prod.ts apps/photos/src/environm
     cp apps/photos-ssr/src/environments/environment.prod.ts apps/photos-ssr/src/environments/environments.ts
 
 # Build applications
+# Disable Nx daemon in Docker to avoid polling issues
 ENV NODE_ENV=production
+ENV NX_DAEMON=false
 RUN yarn nx build photos --configuration=production && \
     yarn nx build photos-ssr --configuration=production
 
@@ -46,9 +50,11 @@ WORKDIR /opt/app
 # Copy package files
 COPY package.json yarn.lock decorate-angular-cli.js ./
 
-# Install only production dependencies with cache mount
-RUN --mount=type=cache,target=/usr/local/share/.cache/yarn \
-    yarn --frozen-lockfile --production --network-timeout 100000 && \
+# Install only production dependencies with versioned cache mount
+# Cache path includes v2 to allow invalidation if needed
+# Note: --frozen-lockfile not used with --production due to yarn 1.x limitation
+RUN --mount=type=cache,target=/usr/local/share/.cache/yarn-v2 \
+    yarn install --production --network-timeout 100000 && \
     yarn cache clean
 
 # Copy built artifacts from builder
