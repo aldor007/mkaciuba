@@ -1,3 +1,10 @@
+## [0.6.2](https://github.com/aldor007/mkaciuba/compare/photos-0.6.1...photos-0.6.2) (2025-12-10)
+
+
+### Bug Fixes
+
+* fix docker build ([0e0e0ae](https://github.com/aldor007/mkaciuba/commit/0e0e0ae64827b1f874093b715e723ecb486e1b19))
+
 ## [0.6.1](https://github.com/aldor007/mkaciuba/compare/photos-0.6.0...photos-0.6.1) (2025-12-09)
 
 
