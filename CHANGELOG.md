@@ -1,3 +1,10 @@
+# [0.7.0](https://github.com/aldor007/mkaciuba/compare/photos-0.6.3...photos-0.7.0) (2025-12-10)
+
+
+### Features
+
+* bump cache key version to v4 ([8a5519d](https://github.com/aldor007/mkaciuba/commit/8a5519db62045f2b203f7c225f12ec8ac471b99f))
+
 ## [0.6.3](https://github.com/aldor007/mkaciuba/compare/photos-0.6.2...photos-0.6.3) (2025-12-10)
 
 
