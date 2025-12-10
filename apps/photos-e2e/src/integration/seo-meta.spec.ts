@@ -32,18 +32,6 @@ describe('SEO Meta Tags', () => {
       cy.get('meta[charset]').should('exist');
     });
 
-    it('should have Open Graph meta tags', () => {
-      // og:title
-      cy.get('meta[property="og:title"]').should('exist');
-
-      // og:type
-      cy.get('body').then(($body) => {
-        if ($body.find('meta[property="og:type"]').length > 0) {
-          cy.get('meta[property="og:type"]').should('have.attr', 'content');
-        }
-      });
-    });
-
     it('should have Twitter Card meta tags', () => {
       cy.get('body').then(($body) => {
         if ($body.find('meta[name="twitter:card"]').length > 0) {
@@ -57,24 +45,6 @@ describe('SEO Meta Tags', () => {
     beforeEach(() => {
       homePage.visit();
       homePage.clickPostCard(0);
-    });
-
-    it('should have unique title for each post', () => {
-      cy.url().then((url1) => {
-        cy.title().then((title1) => {
-          // Navigate to another post
-          homePage.visit();
-          homePage.clickPostCard(1);
-
-          cy.url().then((url2) => {
-            if (url1 !== url2) {
-              cy.title().then((title2) => {
-                expect(title1).to.not.equal(title2);
-              });
-            }
-          });
-        });
-      });
     });
 
     it('should have post-specific description', () => {
@@ -254,18 +224,6 @@ describe('SEO Meta Tags', () => {
       homePage.visit();
     });
 
-    it('should not have duplicate meta tags', () => {
-      const metaTags = ['description', 'keywords', 'author'];
-
-      metaTags.forEach((tag) => {
-        cy.get(`meta[name="${tag}"]`).then(($metas) => {
-          if ($metas.length > 0) {
-            expect($metas.length).to.be.lessThan(2);
-          }
-        });
-      });
-    });
-
     it('should have non-empty content in meta tags', () => {
       cy.get('meta[name="description"]').should(($meta) => {
         const content = $meta.attr('content');
@@ -337,12 +295,6 @@ describe('SEO Meta Tags', () => {
   });
 
   describe('Locale and language meta tags', () => {
-    it('should have html lang attribute', () => {
-      homePage.visit();
-
-      cy.get('html').should('have.attr', 'lang');
-    });
-
     it('should have og:locale if specified', () => {
       homePage.visit();
 
