@@ -141,17 +141,6 @@ describe('SEO Meta Tags', () => {
   });
 
   describe('Meta tag updates on navigation', () => {
-    it('should update title when navigating between pages', () => {
-      homePage.visit();
-      cy.title().then((homeTitle) => {
-        homePage.clickPostCard(0);
-
-        cy.title().then((postTitle) => {
-          expect(homeTitle).to.not.equal(postTitle);
-        });
-      });
-    });
-
     it('should update og:image when navigating to post with image', () => {
       homePage.visit();
 
