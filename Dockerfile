@@ -25,25 +25,26 @@ RUN cp /opt/app/apps/photos-ssr/src/environments/environment.prod.ts /opt/app/ap
 
 # Build the application
 ENV NODE_ENV=production
+RUN yarn nx build photos --configuration=production
 RUN yarn nx build photos-ssr --configuration=production
 
 # Validate CSS files are emitted
 RUN echo "Validating CSS files in Docker build..." && \
-    CSS_FILE=$(find /opt/app/dist/apps/photos-ssr/assets/ -name "main*.css" -type f 2>/dev/null | head -1) && \
+    CSS_FILE=$(find /opt/app/dist/apps/photos/ -name "main*.css" -type f -not -path "*/assets/*" 2>/dev/null | head -1) && \
     if [ -z "$CSS_FILE" ]; then \
-      echo "ERROR: No main CSS file found in /opt/app/dist/apps/photos-ssr/assets/" && \
+      echo "ERROR: No main CSS file found in /opt/app/dist/apps/photos/" && \
       echo "Available files:" && \
-      ls -la /opt/app/dist/apps/photos-ssr/assets/ 2>/dev/null || echo "Assets directory not found" && \
+      find /opt/app/dist/apps/photos/ -name "*.css" -type f 2>/dev/null || echo "No CSS files found" && \
       exit 1; \
     fi && \
-    if [ ! -f "/opt/app/dist/apps/photos-ssr/assets/manifest.json" ]; then \
-      echo "ERROR: manifest.json not found" && \
+    if [ ! -f "/opt/app/dist/apps/photos/manifest.json" ]; then \
+      echo "ERROR: manifest.json not found in /opt/app/dist/apps/photos/" && \
       exit 1; \
     fi && \
     echo "✓ CSS validation passed" && \
     echo "  - CSS file: $(basename $CSS_FILE) ($(wc -c < $CSS_FILE) bytes)" && \
     echo "  - manifest.json: found" && \
-    echo "  - Total assets: $(ls /opt/app/dist/apps/photos-ssr/assets/ | wc -l) files"
+    echo "  - Total CSS files: $(find /opt/app/dist/apps/photos/ -name '*.css' -type f | wc -l) files"
 
 # Production stage
 FROM node:20-alpine
@@ -62,15 +63,15 @@ COPY --from=builder /opt/app/dist /opt/app/dist
 
 # Verify assets are present in production image
 RUN echo "Verifying assets in production image..." && \
-    CSS_FILE=$(find /opt/app/dist/apps/photos-ssr/assets/ -name "main*.css" -type f 2>/dev/null | head -1) && \
+    CSS_FILE=$(find /opt/app/dist/apps/photos/ -name "main*.css" -type f -not -path "*/assets/*" 2>/dev/null | head -1) && \
     if [ -z "$CSS_FILE" ]; then \
       echo "ERROR: CSS files missing in production image!" && \
-      ls -la /opt/app/dist/apps/photos-ssr/ 2>/dev/null || echo "dist directory not found" && \
+      ls -la /opt/app/dist/apps/photos/ 2>/dev/null || echo "photos dist directory not found" && \
       exit 1; \
     fi && \
     echo "✓ Assets verified in production image" && \
-    echo "  - Assets directory: /opt/app/dist/apps/photos-ssr/assets/" && \
-    echo "  - Total assets: $(ls /opt/app/dist/apps/photos-ssr/assets/ | wc -l) files"
+    echo "  - Photos app directory: /opt/app/dist/apps/photos/" && \
+    echo "  - Total CSS files: $(find /opt/app/dist/apps/photos/ -name '*.css' -type f | wc -l) files"
 
 ENV NODE_ENV=production
 CMD ["node", "dist/apps/photos-ssr/main.js"]
