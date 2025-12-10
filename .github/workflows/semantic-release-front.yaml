@@ -30,6 +30,22 @@ jobs:
       - run: cp apps/photos-ssr/src/environments/environment.e2e.ts apps/photos-ssr/src/environments/environment.ts
       - run: yarn
       - run: yarn build  photos-ssr
+      - name: Validate CSS files are emitted
+        run: |
+          echo "Checking for CSS files in build output..."
+          if [ ! -f "dist/apps/photos-ssr/assets/main.css" ]; then
+            echo "ERROR: main.css not found in dist/apps/photos-ssr/assets/"
+            echo "Available files:"
+            ls -la dist/apps/photos-ssr/assets/ || echo "Assets directory not found"
+            exit 1
+          fi
+          if [ ! -f "dist/apps/photos-ssr/assets/manifest.json" ]; then
+            echo "ERROR: manifest.json not found in dist/apps/photos-ssr/assets/"
+            exit 1
+          fi
+          echo "✓ CSS files validated successfully"
+          echo "  - main.css: $(wc -c < dist/apps/photos-ssr/assets/main.css) bytes"
+          echo "  - manifest.json: found"
       - run: yarn start photos-ssr&
         id: ssr
       - run: yarn nx e2e photos-e2e --ci --skip-serve && pkill -f photos-ssr
