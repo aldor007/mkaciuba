@@ -48,23 +48,24 @@ jobs:
             ${{ runner.os }}-nx-
       - run: cp apps/photos-ssr/src/environments/environment.e2e.ts apps/photos-ssr/src/environments/environment.ts
       - run: yarn
-      - run: yarn build  photos-ssr
+      - run: yarn build photos
+      - run: yarn build photos-ssr
       - name: Validate CSS files are emitted
         run: |
           echo "Checking for CSS files in build output..."
 
-          # Check for main.css (with or without hash)
-          CSS_FILE=$(find dist/apps/photos-ssr/assets/ -name "main*.css" -type f | head -1)
+          # Check for main.css (with or without hash) in photos build
+          CSS_FILE=$(find dist/apps/photos/ -name "main*.css" -type f -not -path "*/assets/*" | head -1)
           if [ -z "$CSS_FILE" ]; then
-            echo "ERROR: No main CSS file found (checked main.css and main.*.css)"
+            echo "ERROR: No main CSS file found in dist/apps/photos/"
             echo "Available files:"
-            ls -la dist/apps/photos-ssr/assets/ || echo "Assets directory not found"
+            find dist/apps/photos/ -name "*.css" -type f || echo "No CSS files found"
             exit 1
           fi
 
-          # Check for manifest.json
-          if [ ! -f "dist/apps/photos-ssr/assets/manifest.json" ]; then
-            echo "ERROR: manifest.json not found in dist/apps/photos-ssr/assets/"
+          # Check for manifest.json in photos build
+          if [ ! -f "dist/apps/photos/manifest.json" ]; then
+            echo "ERROR: manifest.json not found in dist/apps/photos/"
             exit 1
           fi
 
