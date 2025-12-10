@@ -6,7 +6,9 @@
     "plugin:cypress/recommended",
     "plugin:cypress/recommended"
   ],
-  "rules": {},
+  "rules": {
+    "cypress/no-unnecessary-waiting": "off"
+  },
   "ignorePatterns": [
     "!**/*"
   ],

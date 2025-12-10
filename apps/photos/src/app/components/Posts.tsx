@@ -17,7 +17,7 @@ import { PostCard } from "./PostCard";
 import '../../assets/category.css';
 
 
-const GET_POSTS = gql`
+export const GET_POSTS = gql`
   query posts($start: Int, $limit: Int) {
   posts(limit: $limit, start: $start, sort:"id:desc") {
     title
@@ -41,7 +41,7 @@ const GET_POSTS = gql`
  postsCount
 }
 `;
-const GET_POSTS_FROM_CAT = gql`
+export const GET_POSTS_FROM_CAT = gql`
   query posts($start: Int, $limit: Int, $id: String) {
   posts(limit: $limit, start: $start, sort:"id:desc", where: {
     category: $id
@@ -69,7 +69,7 @@ const GET_POSTS_FROM_CAT = gql`
  })
 }`
 
-const GET_POSTS_FROM_TAG = gql`
+export const GET_POSTS_FROM_TAG = gql`
   query posts($start: Int, $limit: Int, $id: String) {
   posts(limit: $limit, start: $start, sort:"id:desc", where: {
     tags: $id

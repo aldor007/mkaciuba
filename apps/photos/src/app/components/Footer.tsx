@@ -10,7 +10,7 @@ import { Loading, ErrorPage, LoadingMore} from "@mkaciuba/ui-kit";
 import { FacebookProvider, Page } from 'react-facebook';
 import { Tag } from "./Tag";
 
-const GET_FOOTER = gql`
+export const GET_FOOTER = gql`
   query($webp: Boolean!) {
     categories(limit: 9, sort: "id:desc") {
       slug

@@ -9,7 +9,7 @@ export interface ErrorPageProps {
     details?: string;
 }
 
-const getErrorTitle = (code: number): string => {
+export const getErrorTitle = (code: number): string => {
     switch (code) {
         case 400:
             return 'Bad Request';
@@ -30,7 +30,7 @@ const getErrorTitle = (code: number): string => {
     }
 };
 
-const getErrorSuggestion = (code: number, message?: string): string | null => {
+export const getErrorSuggestion = (code: number, message?: string): string | null => {
     if (code === 500 && message?.toLowerCase().includes('unexpected token')) {
         return 'This appears to be a server configuration issue. The server may have returned HTML instead of JSON. Please try again later or contact support if the issue persists.';
     }

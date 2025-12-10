@@ -4,7 +4,7 @@
     "outDir": "../../dist/out-tsc",
     "types": ["node"]
   },
-  "exclude": ["**/*.spec.ts", "**/*.spec.tsx"],
+  "exclude": ["**/*.spec.ts", "**/*.spec.tsx", "**/test-utils/**", "**/test-setup.ts"],
   "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"],
   "files": [
     "../../node_modules/@nrwl/react/typings/cssmodule.d.ts",

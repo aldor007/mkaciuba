@@ -17,7 +17,8 @@ import { getDataFromTree } from "@apollo/client/react/ssr";
 import React from 'react';
 import path from 'path';
 
-import { AppRoutesComponent, App } from '@mkaciuba/photos';
+import { AppRoutesComponent, App, startLimitPagination } from '@mkaciuba/photos';
+// startLimitPagination imported from photos
 import { Html } from './html'
 import { renderToString } from 'react-dom/server';
 import { ErrorPage } from '@mkaciuba/ui-kit';
@@ -31,6 +32,7 @@ import proxy from 'express-http-proxy';
 import fs from 'fs';
 import pkgJson from  '../../../package.json';
 import { Cache } from './redis';
+import { getCacheKey } from './cache-utils';
 const API_KEY = process.env.API_KEY || '123';
 const CLOUDFLARE_ZONE_ID = process.env.CLOUDFLARE_ZONE_ID;
 const CLOUDFLARE_API_TOKEN = process.env.CLOUDFLARE_API_TOKEN;
@@ -59,10 +61,6 @@ setImmediate(async () => {
    await cache.init(process.env.REDIS_URL, parseInt(process.env.REDIS_PORT), parseInt(process.env.REDIS_DB))
   }
 })
-
-const getCacheKey = (req) => {
-  return `v3:${req.path}|${req.query.page || ''}|${req.headers['x-gallery-token'] || ''}|${req.cookies.category_token || ''}`
-}
 
 const getAssetPath = (name) => {
   if (manifest[name]) {
@@ -229,7 +227,21 @@ app.get('*', async (req, res) => {
         'x-gallery-token': req.headers['x-gallery-token']
       },
     }),
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({
+      typePolicies: {
+        Category: {
+          fields: {
+            medias: startLimitPagination(['where'])
+          }
+        },
+        Query: {
+          fields: {
+            categories: startLimitPagination(['where', 'limit']),
+            posts: startLimitPagination(['where', 'limit'])
+          }
+        }
+      }
+    }),
   });
 
   const staticApp = (

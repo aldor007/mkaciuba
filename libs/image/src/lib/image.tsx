@@ -1,5 +1,5 @@
 
-import { UploadFile } from '@mkaciuba/api';
+import { UploadFile } from '@mkaciuba/types';
 import React, { RefObject, useState, useEffect, useCallback, useRef} from 'react';
 import { findImageForWidth } from '..';
 import { useWebPSupportCheck } from "react-use-webp-support-check";

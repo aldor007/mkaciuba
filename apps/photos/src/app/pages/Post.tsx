@@ -20,7 +20,7 @@ import { format } from "date-fns";
 import { Tag } from '../components/Tag';
 import { PostNavbar } from '../components/PostNavbar';
 
-const GET_POST = gql`
+export const GET_POST = gql`
   query ($postSlug: String!) {
     postBySlug(slug: $postSlug) {
       id
@@ -158,8 +158,7 @@ export const Post = () => {
     { post.image && <ImageComponent thumbnails={post.image.matchingThumbnails} defaultImage={post.image.matchingThumbnails[0]}/> }
     </Link>
     </div></>)
-    : (<>
-      <div className="flex font-bold	text-xl	w-full">
+    : (<div className="flex font-bold	text-xl	w-full">
         <div className="-ml-2 col">
           <Link to={generatePath(AppRoutes.post.path, {
             slug: post.slug,
@@ -177,7 +176,7 @@ export const Post = () => {
             </Link>
           </div>
         </div>
-    </div></>) ;
+    </div>) ;
 
     return (
       <div className={direction + " hidden sm:block  cursor-pointer fixed top-1/2"}  onMouseEnter={onHover(true)} onMouseLeave={onHover(false)} >
@@ -261,8 +260,7 @@ export const Post = () => {
               <div className="clear-right"></div>
       <hr className="divide-y m-8 bg-gray-700" />
       </div>
-      <>
-      </>
+      
 
     <h1 className="m-8 font-black text-lg 	leading-snug font-serif  md:text-3xl sm:text-1xl text-4xl text-center">Powiązane posty</h1>
     <div className="max-w-screen-xl mx-auto grid xl:grid-cols-2  gap-4">

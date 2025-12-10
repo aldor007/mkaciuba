@@ -23,7 +23,7 @@ export interface MenuType {
   name: string
   children?: MenuType[]
 }
-const GET_MENU = gql`
+export const GET_MENU = gql`
   query menu {
    menu {
     brandName
