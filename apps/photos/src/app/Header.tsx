@@ -10,9 +10,7 @@ export default function Header(props: HeaderProps)  {
   const { mainMenu } = props;
 
   return (
-    <React.Fragment>
-        <Navbar additionalMainMenu={mainMenu}/>
-    </React.Fragment>
+    <Navbar additionalMainMenu={mainMenu}/>
   );
 }
 
