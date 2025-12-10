@@ -1,3 +1,13 @@
+## [0.6.3](https://github.com/aldor007/mkaciuba/compare/photos-0.6.2...photos-0.6.3) (2025-12-10)
+
+
+### Bug Fixes
+
+* more tests ([c83b815](https://github.com/aldor007/mkaciuba/commit/c83b8157b25d4eeb3cb293baa8b19d06c2612865))
+* more tests ([78c5b58](https://github.com/aldor007/mkaciuba/commit/78c5b586baf9b8d4953151cac7c5d8d9d8a50e57))
+* more tests ([a966d71](https://github.com/aldor007/mkaciuba/commit/a966d71363e48a1d769c94dc56032e9155def38d))
+* use semantic footer HTML tag instead of div ([aea02d3](https://github.com/aldor007/mkaciuba/commit/aea02d373a28cbe1e2f97c1a7c6f4efd25585839))
+
 ## [0.6.2](https://github.com/aldor007/mkaciuba/compare/photos-0.6.1...photos-0.6.2) (2025-12-10)
 
 
