@@ -1,3 +1,15 @@
+# [0.8.0](https://github.com/aldor007/mkaciuba/compare/photos-0.7.1...photos-0.8.0) (2025-12-10)
+
+
+### Bug Fixes
+
+* use production builds in semantic-release workflow ([2774a5d](https://github.com/aldor007/mkaciuba/commit/2774a5d5771675608be0b9cd2327eed956f4213b))
+
+
+### Features
+
+* use pre-built artifacts from workflow in Docker ([aeb3df5](https://github.com/aldor007/mkaciuba/commit/aeb3df5b1aed95fb917462c33cea1eaa8cb23a58))
+
 ## [0.7.1](https://github.com/aldor007/mkaciuba/compare/photos-0.7.0...photos-0.7.1) (2025-12-10)
 
 
