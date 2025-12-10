@@ -72,7 +72,7 @@ jobs:
         name: Include dist in Docker context
         run: |
           echo "Modifying .dockerignore to include dist/ for workflow-built artifacts..."
-          sed -i '' '/^dist\/\*$/d' .dockerignore
+          sed -i '/^dist\/\*$/d' .dockerignore
           echo "# dist/* exclusion removed for workflow builds" >> .dockerignore
       -
         name: Build and push
