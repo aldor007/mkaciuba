@@ -20,16 +20,18 @@ RUN --mount=type=cache,target=/usr/local/share/.cache/yarn-v2 \
 # Copy only necessary config files
 COPY nx.json tsconfig.base.json babel.config.json tailwind.config.js postcss.config.js ./
 
-# Copy pre-built dist if exists (from GitHub Actions), otherwise copy source to build
-# This allows using the exact manifest.json from the workflow that uploaded CSS to S3
-# Note: dist/ contains only JS/CSS/HTML (platform-agnostic), safe for multi-arch builds
-COPY --chown=node:node dist* ./dist 2>/dev/null || true
+# Copy source files
 COPY apps ./apps
 COPY libs ./libs
 
 # Set up environment files for production build
 RUN cp apps/photos/src/environments/environment.prod.ts apps/photos/src/environments/environment.ts && \
     cp apps/photos-ssr/src/environments/environment.prod.ts apps/photos-ssr/src/environments/environments.ts
+
+# Copy pre-built dist if available (excluded by .dockerignore for local builds)
+# GitHub Actions modifies .dockerignore to include dist before docker build
+# This allows using the exact manifest.json that references S3-uploaded CSS files
+COPY dist ./dist
 
 # Build applications only if dist doesn't exist
 # Disable Nx daemon in Docker to avoid polling issues
