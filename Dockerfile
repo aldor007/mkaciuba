@@ -1,77 +1,74 @@
+# syntax=docker/dockerfile:1.4
+
 # Build stage
 FROM node:20-alpine AS builder
 
-RUN  apk add --update python3 make g++\
-   && rm -rf /var/cache/apk/*
+# Install build dependencies
+RUN apk add --no-cache python3 make g++
 
 WORKDIR /opt/app
 
-# Copy package files and install ALL dependencies (including devDependencies needed for build)
-COPY ./package.json ./yarn.lock ./decorate-angular-cli.js /opt/app/
-RUN yarn --network-timeout 100000 --frozen-lockfile
+# Copy package files first (better layer caching)
+COPY package.json yarn.lock decorate-angular-cli.js ./
 
-# Copy source files and configuration
-COPY ./apps /opt/app/apps
-COPY ./libs /opt/app/libs
-COPY ./nx.json /opt/app/nx.json
-COPY ./tsconfig.base.json /opt/app/tsconfig.base.json
-COPY ./babel.config.json /opt/app/babel.config.json
-COPY ./tailwind.config.js /opt/app/tailwind.config.js
-COPY ./postcss.config.js /opt/app/postcss.config.js
+# Use cache mount for yarn to speed up installs
+RUN --mount=type=cache,target=/usr/local/share/.cache/yarn \
+    yarn --frozen-lockfile --network-timeout 100000
+
+# Copy only necessary config files
+COPY nx.json tsconfig.base.json babel.config.json tailwind.config.js postcss.config.js ./
+
+# Copy source files
+COPY apps ./apps
+COPY libs ./libs
 
 # Set up environment files for production build
-RUN cp /opt/app/apps/photos/src/environments/environment.prod.ts /opt/app/apps/photos/src/environments/environment.ts
-RUN cp /opt/app/apps/photos-ssr/src/environments/environment.prod.ts /opt/app/apps/photos-ssr/src/environments/environments.ts
+RUN cp apps/photos/src/environments/environment.prod.ts apps/photos/src/environments/environment.ts && \
+    cp apps/photos-ssr/src/environments/environment.prod.ts apps/photos-ssr/src/environments/environments.ts
 
-# Build the application
+# Build applications
 ENV NODE_ENV=production
-RUN yarn nx build photos --configuration=production
-RUN yarn nx build photos-ssr --configuration=production
+RUN yarn nx build photos --configuration=production && \
+    yarn nx build photos-ssr --configuration=production
 
-# Validate CSS files are emitted
-RUN echo "Validating CSS files in Docker build..." && \
-    CSS_FILE=$(find /opt/app/dist/apps/photos/ -name "main*.css" -type f -not -path "*/assets/*" 2>/dev/null | head -1) && \
-    if [ -z "$CSS_FILE" ]; then \
-      echo "ERROR: No main CSS file found in /opt/app/dist/apps/photos/" && \
-      echo "Available files:" && \
-      find /opt/app/dist/apps/photos/ -name "*.css" -type f 2>/dev/null || echo "No CSS files found" && \
-      exit 1; \
-    fi && \
-    if [ ! -f "/opt/app/dist/apps/photos/manifest.json" ]; then \
-      echo "ERROR: manifest.json not found in /opt/app/dist/apps/photos/" && \
-      exit 1; \
-    fi && \
-    echo "✓ CSS validation passed" && \
-    echo "  - CSS file: $(basename $CSS_FILE) ($(wc -c < $CSS_FILE) bytes)" && \
-    echo "  - manifest.json: found" && \
-    echo "  - Total CSS files: $(find /opt/app/dist/apps/photos/ -name '*.css' -type f | wc -l) files"
+# Validate CSS files are emitted (combined with build for fewer layers)
+RUN CSS_FILE=$(find dist/apps/photos/ -name "main*.css" -type f -not -path "*/assets/*" | head -1) && \
+    [ -n "$CSS_FILE" ] && [ -f "dist/apps/photos/manifest.json" ] && \
+    echo "✓ CSS validation passed: $(basename $CSS_FILE) ($(wc -c < $CSS_FILE) bytes)" || \
+    (echo "ERROR: CSS validation failed" && exit 1)
 
 # Production stage
 FROM node:20-alpine
 
-RUN  apk add --update python3 make g++\
-   && rm -rf /var/cache/apk/*
-
+# Only install runtime dependencies (no build tools needed)
 WORKDIR /opt/app
 
-# Copy package files and install only production dependencies
-COPY ./package.json ./yarn.lock ./decorate-angular-cli.js /opt/app/
-RUN yarn --network-timeout 100000 --frozen-lockfile --production
+# Copy package files
+COPY package.json yarn.lock decorate-angular-cli.js ./
 
-# Copy built artifacts from builder stage
-COPY --from=builder /opt/app/dist /opt/app/dist
+# Install only production dependencies with cache mount
+RUN --mount=type=cache,target=/usr/local/share/.cache/yarn \
+    yarn --frozen-lockfile --production --network-timeout 100000 && \
+    yarn cache clean
 
-# Verify assets are present in production image
-RUN echo "Verifying assets in production image..." && \
-    CSS_FILE=$(find /opt/app/dist/apps/photos/ -name "main*.css" -type f -not -path "*/assets/*" 2>/dev/null | head -1) && \
-    if [ -z "$CSS_FILE" ]; then \
-      echo "ERROR: CSS files missing in production image!" && \
-      ls -la /opt/app/dist/apps/photos/ 2>/dev/null || echo "photos dist directory not found" && \
-      exit 1; \
-    fi && \
-    echo "✓ Assets verified in production image" && \
-    echo "  - Photos app directory: /opt/app/dist/apps/photos/" && \
-    echo "  - Total CSS files: $(find /opt/app/dist/apps/photos/ -name '*.css' -type f | wc -l) files"
+# Copy built artifacts from builder
+COPY --from=builder /opt/app/dist ./dist
 
+# Verify assets in production image
+RUN CSS_FILE=$(find dist/apps/photos/ -name "main*.css" -type f -not -path "*/assets/*" | head -1) && \
+    [ -n "$CSS_FILE" ] && \
+    echo "✓ Assets verified: $(find dist/apps/photos/ -name '*.css' -type f | wc -l) CSS files" || \
+    (echo "ERROR: Assets missing in production" && exit 1)
+
+# Set production environment and expose port
 ENV NODE_ENV=production
+EXPOSE 3000
+
+# Use non-root user for security
+USER node
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s \
+    CMD node -e "require('http').get('http://localhost:3000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
+
 CMD ["node", "dist/apps/photos-ssr/main.js"]
