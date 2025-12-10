@@ -4,8 +4,10 @@ import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { CategoriesList, GET_CATEGORIES } from './CategoriesList';
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { createMockGallery, createMockCategory, createMockUploadFile } from '../../../../../libs/api/src/test-utils/factories';
-import { Gallery } from '@mkaciuba/api';
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import { Gallery } from '@mkaciuba/types';
 
 // Mock useInfiniteScroll hook
 const mockSentryRef = { current: null };

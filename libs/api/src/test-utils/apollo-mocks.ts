@@ -5,6 +5,7 @@ import {
   Operation,
   FieldPolicy,
   Reference,
+  gql,
 } from '@apollo/client';
 import { MockedResponse, MockLink } from '@apollo/client/testing';
 
@@ -104,7 +105,7 @@ export function createQueryMock(
 
   return {
     request: {
-      query: require('graphql-tag')(`query ${operationName} { __typename }`), // Placeholder query
+      query: gql`query ${operationName} { __typename }`, // Placeholder query
       variables,
       operationName,
     },
@@ -136,7 +137,7 @@ export function createMutationMock(
 
   return {
     request: {
-      query: require('graphql-tag')(`mutation ${operationName} { __typename }`), // Placeholder mutation
+      query: gql`mutation ${operationName} { __typename }`, // Placeholder mutation
       variables,
       operationName,
     },

@@ -51,6 +51,15 @@
         "plugin:@nrwl/nx/javascript"
       ],
       "rules": {}
+    },
+    {
+      "files": [
+        "*.spec.ts",
+        "*.spec.tsx"
+      ],
+      "rules": {
+        "@nrwl/nx/enforce-module-boundaries": "off"
+      }
     }
   ]
 }

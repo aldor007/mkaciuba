@@ -9,7 +9,7 @@ import {
   Enum_Post_Content_Position,
   Enum_Post_Content_Type,
   Enum_Post_Gallery_Template,
-} from '../lib/graphql';
+} from '@mkaciuba/types';
 
 /**
  * Creates a mock Image object with sensible defaults
