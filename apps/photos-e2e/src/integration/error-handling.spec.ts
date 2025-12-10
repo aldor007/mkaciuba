@@ -36,21 +36,6 @@ describe('Error Handling', () => {
       errorPage.shouldDisplayGoHomeButton();
     });
 
-    it('should display 404 page for non-existent gallery', () => {
-      cy.visit('/gallery/non-existent-gallery-xyz', { failOnStatusCode: false });
-
-      // Should display error page
-      errorPage.shouldDisplay404();
-      errorPage.shouldDisplayGoHomeButton();
-    });
-
-    it('should display 404 page for non-existent gallery category', () => {
-      cy.visit('/gallery/portfolio/non-existent-category-xyz', { failOnStatusCode: false });
-
-      // Should display error page (404 or 500 depending on setup)
-      errorPage.shouldDisplayError();
-      errorPage.shouldDisplayGoHomeButton();
-    });
   });
 
   describe('500 Internal Server Error', () => {

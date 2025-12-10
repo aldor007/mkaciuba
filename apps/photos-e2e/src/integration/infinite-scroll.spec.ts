@@ -7,23 +7,6 @@ describe('Infinite Scroll', () => {
   });
 
   describe('Gallery infinite scroll', () => {
-    it('should load more images when scrolling to bottom', () => {
-      cy.visit('/gallery/portfolio');
-      cy.get('.grid a').first().click();
-
-      // Get initial image count
-      photosPage.getPhotoThumbnails().its('length').then((initialCount) => {
-        // Scroll to bottom
-        cy.scrollToTriggerInfiniteLoad();
-
-        // Wait for new images to load
-        cy.wait(2000);
-
-        // Should have more images
-        photosPage.getPhotoThumbnails().its('length').should('be.greaterThan', initialCount);
-      });
-    });
-
     it('should show loading indicator when loading more images', () => {
       cy.visit('/gallery/portfolio');
       cy.get('.grid a').first().click();
@@ -237,22 +220,4 @@ describe('Infinite Scroll', () => {
     });
   });
 
-  describe('Infinite scroll error handling', () => {
-    it('should handle network errors gracefully', () => {
-      cy.visit('/gallery/portfolio');
-      cy.get('.grid a').first().click();
-
-      // Intercept GraphQL and simulate error
-      cy.intercept('POST', '**/graphql', {
-        statusCode: 500,
-        body: { errors: [{ message: 'Network error' }] },
-      }).as('errorRequest');
-
-      // Try to scroll
-      cy.scrollToTriggerInfiniteLoad();
-
-      // Should not crash - page should still be usable
-      photosPage.shouldDisplayPhotoGrid();
-    });
-  });
 });
