@@ -1,3 +1,10 @@
+## [0.7.1](https://github.com/aldor007/mkaciuba/compare/photos-0.7.0...photos-0.7.1) (2025-12-10)
+
+
+### Bug Fixes
+
+* version yarn cache and fix Docker build issues ([50a501a](https://github.com/aldor007/mkaciuba/commit/50a501adc850aaee552ecfe294aa54362349e716))
+
 # [0.7.0](https://github.com/aldor007/mkaciuba/compare/photos-0.6.3...photos-0.7.0) (2025-12-10)
 
 
