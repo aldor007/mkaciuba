@@ -74,7 +74,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
 
     const s3Plugin = new S3Plugin({
        exclude: /.*\.html$/,
-      directory: config.output?.path,  // Explicitly set output directory
+      // directory: config.output?.path,  // Removed - use webpack compilation assets instead
       s3Options: {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID,
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -91,8 +91,6 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
       basePath: process.env.AWS_BASE_PATH,
       progress: true  // Boolean to enable built-in progress bar
     });
-
-    console.log('🔵 S3 Plugin will upload from directory:', config.output?.path);
 
     console.log('🔵 S3 Plugin options configured:', {
       hasExclude: true,
