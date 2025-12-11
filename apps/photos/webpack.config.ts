@@ -128,13 +128,57 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
           console.log('❌ Webpack failed hook triggered:', error);
         });
 
-        // Wait a bit to see S3 output
-        compiler.hooks.done.tapAsync('WaitForS3', (stats, callback) => {
+        // Wait for S3 upload, then validate
+        compiler.hooks.done.tapAsync('WaitForS3', async (stats, callback) => {
           console.log('🔵 Waiting 3 seconds for S3 upload to complete...');
-          setTimeout(() => {
-            console.log('🔵 Post-compilation wait complete. Check above for S3 upload output or errors.');
-            callback();
-          }, 3000);
+          await new Promise(resolve => setTimeout(resolve, 3000));
+          console.log('🔵 Validating S3 upload...');
+
+          // Validate S3 upload by checking if files exist
+          try {
+            const AWS = require('aws-sdk');
+            const s3 = new AWS.S3({
+              accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+              secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+              region: process.env.AWS_REGION,
+            });
+
+            const basePath = process.env.AWS_BASE_PATH || '';
+            const bucket = process.env.AWS_BUCKET;
+
+            // Check first 3 CSS files
+            const cssAssets = Object.keys(stats.compilation.assets).filter(name => name.endsWith('.css'));
+            const filesToCheck = cssAssets.slice(0, 3);
+
+            console.log(`🔵 Checking ${filesToCheck.length} files in S3 bucket: ${bucket}`);
+
+            const checks = await Promise.all(
+              filesToCheck.map(async (file) => {
+                const key = `${basePath}${file}`.replace(/^\//, '');
+                try {
+                  await s3.headObject({ Bucket: bucket, Key: key }).promise();
+                  console.log(`✅ S3 verified: ${key}`);
+                  return { file, key, exists: true };
+                } catch (err) {
+                  console.log(`❌ S3 FAILED: ${key} - ${err.message}`);
+                  return { file, key, exists: false, error: err.message };
+                }
+              })
+            );
+
+            const uploaded = checks.filter(c => c.exists).length;
+            const total = checks.length;
+
+            if (uploaded === total) {
+              console.log(`✅ S3 Upload SUCCESS: ${uploaded}/${total} files verified`);
+            } else {
+              console.log(`❌ S3 Upload INCOMPLETE: ${uploaded}/${total} files found`);
+            }
+          } catch (error) {
+            console.log('⚠️  S3 validation error:', error.message);
+          }
+
+          callback();
         });
       }
     });
