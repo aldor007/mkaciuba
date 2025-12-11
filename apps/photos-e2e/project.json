@@ -9,7 +9,8 @@
       "options": {
         "cypressConfig": "apps/photos-e2e/cypress.config.ts",
         "tsConfig": "apps/photos-e2e/tsconfig.e2e.json",
-        "devServerTarget": "photos-ssr:serve:production"
+        "devServerTarget": "photos-ssr:serve:production",
+        "parallel": true
       },
       "configurations": {
         "production": {

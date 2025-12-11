@@ -1,0 +1,43 @@
+yarn run v1.22.22
+$ nx e2e photos-e2e
+
+> nx run photos-e2e:e2e
+
+(node:46134) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[1m[33mwarn[39m[22m - The `purge`/`content` options have changed in Tailwind CSS v3.0.
+[1m[33mwarn[39m[22m - Update your configuration file to eliminate this warning.
+[1m[33mwarn[39m[22m - https://tailwindcss.com/docs/upgrade-guide#configure-content-sources
+chunk (runtime: main) [1m[32m72.js[39m[22m 2.87 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: main) [1m[32m131.js[39m[22m 785 bytes [1m[32m[rendered][39m[22m
+chunk (runtime: main) [1m[32m181.js[39m[22m 1.03 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: main) [1m[32m328.js[39m[22m 26.6 KiB [1m[32m[rendered][39m[22m [1m[33msplit chunk (cache group: default)[39m[22m
+chunk (runtime: main) [1m[32m470.js[39m[22m 3.5 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: main) [1m[32m478.js[39m[22m 11.4 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: main) [1m[32m575.js[39m[22m 10.4 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: main) [1m[32m628.js[39m[22m 9.53 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: main) [1m[32mmain.js[39m[22m (main) 33.3 KiB (javascript) 2.12 KiB (runtime) [1m[33m[entry][39m[22m [1m[32m[rendered][39m[22m
+chunk (runtime: main) [1m[32m807.js[39m[22m 14.9 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: main) [1m[32m846.js[39m[22m 6.5 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: main) [1m[32m903.js[39m[22m 9.5 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: main) [1m[32m944.js[39m[22m 4.37 KiB [1m[32m[rendered][39m[22m
+webpack compiled [1m[32msuccessfully[39m[22m (4b8bf7b01f2c3737)
+Debugger listening on ws://localhost:9229/99fa51d5-88bb-4167-ab5a-833f7e80d019
+Debugger listening on ws://localhost:9229/99fa51d5-88bb-4167-ab5a-833f7e80d019
+For help, see: https://nodejs.org/en/docs/inspector
+Scripts [ [32m'/assets/vendor.js'[39m, [32m'/assets/runtime.js'[39m, [32m'/assets/main.js'[39m ] production
+Apollo url https://mkaciuba.pl/graphql
+Listening at http://0.0.0.0:3333
+ [31m>[39m [0m[7m[1m[31m NX [39m[22m[27m[0m  [31mUnknown error caught[39m
+   Pass --verbose to see the stacktrace.
+
+ 
+
+ >  NX   Running target e2e for project photos-e2e failed
+
+   Failed tasks:
+   
+   - photos-e2e:e2e
+   
+   Hint: run the command with --verbose for more details.
+

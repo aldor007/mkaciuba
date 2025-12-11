@@ -9,7 +9,8 @@
       "options": {
         "cypressConfig": "apps/photos-embed-e2e/cypress.config.ts",
         "tsConfig": "apps/photos-embed-e2e/tsconfig.e2e.json",
-        "devServerTarget": "photos-embed:serve"
+        "devServerTarget": "photos-embed:serve",
+        "parallel": true
       },
       "configurations": {
         "production": {
