@@ -1,3 +1,10 @@
+# [0.9.0](https://github.com/aldor007/mkaciuba/compare/photos-0.8.3...photos-0.9.0) (2025-12-11)
+
+
+### Features
+
+* add debug logging for S3 upload ([ff2d64b](https://github.com/aldor007/mkaciuba/commit/ff2d64baa1475cf52b4cf6e892d2d83250556002))
+
 ## [0.8.3](https://github.com/aldor007/mkaciuba/compare/photos-0.8.2...photos-0.8.3) (2025-12-11)
 
 
