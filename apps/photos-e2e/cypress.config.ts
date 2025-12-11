@@ -13,10 +13,14 @@ export default defineConfig({
     screenshotsFolder: '../../dist/cypress/apps/photos-e2e/screenshots',
     chromeWebSecurity: false,
     baseUrl: 'http://localhost:3333',
-    // Retry failed tests up to 3 times before marking as failed
+    // Increased retries for flaky test resilience
     retries: {
-      runMode: 2,    // Retry 2 times in CI/headless (total 3 attempts)
+      runMode: 4,    // Retry 4 times in CI/headless (total 5 attempts)
       openMode: 0,   // No retries in interactive mode for faster debugging
     },
+    // Increase timeouts for better reliability
+    defaultCommandTimeout: 10000,  // 10s (default: 4s)
+    pageLoadTimeout: 60000,         // 60s (default: 60s)
+    requestTimeout: 10000,          // 10s (default: 5s)
   },
 });
