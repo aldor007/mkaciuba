@@ -57,6 +57,13 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     }
   }));
   if (process.env.AWS_ACCESS_KEY_ID) {
+    console.log('🔵 S3 Plugin: AWS credentials detected, enabling S3 upload');
+    console.log('🔵 S3 Config:', {
+      bucket: process.env.AWS_BUCKET,
+      region: process.env.AWS_REGION,
+      basePath: process.env.AWS_BASE_PATH,
+      endpoint: process.env.AWS_ENDPOINT || 'default',
+    });
 
     config.plugins.push(new S3Plugin({
        exclude: /.*\.html$/,
@@ -73,8 +80,20 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
         Bucket: process.env.AWS_BUCKET,
         ACL: 'private'
       },
-      basePath: process.env.AWS_BASE_PATH
+      basePath: process.env.AWS_BASE_PATH,
+      progress: (percent, message, fileName) => {
+        if (percent === 100) {
+          console.log(`✅ S3 Upload complete: ${message}`);
+        } else {
+          const s3Path = process.env.AWS_BASE_PATH ? `${process.env.AWS_BASE_PATH}/${fileName}` : fileName;
+          console.log(`📤 S3 Upload [${percent}%]: ${fileName} -> s3://${process.env.AWS_BUCKET}/${s3Path}`);
+        }
+      }
     }));
+
+    console.log('🔵 S3 Plugin registered. Files will be uploaded after webpack compilation.');
+  } else {
+    console.log('⚠️  S3 Plugin: AWS_ACCESS_KEY_ID not found, S3 upload disabled');
   }
 
   // Remove default Nx CSS handling to use our own
