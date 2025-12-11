@@ -1,3 +1,10 @@
+## [0.8.2](https://github.com/aldor007/mkaciuba/compare/photos-0.8.1...photos-0.8.2) (2025-12-11)
+
+
+### Bug Fixes
+
+* properly handle optional dist/ in Docker builds ([9e23a3a](https://github.com/aldor007/mkaciuba/commit/9e23a3abe6bff50a41cbeb1609f0d71cf518cd5a))
+
 ## [0.8.1](https://github.com/aldor007/mkaciuba/compare/photos-0.8.0...photos-0.8.1) (2025-12-10)
 
 
