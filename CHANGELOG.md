@@ -1,3 +1,24 @@
+# [0.13.0](https://github.com/aldor007/mkaciuba/compare/photos-0.12.1...photos-0.13.0) (2025-12-11)
+
+
+### Bug Fixes
+
+* Add SSR server wait time and logging to release pipeline ([4511e17](https://github.com/aldor007/mkaciuba/commit/4511e177f46e152cce7ec0325987f2aba60850ca))
+* **e2e:** adjust test assertions for better reliability ([ebd7110](https://github.com/aldor007/mkaciuba/commit/ebd711039db01485aee221fea781c805ea079707))
+* **e2e:** disable Cypress Cloud parallel execution ([997492c](https://github.com/aldor007/mkaciuba/commit/997492cc2deb4485999273cb4c8ff370e05e2bb8))
+* Replace webpack S3 plugins with post-build upload script ([faa89e6](https://github.com/aldor007/mkaciuba/commit/faa89e656044896a4b733734e17064611a141f93))
+* resolve duplicate HelmetProvider causing empty SSR meta tags ([dbe6faf](https://github.com/aldor007/mkaciuba/commit/dbe6fafa4971c7508ac13f738d78879dc97987a2))
+
+
+### Features
+
+* Add comprehensive debug logging for E2E failures ([a3c8012](https://github.com/aldor007/mkaciuba/commit/a3c801241b1151a3ad99ccb53fd7ec1e9bc0e544))
+* Add Cypress artifacts upload to release pipeline ([4a25ec9](https://github.com/aldor007/mkaciuba/commit/4a25ec90765567aa2c8bcaf742ac0c9410293d94))
+* enable S3 upload in semantic-release workflow ([c9522c2](https://github.com/aldor007/mkaciuba/commit/c9522c2b9c9a42a0ba8185d5676b313c35caa89e))
+* Increase E2E test retries and timeouts for flaky test resilience ([bf67c68](https://github.com/aldor007/mkaciuba/commit/bf67c6826dbef818ad5ce4faf5cd4f9ba7893118))
+* switch from webpack-s3-plugin to webpack-s3-uploader ([5874fa0](https://github.com/aldor007/mkaciuba/commit/5874fa04e242895363ca7f4920ed3ded6d571f2a))
+* Update workflows to use post-build S3 upload script ([c1995cb](https://github.com/aldor007/mkaciuba/commit/c1995cbd4bcd62bc30d66b7dc969c58835a5a206))
+
 ## [0.12.1](https://github.com/aldor007/mkaciuba/compare/photos-0.12.0...photos-0.12.1) (2025-12-11)
 
 
