@@ -1,3 +1,10 @@
+## [0.13.2](https://github.com/aldor007/mkaciuba/compare/photos-0.13.1...photos-0.13.2) (2025-12-11)
+
+
+### Bug Fixes
+
+* more assets debug ([48826c3](https://github.com/aldor007/mkaciuba/commit/48826c3e83aedca9993f17d0b3ebdb63410d48df))
+
 ## [0.13.1](https://github.com/aldor007/mkaciuba/compare/photos-0.13.0...photos-0.13.1) (2025-12-11)
 
 
