@@ -1,3 +1,11 @@
+# [0.10.0](https://github.com/aldor007/mkaciuba/compare/photos-0.9.0...photos-0.10.0) (2025-12-11)
+
+
+### Features
+
+* add AWS credentials check in deployment workflow ([4bf87c9](https://github.com/aldor007/mkaciuba/commit/4bf87c98e51f8d214b0daa20c86577f34a2aeae5))
+* add webpack compilation hooks for S3 upload debugging ([3236bcd](https://github.com/aldor007/mkaciuba/commit/3236bcdf0c04fe08ccd6a71ddfdac03ccb574b24))
+
 # [0.9.0](https://github.com/aldor007/mkaciuba/compare/photos-0.8.3...photos-0.9.0) (2025-12-11)
 
 
