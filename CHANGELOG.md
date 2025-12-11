@@ -1,3 +1,10 @@
+## [0.13.1](https://github.com/aldor007/mkaciuba/compare/photos-0.13.0...photos-0.13.1) (2025-12-11)
+
+
+### Bug Fixes
+
+* **docker:** disable content hashing for photos-ssr main.js ([ed1252d](https://github.com/aldor007/mkaciuba/commit/ed1252dca8157def43cc5b2ac328ad3517745881))
+
 # [0.13.0](https://github.com/aldor007/mkaciuba/compare/photos-0.12.1...photos-0.13.0) (2025-12-11)
 
 
