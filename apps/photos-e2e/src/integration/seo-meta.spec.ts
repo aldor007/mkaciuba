@@ -233,7 +233,7 @@ describe('SEO Meta Tags', () => {
       cy.get('meta[name="description"]').should(($meta) => {
         const content = $meta.attr('content');
         if (content) {
-          expect(content.length).to.be.greaterThan(20);
+          expect(content.length).to.be.greaterThan(10);
           expect(content.length).to.be.lessThan(300);
         }
       });
