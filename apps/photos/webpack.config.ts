@@ -65,7 +65,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
       endpoint: process.env.AWS_ENDPOINT || 'default',
     });
 
-    config.plugins.push(new S3Plugin({
+    const s3Plugin = new S3Plugin({
        exclude: /.*\.html$/,
       s3Options: {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -82,6 +82,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
       },
       basePath: process.env.AWS_BASE_PATH,
       progress: (percent, message, fileName) => {
+        console.log(`📤 S3 Upload progress callback: percent=${percent}, message=${message}, fileName=${fileName}`);
         if (percent === 100) {
           console.log(`✅ S3 Upload complete: ${message}`);
         } else {
@@ -89,7 +90,30 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
           console.log(`📤 S3 Upload [${percent}%]: ${fileName} -> s3://${process.env.AWS_BUCKET}/${s3Path}`);
         }
       }
-    }));
+    });
+
+    config.plugins.push(s3Plugin);
+
+    // Add webpack hook to track S3 plugin execution
+    config.plugins.push({
+      apply: (compiler) => {
+        compiler.hooks.afterEmit.tap('S3UploadLogger', (compilation) => {
+          console.log('🔵 Webpack afterEmit hook: Build complete, S3 plugin should now upload files');
+          const assets = Object.keys(compilation.assets);
+          console.log(`🔵 Total assets emitted: ${assets.length}`);
+          console.log(`🔵 CSS assets: ${assets.filter(a => a.endsWith('.css')).join(', ')}`);
+        });
+
+        compiler.hooks.done.tap('S3UploadLogger', (stats) => {
+          console.log('🔵 Webpack done hook: Compilation finished');
+          if (stats.hasErrors()) {
+            console.log('❌ Compilation had errors');
+          } else {
+            console.log('✅ Compilation successful, waiting for S3 upload...');
+          }
+        });
+      }
+    });
 
     console.log('🔵 S3 Plugin registered. Files will be uploaded after webpack compilation.');
   } else {
