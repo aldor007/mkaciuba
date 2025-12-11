@@ -44,6 +44,16 @@ try {
   const manifestContent = fs.readFileSync(manifestPath, 'utf-8');
   try {
     manifest = JSON.parse(manifestContent);
+    console.info('📦 Loaded manifest.json from:', manifestPath);
+    console.info('📦 Manifest entries:', Object.keys(manifest).length);
+    console.info('📦 Key manifest mappings:');
+    ['main.js', 'main.css', 'runtime.js', 'assets/default-skin.css', 'assets/photos.css'].forEach(key => {
+      if (manifest[key]) {
+        console.info(`   ${key} -> ${manifest[key]}`);
+      } else {
+        console.warn(`   ${key} -> NOT FOUND in manifest`);
+      }
+    });
   } catch (parseError) {
     console.error(`Failed to parse JSON from manifest file at "${manifestPath}". Content preview: "${manifestContent?.substring(0, 200)}...". Error: ${parseError.message}`);
     throw new Error(`Invalid JSON in manifest file: ${parseError.message}`);
@@ -82,6 +92,16 @@ scripts.push(getAssetPath('runtime.js'))
 scripts.push(getAssetPath('main.js'))
 
 scripts = scripts.filter(x => x)
+
+// Log resolved asset paths for debugging
+console.info('🎨 Assets base path:', assetsPath);
+console.info('🎨 Assets URL prefix:', process.env.ASSETS_URL || '/assets');
+console.info('🎨 Resolved asset paths:');
+console.info('  - main.css:', getAssetPath('main.css'));
+console.info('  - main.js:', getAssetPath('main.js'));
+console.info('  - runtime.js:', getAssetPath('runtime.js'));
+console.info('  - default-skin.css:', getAssetPath('assets/default-skin.css'));
+console.info('  - photos.css:', getAssetPath('assets/photos.css'));
 
 const app = express();
 app.use(cookeParser())

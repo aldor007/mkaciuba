@@ -49,11 +49,12 @@ const s3Client = new S3Client({
 
 console.log('🔵 S3 Upload: Starting upload to S3...');
 console.log('🔵 S3 Config:', {
-  bucket: config.bucket.substring(0, 3) + '***',
+  bucket: config.bucket,
   region: config.region,
-  basePath: config.basePath ? config.basePath + '***' : '(root)',
+  basePath: config.basePath || '(root)',
   distDir: config.distDir
 });
+console.log('🔵 S3 Base URL: https://' + config.bucket + '.s3.' + config.region + '.amazonaws.com/' + config.basePath);
 
 /**
  * Get all files to upload (exclude source maps and other non-essential files)
@@ -110,7 +111,8 @@ async function uploadFile(filePath) {
 
   try {
     await s3Client.send(command);
-    return { success: true, file: filePath, key: s3Key };
+    const s3Url = `https://${config.bucket}.s3.${config.region}.amazonaws.com/${s3Key}`;
+    return { success: true, file: filePath, key: s3Key, url: s3Url };
   } catch (error) {
     return { success: false, file: filePath, key: s3Key, error: error.message };
   }
@@ -160,6 +162,20 @@ async function main() {
       console.log(`      - ${f.file}: ${f.error}`);
     });
   }
+
+  // Show sample of uploaded files with their URLs
+  console.log(`\n📤 Sample uploaded files:`);
+  const importantFiles = successful.filter(f =>
+    f.file === 'manifest.json' ||
+    f.file.includes('main.') ||
+    f.file.endsWith('.css') ||
+    f.file === 'index.html'
+  ).slice(0, 10);
+
+  importantFiles.forEach(f => {
+    console.log(`   ✅ ${f.file}`);
+    console.log(`      → ${f.url}`);
+  });
 
   // Verify critical files (CSS and manifest)
   console.log(`\n🔍 Verifying critical files...`);

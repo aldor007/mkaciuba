@@ -43,8 +43,11 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     plugin => !(plugin instanceof MiniCssExtractPlugin)
   );
 
+  // Use contenthash for CSS files in production, simple names in development
+  // This ensures consistent behavior with JS files (controlled by outputHashing in project.json)
+  const cssFilename = process.env.NODE_ENV === 'production' ? '[name].[contenthash].css' : '[name].css';
   config.plugins.push( new MiniCssExtractPlugin({
-    filename: '[name].[hash].css',
+    filename: cssFilename,
   }));
   config.plugins.push(new WebpackManifestPlugin({
     generate: (seed, files, entries) => {
