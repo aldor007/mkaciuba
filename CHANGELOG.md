@@ -1,3 +1,10 @@
+# [0.11.0](https://github.com/aldor007/mkaciuba/compare/photos-0.10.1...photos-0.11.0) (2025-12-11)
+
+
+### Features
+
+* add S3 plugin directory option and enhanced error handling ([c76ce62](https://github.com/aldor007/mkaciuba/commit/c76ce62f91b39d830e328f575101802a3c8000b2))
+
 ## [0.10.1](https://github.com/aldor007/mkaciuba/compare/photos-0.10.0...photos-0.10.1) (2025-12-11)
 
 
