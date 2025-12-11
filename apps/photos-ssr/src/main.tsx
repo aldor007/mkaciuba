@@ -260,8 +260,13 @@ app.get('*', async (req, res) => {
       // Extract the entirety of the Apollo Client cache's current state
       const initialState = client.extract();
 
-      // Extract helmet data after rendering
+      // Render the app content to string (forces lazy components to load)
+      // NOTE: This MUST happen before extracting helmet data!
+      const appContent = renderToString(staticApp);
+
+      // Extract helmet data AFTER rendering (react-helmet-async populates context during renderToString)
       const { helmet } = helmetContext;
+
       const headTags = `
         ${helmet?.title?.toString() || ''}
         ${helmet?.meta?.toString() || ''}
@@ -275,9 +280,6 @@ app.get('*', async (req, res) => {
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="${getAssetPath('assets/default-skin.css')}" rel="stylesheet"/>
         <link href="${getAssetPath('assets/photos.css')}" rel="stylesheet"/>`
-
-      // Render the app content to string (forces lazy components to load)
-      const appContent = renderToString(staticApp);
       // Add both the page content and the cache state to a top-level component
       const html = <Html state={initialState} meta={meta} scripts={scripts} content={appContent} />;
       const headers = {

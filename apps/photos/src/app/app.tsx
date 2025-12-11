@@ -100,17 +100,27 @@ export const App = ({ client }: AppsProps) => {
       });
     }
   }
-  return (
-      <HelmetProvider>
-        <ApolloProvider client={client}>
-          <Tracking />
-          <ScrollToTop />
-          <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-pulse text-lg">Loading...</div></div>}>
-            <AppRoutesComponent />
-          </Suspense>
-        </ApolloProvider>
-      </HelmetProvider>
+
+  // Don't wrap in HelmetProvider here - SSR code in photos-ssr/main.tsx provides it
+  // with the helmetContext. In browser mode, the window.__APOLLO_STATE__ check tells us
+  // we're hydrating SSR content, so HelmetProvider is already in the tree.
+  const content = (
+    <ApolloProvider client={client}>
+      <Tracking />
+      <ScrollToTop />
+      <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-pulse text-lg">Loading...</div></div>}>
+        <AppRoutesComponent />
+      </Suspense>
+    </ApolloProvider>
   );
+
+  // Only wrap in HelmetProvider if we're NOT in SSR mode (no client passed) AND not hydrating
+  // This ensures browser-only renders (e.g., development) still work
+  if (!client && typeof window !== 'undefined' && !window.__APOLLO_STATE__) {
+    return <HelmetProvider>{content}</HelmetProvider>;
+  }
+
+  return content;
 };
 
 export default App;

@@ -71,24 +71,6 @@ jobs:
           echo "=== Photos SSR Server Logs After E2E ==="
           cat photos-ssr.log || echo "No logs found"
 
-      - name: Upload Cypress artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cypress-artifacts
-          path: |
-            dist/cypress/apps/photos-e2e/videos/**/*
-            dist/cypress/apps/photos-e2e/screenshots/**/*
-          retention-days: 7
-
-      - name: Upload SSR server logs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: ssr-server-logs
-          path: photos-ssr.log
-          retention-days: 7
-
       - name: Stop servers
         if: always()
         run: |

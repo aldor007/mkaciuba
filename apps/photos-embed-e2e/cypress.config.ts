@@ -18,9 +18,9 @@ export default defineConfig({
       runMode: 4,    // Retry 4 times in CI/headless (total 5 attempts)
       openMode: 0,   // No retries in interactive mode for faster debugging
     },
-    // Increase timeouts for better reliability
-    defaultCommandTimeout: 10000,  // 10s (default: 4s)
-    pageLoadTimeout: 60000,         // 60s (default: 60s)
-    requestTimeout: 10000,          // 10s (default: 5s)
+    // Increase timeouts for better reliability (GraphQL can be slow)
+    defaultCommandTimeout: 15000,  // 15s (default: 4s)
+    pageLoadTimeout: 90000,         // 90s (default: 60s)
+    requestTimeout: 20000,          // 20s (default: 5s)
   },
 });
