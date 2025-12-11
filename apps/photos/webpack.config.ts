@@ -49,8 +49,9 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     generate: (seed, files, entries) => {
       const manifest = {};
       files.forEach(file => {
-        // Use file.name for both key and value to avoid "auto" prefix
-        manifest[file.name] = file.name;
+        // Map original filename to hashed filename for CDN assets
+        // Strip 'auto' prefix that webpack adds to file.path
+        manifest[file.name] = file.path.replace(/^auto/, '');
       });
       return manifest;
     }
