@@ -93,31 +93,6 @@ jobs:
         id: ssr
       - name: Wait for SSR server
         run: sleep 5
-      - name: Debug - Check manifest.json
-        run: |
-          echo "=== Manifest Contents ==="
-          cat dist/apps/photos/manifest.json || echo "Manifest not found"
-          echo ""
-          echo "=== Dist Directory Structure ==="
-          ls -la dist/apps/photos/ || echo "Photos dist not found"
-          echo ""
-          echo "=== Check for runtime.js ==="
-          find dist/apps/photos/ -name "runtime*.js" || echo "No runtime.js found"
-      - name: Debug - Test SSR HTML output
-        run: |
-          echo "=== Testing SSR HTML Output ==="
-          curl -s http://localhost:3333 | head -100 > ssr-output.html
-          echo "First 50 lines of SSR output:"
-          head -50 ssr-output.html
-          echo ""
-          echo "=== Checking for meta tags ==="
-          grep -i "meta" ssr-output.html || echo "No meta tags found"
-          echo ""
-          echo "=== Checking for title ==="
-          grep -i "title" ssr-output.html || echo "No title found"
-          echo ""
-          echo "=== Checking Helmet data attributes ==="
-          grep -i "data-react-helmet" ssr-output.html || echo "No Helmet attributes found"
       - name: Run E2E tests
         run: yarn nx e2e photos-e2e --ci --skip-serve
         env:
