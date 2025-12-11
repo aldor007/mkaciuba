@@ -1,3 +1,10 @@
+## [0.10.1](https://github.com/aldor007/mkaciuba/compare/photos-0.10.0...photos-0.10.1) (2025-12-11)
+
+
+### Bug Fixes
+
+* correct S3 plugin progress option and add validation ([1ca3926](https://github.com/aldor007/mkaciuba/commit/1ca3926e39dfa8890fd9b905c8111bc6f3b2eb55))
+
 # [0.10.0](https://github.com/aldor007/mkaciuba/compare/photos-0.9.0...photos-0.10.0) (2025-12-11)
 
 
