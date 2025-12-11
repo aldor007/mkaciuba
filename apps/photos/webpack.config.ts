@@ -74,6 +74,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
 
     const s3Plugin = new S3Plugin({
        exclude: /.*\.html$/,
+      directory: config.output?.path,  // Explicitly set output directory
       s3Options: {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID,
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -90,6 +91,8 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
       basePath: process.env.AWS_BASE_PATH,
       progress: true  // Boolean to enable built-in progress bar
     });
+
+    console.log('🔵 S3 Plugin will upload from directory:', config.output?.path);
 
     console.log('🔵 S3 Plugin options configured:', {
       hasExclude: true,
@@ -118,6 +121,20 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
           } else {
             console.log('✅ Compilation successful, waiting for S3 upload...');
           }
+        });
+
+        // Catch S3 plugin errors
+        compiler.hooks.failed.tap('S3UploadErrorLogger', (error) => {
+          console.log('❌ Webpack failed hook triggered:', error);
+        });
+
+        // Wait a bit to see S3 output
+        compiler.hooks.done.tapAsync('WaitForS3', (stats, callback) => {
+          console.log('🔵 Waiting 3 seconds for S3 upload to complete...');
+          setTimeout(() => {
+            console.log('🔵 Post-compilation wait complete. Check above for S3 upload output or errors.');
+            callback();
+          }, 3000);
         });
       }
     });
