@@ -104,6 +104,15 @@ jobs:
             kill $(cat photos-ssr.pid) || true
           fi
           pkill -f photos-ssr || true
+      - name: Upload Cypress artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-artifacts-release
+          path: |
+            dist/cypress/apps/photos-e2e/videos/**/*
+            dist/cypress/apps/photos-e2e/screenshots/**/*
+          retention-days: 7
       - name: Upload SSR server logs
         if: always()
         uses: actions/upload-artifact@v4
@@ -111,8 +120,6 @@ jobs:
           name: ssr-server-logs-release
           path: photos-ssr.log
           retention-days: 7
-        env:
-          NODE_ENV: production
       - run: npx semantic-release@19
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
