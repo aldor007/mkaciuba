@@ -142,7 +142,7 @@
     "typescript": "~4.9.5",
     "webpack-bundle-analyzer": "^4.4.2",
     "webpack-manifest-plugin": "^3.1.1",
-    "webpack-s3-plugin": "^1.2.0-rc.0"
+    "webpack-s3-uploader": "https://github.com/ad34/webpack5-s3-uploader.git"
   },
   "author": {
     "name": "Marcin Kaciuba"

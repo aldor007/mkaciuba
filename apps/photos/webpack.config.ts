@@ -4,7 +4,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const TerserPlugin = require("terser-webpack-plugin");
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const S3Plugin = require('webpack-s3-plugin');
+const S3Plugin = require('webpack-s3-uploader');
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const gitsha = require('gitsha')
 
