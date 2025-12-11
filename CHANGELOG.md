@@ -1,3 +1,10 @@
+# [0.12.0](https://github.com/aldor007/mkaciuba/compare/photos-0.11.0...photos-0.12.0) (2025-12-11)
+
+
+### Features
+
+* add S3 upload validation after build ([1489bf3](https://github.com/aldor007/mkaciuba/commit/1489bf3778fb74b3c5d76643f8b30f61d8c30bfe))
+
 # [0.11.0](https://github.com/aldor007/mkaciuba/compare/photos-0.10.1...photos-0.11.0) (2025-12-11)
 
 
