@@ -64,6 +64,13 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
       basePath: process.env.AWS_BASE_PATH,
       endpoint: process.env.AWS_ENDPOINT || 'default',
     });
+    console.log('🔵 S3 Config validation:', {
+      bucketDefined: !!process.env.AWS_BUCKET,
+      bucketValue: process.env.AWS_BUCKET ? `${process.env.AWS_BUCKET.substring(0, 3)}...` : 'UNDEFINED',
+      regionDefined: !!process.env.AWS_REGION,
+      accessKeyDefined: !!process.env.AWS_ACCESS_KEY_ID,
+      secretKeyDefined: !!process.env.AWS_SECRET_ACCESS_KEY,
+    });
 
     const s3Plugin = new S3Plugin({
        exclude: /.*\.html$/,
@@ -81,15 +88,15 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
         ACL: 'private'
       },
       basePath: process.env.AWS_BASE_PATH,
-      progress: (percent, message, fileName) => {
-        console.log(`📤 S3 Upload progress callback: percent=${percent}, message=${message}, fileName=${fileName}`);
-        if (percent === 100) {
-          console.log(`✅ S3 Upload complete: ${message}`);
-        } else {
-          const s3Path = process.env.AWS_BASE_PATH ? `${process.env.AWS_BASE_PATH}/${fileName}` : fileName;
-          console.log(`📤 S3 Upload [${percent}%]: ${fileName} -> s3://${process.env.AWS_BUCKET}/${s3Path}`);
-        }
-      }
+      progress: true  // Boolean to enable built-in progress bar
+    });
+
+    console.log('🔵 S3 Plugin options configured:', {
+      hasExclude: true,
+      hasS3Options: true,
+      hasUploadOptions: true,
+      uploadBucket: s3Plugin.uploadOptions?.Bucket ? 'SET' : 'NOT SET',
+      basePath: s3Plugin.options?.basePath || 'NOT SET',
     });
 
     config.plugins.push(s3Plugin);
