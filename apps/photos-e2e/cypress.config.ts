@@ -13,6 +13,9 @@ export default defineConfig({
     screenshotsFolder: '../../dist/cypress/apps/photos-e2e/screenshots',
     chromeWebSecurity: false,
     baseUrl: 'http://localhost:3333',
+    // Enable experimental parallel spec execution
+    experimentalMemoryManagement: true,
+    numTestsKeptInMemory: 0,
     // Increased retries for flaky test resilience
     retries: {
       runMode: 4,    // Retry 4 times in CI/headless (total 5 attempts)

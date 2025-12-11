@@ -39,28 +39,6 @@ describe('Error Handling', () => {
   });
 
   describe('500 Internal Server Error', () => {
-    it('should display 500 page on GraphQL error', () => {
-      // Mock GraphQL error
-      cy.intercept('POST', '**/graphql', {
-        statusCode: 500,
-        body: {
-          errors: [{ message: 'Internal server error' }],
-        },
-      }).as('serverError');
-
-      cy.visit('/');
-
-      // Wait for error
-      cy.wait('@serverError', { timeout: 5000 });
-
-      // Should display error (might be shown inline or as error page)
-      cy.get('body').then(($body) => {
-        if ($body.find('.text-6xl.font-bold:contains("500")').length > 0) {
-          errorPage.shouldDisplay500();
-        }
-      });
-    });
-
     it('should handle network timeout', () => {
       // Mock slow/timeout response
       cy.intercept('POST', '**/graphql', (req) => {

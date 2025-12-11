@@ -1,0 +1,69 @@
+yarn run v1.22.22
+$ nx serve photos-ssr
+
+> nx run photos-ssr:serve
+
+
+warn - The `purge`/`content` options have changed in Tailwind CSS v3.0.
+warn - Update your configuration file to eliminate this warning.
+warn - https://tailwindcss.com/docs/upgrade-guide#configure-content-sources
+chunk (runtime: main) [1m[32mlibs_image_src_index_ts.js[39m[22m 11.1 KiB [1m[32m[rendered][39m[22m [1m[33msplit chunk (cache group: default)[39m[22m
+chunk (runtime: main) [1m[32mmain.js[39m[22m (main) 33.3 KiB (javascript) 2.39 KiB (runtime) [1m[33m[entry][39m[22m [1m[32m[rendered][39m[22m
+chunk (runtime: main) [1m[32mphotos_src_app_components_Footer_tsx-photos_src_app_components_Navbar_tsx.js[39m[22m 15.6 KiB [1m[32m[rendered][39m[22m [1m[33msplit chunk (cache group: default)[39m[22m
+chunk (runtime: main) [1m[32mphotos_src_app_pages_Categories_tsx.js[39m[22m 6.5 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: main) [1m[32mphotos_src_app_pages_GalleryBlog_tsx.js[39m[22m 785 bytes [1m[32m[rendered][39m[22m
+chunk (runtime: main) [1m[32mphotos_src_app_pages_Home_tsx.js[39m[22m 9.53 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: main) [1m[32mphotos_src_app_pages_IframePhotos_tsx.js[39m[22m 318 bytes [1m[32m[rendered][39m[22m
+chunk (runtime: main) [1m[32mphotos_src_app_pages_Login_tsx.js[39m[22m 4.37 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: main) [1m[32mphotos_src_app_pages_OldPosts_tsx.js[39m[22m 1.03 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: main) [1m[32mphotos_src_app_pages_Page_tsx.js[39m[22m 2.87 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: main) [1m[32mphotos_src_app_pages_Photos_tsx.js[39m[22m 3.5 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: main) [1m[32mphotos_src_app_pages_PostCategory_tsx.js[39m[22m 10.4 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: main) [1m[32mphotos_src_app_pages_PostTag_tsx.js[39m[22m 9.5 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: main) [1m[32mphotos_src_app_pages_Post_tsx.js[39m[22m 14.9 KiB [1m[32m[rendered][39m[22m
+webpack compiled [1m[32msuccessfully[39m[22m (6ac52df4e5f3bffa)
+No errors found.
+Debugger listening on ws://localhost:9229/24312090-0201-44e4-829e-2c247df68f01
+Debugger listening on ws://localhost:9229/24312090-0201-44e4-829e-2c247df68f01
+For help, see: https://nodejs.org/en/docs/inspector
+Scripts [ '/assets/vendor.js', '/assets/runtime.js', '/assets/main.js' ] development
+Apollo url https://mkaciuba.pl/graphql
+Listening at http://0.0.0.0:3333
+No routes matched location "/.well-known/appspecific/com.chrome.devtools.json" 
+No routes matched location "/.well-known/appspecific/com.chrome.devtools.json" 
+Warning: FontAwesomeIcon: Support for defaultProps will be removed from function components in a future major release. Use JavaScript default parameters instead.
+    at FontAwesomeIcon (/Users/mkaciuba/priv/mkaciuba/node_modules/@fortawesome/react-fontawesome/index.js:341:29)
+    at a
+    at li
+    at ul
+    at div
+    at div
+    at nav
+    at div
+    at Navbar (/Users/mkaciuba/priv/mkaciuba/dist/apps/photos-ssr/photos_src_app_components_Footer_tsx-photos_src_app_components_Navbar_tsx.js:251:90)
+    at PostNavbar (/Users/mkaciuba/priv/mkaciuba/dist/apps/photos-ssr/photos_src_app_pages_Home_tsx.js:98:100)
+    at Home
+    at Lazy
+    at RenderedRoute (/Users/mkaciuba/priv/mkaciuba/node_modules/react-router/dist/umd/react-router.development.js:539:7)
+    at Routes (/Users/mkaciuba/priv/mkaciuba/node_modules/react-router/dist/umd/react-router.development.js:1273:7)
+    at AppRoutesComponent
+    at Suspense
+    at ApolloProvider (/Users/mkaciuba/priv/mkaciuba/node_modules/@apollo/client/react/context/context.cjs:50:21)
+    at _HelmetProvider (/Users/mkaciuba/priv/mkaciuba/node_modules/react-helmet-async/lib/index.js:483:5)
+    at App (/Users/mkaciuba/priv/mkaciuba/dist/apps/photos-ssr/main.js:688:16)
+    at _HelmetProvider (/Users/mkaciuba/priv/mkaciuba/node_modules/react-helmet-async/lib/index.js:483:5)
+    at Router (/Users/mkaciuba/priv/mkaciuba/node_modules/react-router/dist/umd/react-router.development.js:1207:17)
+    at StaticRouter (/Users/mkaciuba/priv/mkaciuba/node_modules/react-router-dom/server.js:35:3)
+No routes matched location "/.well-known/appspecific/com.chrome.devtools.json" 
+No routes matched location "/.well-known/appspecific/com.chrome.devtools.json" 
+
+ 
+
+ >  NX   Running target serve for project photos-ssr failed
+
+   Failed tasks:
+   
+   - photos-ssr:serve
+   
+   Hint: run the command with --verbose for more details.
+
