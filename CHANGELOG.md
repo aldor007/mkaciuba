@@ -1,3 +1,11 @@
+## [0.12.1](https://github.com/aldor007/mkaciuba/compare/photos-0.12.0...photos-0.12.1) (2025-12-11)
+
+
+### Bug Fixes
+
+* improve S3 validation error reporting ([9861250](https://github.com/aldor007/mkaciuba/commit/9861250895d5ae3ef2ffad8ee4ab12c2b9f824a8))
+* remove directory option from S3 plugin to use webpack assets ([621862d](https://github.com/aldor007/mkaciuba/commit/621862d253d7717a3dbde25c16c5728e7dfb1596))
+
 # [0.12.0](https://github.com/aldor007/mkaciuba/compare/photos-0.11.0...photos-0.12.0) (2025-12-11)
 
 
