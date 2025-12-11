@@ -1,3 +1,10 @@
+## [0.8.3](https://github.com/aldor007/mkaciuba/compare/photos-0.8.2...photos-0.8.3) (2025-12-11)
+
+
+### Bug Fixes
+
+* generate correct manifest.json with hashed filenames ([285186c](https://github.com/aldor007/mkaciuba/commit/285186cb3461a8d0d1a9c388c73dca65a4dd1114))
+
 ## [0.8.2](https://github.com/aldor007/mkaciuba/compare/photos-0.8.1...photos-0.8.2) (2025-12-11)
 
 
