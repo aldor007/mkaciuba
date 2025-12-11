@@ -160,8 +160,9 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
                   console.log(`✅ S3 verified: ${key}`);
                   return { file, key, exists: true };
                 } catch (err) {
-                  console.log(`❌ S3 FAILED: ${key} - ${err.message}`);
-                  return { file, key, exists: false, error: err.message };
+                  const errorMsg = err.code || err.message || JSON.stringify(err);
+                  console.log(`❌ S3 FAILED: ${key} - ${errorMsg}`);
+                  return { file, key, exists: false, error: errorMsg };
                 }
               })
             );
