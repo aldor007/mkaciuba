@@ -4,7 +4,8 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const TerserPlugin = require("terser-webpack-plugin");
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const S3Plugin = require('webpack-s3-uploader');
+// S3 upload now handled by post-build script (tools/upload-to-s3.js)
+// const S3Plugin = require('webpack-s3-plugin');
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const gitsha = require('gitsha')
 
@@ -56,136 +57,9 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
       return manifest;
     }
   }));
-  if (process.env.AWS_ACCESS_KEY_ID) {
-    console.log('🔵 S3 Plugin: AWS credentials detected, enabling S3 upload');
-    console.log('🔵 S3 Config:', {
-      bucket: process.env.AWS_BUCKET,
-      region: process.env.AWS_REGION,
-      basePath: process.env.AWS_BASE_PATH,
-      endpoint: process.env.AWS_ENDPOINT || 'default',
-    });
-    console.log('🔵 S3 Config validation:', {
-      bucketDefined: !!process.env.AWS_BUCKET,
-      bucketValue: process.env.AWS_BUCKET ? `${process.env.AWS_BUCKET.substring(0, 3)}...` : 'UNDEFINED',
-      regionDefined: !!process.env.AWS_REGION,
-      accessKeyDefined: !!process.env.AWS_ACCESS_KEY_ID,
-      secretKeyDefined: !!process.env.AWS_SECRET_ACCESS_KEY,
-    });
 
-    const s3Plugin = new S3Plugin({
-       exclude: /.*\.html$/,
-      // directory: config.output?.path,  // Removed - use webpack compilation assets instead
-      s3Options: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-        region: process.env.AWS_REGION,
-        computeChecksums: true,
-        // s3ForcePathStyle: true,
-        // sslEnabled: false,
-        endpoint: process.env.AWS_ENDPOINT,
-      },
-      s3UploadOptions: {
-        Bucket: process.env.AWS_BUCKET,
-        ACL: 'private'
-      },
-      basePath: process.env.AWS_BASE_PATH,
-      progress: true  // Boolean to enable built-in progress bar
-    });
-
-    console.log('🔵 S3 Plugin options configured:', {
-      hasExclude: true,
-      hasS3Options: true,
-      hasUploadOptions: true,
-      uploadBucket: s3Plugin.uploadOptions?.Bucket ? 'SET' : 'NOT SET',
-      basePath: s3Plugin.options?.basePath || 'NOT SET',
-    });
-
-    config.plugins.push(s3Plugin);
-
-    // Add webpack hook to track S3 plugin execution
-    config.plugins.push({
-      apply: (compiler) => {
-        compiler.hooks.afterEmit.tap('S3UploadLogger', (compilation) => {
-          console.log('🔵 Webpack afterEmit hook: Build complete, S3 plugin should now upload files');
-          const assets = Object.keys(compilation.assets);
-          console.log(`🔵 Total assets emitted: ${assets.length}`);
-          console.log(`🔵 CSS assets: ${assets.filter(a => a.endsWith('.css')).join(', ')}`);
-        });
-
-        compiler.hooks.done.tap('S3UploadLogger', (stats) => {
-          console.log('🔵 Webpack done hook: Compilation finished');
-          if (stats.hasErrors()) {
-            console.log('❌ Compilation had errors');
-          } else {
-            console.log('✅ Compilation successful, waiting for S3 upload...');
-          }
-        });
-
-        // Catch S3 plugin errors
-        compiler.hooks.failed.tap('S3UploadErrorLogger', (error) => {
-          console.log('❌ Webpack failed hook triggered:', error);
-        });
-
-        // Wait for S3 upload, then validate
-        compiler.hooks.done.tapAsync('WaitForS3', async (stats, callback) => {
-          console.log('🔵 Waiting 3 seconds for S3 upload to complete...');
-          await new Promise(resolve => setTimeout(resolve, 3000));
-          console.log('🔵 Validating S3 upload...');
-
-          // Validate S3 upload by checking if files exist
-          try {
-            const AWS = require('aws-sdk');
-            const s3 = new AWS.S3({
-              accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-              secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-              region: process.env.AWS_REGION,
-            });
-
-            const basePath = process.env.AWS_BASE_PATH || '';
-            const bucket = process.env.AWS_BUCKET;
-
-            // Check first 3 CSS files
-            const cssAssets = Object.keys(stats.compilation.assets).filter(name => name.endsWith('.css'));
-            const filesToCheck = cssAssets.slice(0, 3);
-
-            console.log(`🔵 Checking ${filesToCheck.length} files in S3 bucket: ${bucket}`);
-
-            const checks = await Promise.all(
-              filesToCheck.map(async (file) => {
-                const key = `${basePath}${file}`.replace(/^\//, '');
-                try {
-                  await s3.headObject({ Bucket: bucket, Key: key }).promise();
-                  console.log(`✅ S3 verified: ${key}`);
-                  return { file, key, exists: true };
-                } catch (err) {
-                  const errorMsg = err.code || err.message || JSON.stringify(err);
-                  console.log(`❌ S3 FAILED: ${key} - ${errorMsg}`);
-                  return { file, key, exists: false, error: errorMsg };
-                }
-              })
-            );
-
-            const uploaded = checks.filter(c => c.exists).length;
-            const total = checks.length;
-
-            if (uploaded === total) {
-              console.log(`✅ S3 Upload SUCCESS: ${uploaded}/${total} files verified`);
-            } else {
-              console.log(`❌ S3 Upload INCOMPLETE: ${uploaded}/${total} files found`);
-            }
-          } catch (error) {
-            console.log('⚠️  S3 validation error:', error.message);
-          }
-
-          callback();
-        });
-      }
-    });
-
-    console.log('🔵 S3 Plugin registered. Files will be uploaded after webpack compilation.');
-  } else {
-    console.log('⚠️  S3 Plugin: AWS_ACCESS_KEY_ID not found, S3 upload disabled');
-  }
+  // S3 upload now handled by post-build script: node tools/upload-to-s3.js
+  // See .github/workflows for usage
 
   // Remove default Nx CSS handling to use our own
   const cssRuleIndex = config.module.rules.findIndex(rule =>
