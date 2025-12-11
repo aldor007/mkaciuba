@@ -12,5 +12,5 @@ export const getCacheKey = (req: {
   headers: Record<string, any>;
   cookies: Record<string, any>;
 }): string => {
-  return `v4:${req.path}|${req.query.page || ''}|${req.headers['x-gallery-token'] || ''}|${req.cookies.category_token || ''}`;
+  return `v5:${req.path}|${req.query.page || ''}|${req.headers['x-gallery-token'] || ''}|${req.cookies.category_token || ''}`;
 };
