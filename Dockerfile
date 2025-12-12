@@ -3,6 +3,10 @@
 # Build stage
 FROM node:20-alpine AS builder
 
+# Accept version as build argument
+ARG APP_VERSION
+ENV APP_VERSION=${APP_VERSION}
+
 # Install build dependencies
 RUN apk add --no-cache python3 make g++
 
@@ -37,7 +41,8 @@ COPY dist ./dist
 # Disable Nx daemon in Docker to avoid polling issues
 ENV NODE_ENV=production
 ENV NX_DAEMON=false
-RUN if [ ! -d "dist/apps/photos" ] || [ ! -f "dist/apps/photos/manifest.json" ]; then \
+RUN echo "📦 Building with APP_VERSION: ${APP_VERSION:-not set}" && \
+    if [ ! -d "dist/apps/photos" ] || [ ! -f "dist/apps/photos/manifest.json" ]; then \
       echo "Building from source..." && \
       yarn nx build photos --configuration=production && \
       yarn nx build photos-ssr --configuration=production; \
@@ -53,6 +58,10 @@ RUN CSS_FILE=$(find dist/apps/photos/ -name "main*.css" -type f -not -path "*/as
 
 # Production stage
 FROM node:20-alpine
+
+# Accept version as build argument and set as environment variable
+ARG APP_VERSION
+ENV APP_VERSION=${APP_VERSION}
 
 # Only install runtime dependencies (no build tools needed)
 WORKDIR /opt/app
@@ -79,6 +88,9 @@ RUN CSS_FILE=$(find dist/apps/photos/ -name "main*.css" -type f -not -path "*/as
 # Set production environment and expose port
 ENV NODE_ENV=production
 EXPOSE 3000
+
+# Log the version for debugging
+RUN echo "📦 Docker image built with APP_VERSION: ${APP_VERSION:-not set}"
 
 # Use non-root user for security
 USER node

@@ -1,6 +1,6 @@
 
 import { UploadFile } from '@mkaciuba/types';
-import React, { RefObject, useState, useEffect, useCallback, useRef} from 'react';
+import React, { RefObject, useState, useEffect, useCallback, useRef, useMemo} from 'react';
 import { findImageForWidth } from '..';
 import { useWebPSupportCheck } from "react-use-webp-support-check";
 import {
@@ -108,30 +108,43 @@ const addDatePrefix = (url) => {
     return url + prefix + 'cache=' + Date.now()
 }
 
-export const ImageComponent = React.forwardRef(({thumbnails, defaultImage, onClick, alt, className, defaultImgSizing, initialWidth=1900}:ImageComponentProps, ref: RefObject<HTMLImageElement>) => {
-  const [loading, setLoading] = useState(true)
+export const ImageComponent = React.forwardRef(({thumbnails, defaultImage: providedDefaultImage, onClick, alt, className, defaultImgSizing, initialWidth=1900}:ImageComponentProps, ref: RefObject<HTMLImageElement>) => {
   const errorCounterRef = useRef(0);
   const webp = useWebPSupportCheck();
   const width = useWindowWidth({ initialWidth})
+  const loadedImagesRef = useRef(new Set<string>());
 
-  if (!defaultImage) {
-    if (!defaultImgSizing || defaultImgSizing == DefaultImgSizing.DEFAULT) {
-      defaultImage = findImageForWidth(thumbnails, width, webp)
-    } else {
-      defaultImage = findImageForWidthBigger(thumbnails, width, webp)
+  // Memoize the default image calculation to prevent flickering on re-renders
+  const defaultImage = useMemo(() => {
+    if (providedDefaultImage) {
+      return providedDefaultImage;
     }
-  }
 
-  // Fix memory leak: Use useEffect with cleanup for loading timeout
+    if (!defaultImgSizing || defaultImgSizing == DefaultImgSizing.DEFAULT) {
+      return findImageForWidth(thumbnails, width, webp);
+    } else {
+      return findImageForWidthBigger(thumbnails, width, webp);
+    }
+  }, [providedDefaultImage, thumbnails, width, webp, defaultImgSizing]);
+
+  // Only set loading to true if this specific image hasn't been loaded before
+  const imageUrl = defaultImage?.url;
+  const hasLoadedBefore = imageUrl && loadedImagesRef.current.has(imageUrl);
+  const [loading, setLoading] = useState(!hasLoadedBefore);
+
+  // Reset loading state when image URL changes (but only if we haven't loaded it before)
   useEffect(() => {
-    if (loading) {
+    if (imageUrl && !loadedImagesRef.current.has(imageUrl)) {
+      setLoading(true);
+
+      // Fallback timeout in case onLoad doesn't fire
       const timeoutId = setTimeout(() => {
         setLoading(false);
       }, 1500);
 
       return () => clearTimeout(timeoutId);
     }
-  }, [loading]);
+  }, [imageUrl]);
 
   // Fix memory leak: Use useCallback for imageOnError to prevent recreating on every render
   const imageOnError = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
@@ -149,8 +162,11 @@ export const ImageComponent = React.forwardRef(({thumbnails, defaultImage, onCli
   }, []);
 
   const handleLoad = useCallback(() => {
+    if (imageUrl) {
+      loadedImagesRef.current.add(imageUrl);
+    }
     setLoading(false);
-  }, []);
+  }, [imageUrl]);
 
   const classes = `bg-gray-300 ${className || ''} ${loading ? 'animate-pulse bg-opacity-15' : ''}`;
 

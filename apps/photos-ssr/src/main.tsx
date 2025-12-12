@@ -33,9 +33,14 @@ import fs from 'fs';
 import pkgJson from  '../../../package.json';
 import { Cache } from './redis';
 import { getCacheKey } from './cache-utils';
+
 const API_KEY = process.env.API_KEY || '123';
 const CLOUDFLARE_ZONE_ID = process.env.CLOUDFLARE_ZONE_ID;
 const CLOUDFLARE_API_TOKEN = process.env.CLOUDFLARE_API_TOKEN;
+
+// Get app version for asset versioning
+// Priority: APP_VERSION env var (set by semantic-release/CI) > package.json
+const APP_VERSION = process.env.APP_VERSION || pkgJson.version;
 
 const assetsPath = path.join(__dirname, '../photos');
 const manifestPath = path.join(assetsPath, 'manifest.json');
@@ -74,7 +79,16 @@ setImmediate(async () => {
 
 const getAssetPath = (name) => {
   if (manifest[name]) {
-    return (process.env.ASSETS_URL || '/assets') + '/' + manifest[name];
+    // Construct asset path
+    // If ASSETS_URL is set (e.g., CDN), use it with version prefix for cache busting
+    // Otherwise use local /assets path without version (assets are already hashed)
+    if (process.env.ASSETS_URL) {
+      // CDN path with version: https://cdn.example.com/0.0.13/main.js
+      return `${process.env.ASSETS_URL}/${APP_VERSION}/${manifest[name]}`;
+    } else {
+      // Local path without version: /assets/main.js (files already have contenthash)
+      return `/assets/${manifest[name]}`;
+    }
   }
 };
 
@@ -94,9 +108,10 @@ scripts.push(getAssetPath('main.js'))
 scripts = scripts.filter(x => x)
 
 // Log resolved asset paths for debugging
+console.info('📦 App Version:', APP_VERSION);
 console.info('🎨 Assets base path:', assetsPath);
 console.info('🎨 Assets URL prefix:', process.env.ASSETS_URL || '/assets');
-console.info('🎨 Resolved asset paths:');
+console.info('🎨 Resolved asset paths (versioned):');
 console.info('  - main.css:', getAssetPath('main.css'));
 console.info('  - main.js:', getAssetPath('main.js'));
 console.info('  - runtime.js:', getAssetPath('runtime.js'));

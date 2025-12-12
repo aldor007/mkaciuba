@@ -19,18 +19,42 @@ const path = require('path');
 const glob = require('glob');
 const mime = require('mime-types');
 
+// Read version from environment (set by semantic-release) or package.json
+function getAppVersion() {
+  // Priority: APP_VERSION env var (set by semantic-release/CI) > package.json
+  if (process.env.APP_VERSION) {
+    return process.env.APP_VERSION;
+  }
+
+  const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json'), 'utf-8'));
+  return packageJson.version;
+}
+
+const appVersion = getAppVersion();
+
 // Configuration
 // Normalize basePath to ensure it ends with '/' if not empty
+// Add version to the path for versioned assets
 let basePath = process.env.AWS_BASE_PATH || '';
 if (basePath && !basePath.endsWith('/')) {
   basePath += '/';
 }
 
+// Add version to basePath: e.g., "mkaciuba/" becomes "mkaciuba/0.0.13/"
+if (appVersion) {
+  basePath = basePath + appVersion + '/';
+}
+
+// Parse command line arguments
+const isDryRun = process.env.DRY_RUN === 'true' || process.argv.includes('--dry-run');
+const distDirArg = process.argv.find(arg => !arg.includes('--') && arg !== process.argv[0] && arg !== process.argv[1]);
+
 const config = {
   bucket: process.env.AWS_BUCKET,
   region: process.env.AWS_REGION,
   basePath: basePath,
-  distDir: process.argv[2] || 'dist/apps/photos'
+  distDir: distDirArg || 'dist/apps/photos',
+  dryRun: isDryRun
 };
 
 // Validation
@@ -61,13 +85,23 @@ const s3Client = new S3Client({
 });
 
 console.log('🔵 S3 Upload: Starting upload to S3...');
+if (config.dryRun) {
+  console.log('🔵 DRY RUN MODE - No files will be uploaded');
+}
+console.log('🔵 App Version:', appVersion);
 console.log('🔵 S3 Config:', {
   bucket: config.bucket,
   region: config.region,
   basePath: config.basePath || '(root)',
-  distDir: config.distDir
+  distDir: config.distDir,
+  dryRun: config.dryRun
 });
 console.log('🔵 S3 Base URL: https://' + config.bucket + '.s3.' + config.region + '.amazonaws.com/' + encodeURIComponent(config.basePath).replace(/%2F/g, '/'));
+console.log('🔵 Assets will be uploaded with version prefix: ' + appVersion);
+console.log('🔵 Example paths:');
+console.log('   Local: dist/apps/photos/main.js');
+console.log('   S3 Key: ' + config.basePath + 'main.js');
+console.log('   Full URL: https://' + config.bucket + '.s3.' + config.region + '.amazonaws.com/' + config.basePath + 'main.js');
 
 /**
  * Get all files to upload (exclude source maps and other non-essential files)
@@ -163,6 +197,13 @@ async function uploadFile(filePath, retries = 2) {
   });
 
   try {
+    // Dry run mode - skip actual upload
+    if (config.dryRun) {
+      const encodedKey = s3Key.split('/').map(encodeURIComponent).join('/');
+      const s3Url = `https://${config.bucket}.s3.${config.region}.amazonaws.com/${encodedKey}`;
+      return { success: true, file: filePath, key: s3Key, url: s3Url, dryRun: true };
+    }
+
     await s3Client.send(command);
     // Encode S3 key for URL, but keep forward slashes unencoded
     const encodedKey = s3Key.split('/').map(encodeURIComponent).join('/');
@@ -230,6 +271,9 @@ async function main() {
   const failed = results.filter(r => !r.success);
 
   console.log(`\n📊 Upload Results:`);
+  if (config.dryRun) {
+    console.log(`   🔵 DRY RUN - No files were actually uploaded`);
+  }
   console.log(`   ✅ Successful: ${successful.length}/${files.length}`);
 
   if (failed.length > 0) {
