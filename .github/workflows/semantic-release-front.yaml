@@ -41,9 +41,9 @@ jobs:
           path: |
             node_modules
             */*/node_modules
-          key: ${{ runner.os }}-node-modules-v2-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-node-modules-v3-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-node-modules-v2-
+            ${{ runner.os }}-node-modules-v3-
             ${{ runner.os }}-node-modules-
       - name: Cache Nx
         uses: actions/cache@v3
@@ -51,10 +51,10 @@ jobs:
           path: |
             .nx/cache
             node_modules/.cache/nx
-          key: ${{ runner.os }}-nx-v2-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('**/workspace.json', '**/nx.json', '**/project.json', 'Dockerfile') }}
+          key: ${{ runner.os }}-nx-v3-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('**/workspace.json', '**/nx.json', '**/project.json', 'Dockerfile') }}
           restore-keys: |
-            ${{ runner.os }}-nx-v2-${{ hashFiles('**/yarn.lock') }}-
-            ${{ runner.os }}-nx-v2-
+            ${{ runner.os }}-nx-v3-${{ hashFiles('**/yarn.lock') }}-
+            ${{ runner.os }}-nx-v3-
             ${{ runner.os }}-nx-
       - name: Cache Cypress binary
         uses: actions/cache@v3
