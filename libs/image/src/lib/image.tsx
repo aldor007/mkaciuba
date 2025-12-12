@@ -7,6 +7,73 @@ import {
   useWindowWidth
 } from '@react-hook/window-size';
 
+// Cache WebP support synchronously to prevent flicker
+let cachedWebPSupport: boolean | null = null;
+let hasMounted = false;
+
+function detectWebPSync(): boolean {
+  if (typeof document === 'undefined') return false;
+  const canvas = document.createElement('canvas');
+  if (canvas.getContext && canvas.getContext('2d')) {
+    const dataURL = canvas.toDataURL('image/webp');
+    return dataURL.indexOf('data:image/webp') === 0;
+  }
+  return false;
+}
+
+export function useWebPSupportStable() {
+  const asyncWebP = useWebPSupportCheck();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    hasMounted = true;
+  }, []);
+
+  // During SSR and initial client render (before mount), always return true
+  // This ensures server and client render the same content during hydration
+  // Most modern browsers support WebP, so true is a safe default
+  if (!mounted && !hasMounted) {
+    return true;
+  }
+
+  // After mounting, detect WebP support once and cache it
+  if (cachedWebPSupport === null && typeof document !== 'undefined') {
+    cachedWebPSupport = detectWebPSync();
+  }
+  return cachedWebPSupport !== null ? cachedWebPSupport : asyncWebP;
+}
+
+// Debounced window width hook to prevent excessive re-renders
+export function useStableWindowWidth(initialWidth = 1900, debounceMs = 300, threshold = 100) {
+  const actualWidth = useWindowWidth({ initialWidth });
+  const [stableWidth, setStableWidth] = useState(initialWidth);
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    const widthDiff = Math.abs(actualWidth - stableWidth);
+
+    // On first render, if the difference is small, use actualWidth immediately without debounce
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      if (widthDiff < threshold * 2) {
+        setStableWidth(actualWidth);
+        return;
+      }
+    }
+
+    if (widthDiff < threshold) return;
+
+    const timeoutId = setTimeout(() => {
+      setStableWidth(actualWidth);
+    }, debounceMs);
+
+    return () => clearTimeout(timeoutId);
+  }, [actualWidth, stableWidth, debounceMs, threshold]);
+
+  return stableWidth;
+}
+
 export interface Image {
   url: string
   mediaQuery?: string
@@ -110,41 +177,112 @@ const addDatePrefix = (url) => {
 
 export const ImageComponent = React.forwardRef(({thumbnails, defaultImage: providedDefaultImage, onClick, alt, className, defaultImgSizing, initialWidth=1900}:ImageComponentProps, ref: RefObject<HTMLImageElement>) => {
   const errorCounterRef = useRef(0);
-  const webp = useWebPSupportCheck();
-  const width = useWindowWidth({ initialWidth})
+  const webp = useWebPSupportStable();
+  const width = useStableWindowWidth(initialWidth, 300, 100);
   const loadedImagesRef = useRef(new Set<string>());
+
+  // SSR hydration detection to prevent image switching during hydration
+  const isHydratingRef = useRef(typeof window !== 'undefined' && (window as any).__APOLLO_STATE__ !== undefined);
+  const [hydrationComplete, setHydrationComplete] = useState(false);
+
+  // Mark hydration as complete after a delay (slightly longer than Apollo's ssrForceFetchDelay)
+  useEffect(() => {
+    if (isHydratingRef.current) {
+      const timer = setTimeout(() => {
+        setHydrationComplete(true);
+      }, 150);
+      return () => clearTimeout(timer);
+    } else {
+      setHydrationComplete(true);
+    }
+  }, []);
 
   // Memoize the default image calculation to prevent flickering on re-renders
   const defaultImage = useMemo(() => {
+    // During hydration, lock to initialWidth to prevent image switching
+    const effectiveWidth = (isHydratingRef.current && !hydrationComplete) ? initialWidth : width;
+
     if (providedDefaultImage) {
       return providedDefaultImage;
     }
 
     if (!defaultImgSizing || defaultImgSizing == DefaultImgSizing.DEFAULT) {
-      return findImageForWidth(thumbnails, width, webp);
+      return findImageForWidth(thumbnails, effectiveWidth, webp);
     } else {
-      return findImageForWidthBigger(thumbnails, width, webp);
+      return findImageForWidthBigger(thumbnails, effectiveWidth, webp);
     }
-  }, [providedDefaultImage, thumbnails, width, webp, defaultImgSizing]);
+  }, [providedDefaultImage, thumbnails, width, webp, defaultImgSizing, hydrationComplete, initialWidth]);
 
-  // Only set loading to true if this specific image hasn't been loaded before
+  // Track images by key including dimensions to prevent flicker on format changes
   const imageUrl = defaultImage?.url;
-  const hasLoadedBefore = imageUrl && loadedImagesRef.current.has(imageUrl);
+  const imageKey = defaultImage ? `${imageUrl}-${defaultImage.width}x${defaultImage.height}` : null;
+  const hasLoadedBefore = imageKey && loadedImagesRef.current.has(imageKey);
   const [loading, setLoading] = useState(!hasLoadedBefore);
+  const prevImageKeyRef = useRef<string | null>(null);
+  // Fix: Initialize displayedImage to null if not loaded before, to prevent flash
+  const [displayedImage, setDisplayedImage] = useState(hasLoadedBefore ? defaultImage : null);
+  // Track whether this is a dimension change (needs transition) vs format change (no transition)
+  const [isDimensionChange, setIsDimensionChange] = useState(false);
 
-  // Reset loading state when image URL changes (but only if we haven't loaded it before)
+  // Preload new images before displaying to prevent flicker
   useEffect(() => {
-    if (imageUrl && !loadedImagesRef.current.has(imageUrl)) {
-      setLoading(true);
+    if (!defaultImage || !imageKey) return;
 
-      // Fallback timeout in case onLoad doesn't fire
-      const timeoutId = setTimeout(() => {
-        setLoading(false);
-      }, 1500);
+    const prevKey = prevImageKeyRef.current;
+    prevImageKeyRef.current = imageKey;
 
-      return () => clearTimeout(timeoutId);
+    // If already loaded, display immediately
+    if (loadedImagesRef.current.has(imageKey)) {
+      setDisplayedImage(defaultImage);
+      setLoading(false);
+      setIsDimensionChange(false);
+      return;
     }
-  }, [imageUrl]);
+
+    // Check if dimensions unchanged (e.g., switching jpg->webp)
+    if (prevKey && defaultImage) {
+      const prevMatch = prevKey.match(/-(\d+)x(\d+)$/);
+      if (prevMatch) {
+        const prevWidth = parseInt(prevMatch[1]);
+        const prevHeight = parseInt(prevMatch[2]);
+        if (prevWidth === defaultImage.width && prevHeight === defaultImage.height) {
+          // Same dimensions - preload and swap immediately without loading state or transition
+          setIsDimensionChange(false);
+          const img = new Image();
+          img.onload = () => {
+            loadedImagesRef.current.add(imageKey);
+            setDisplayedImage(defaultImage);
+          };
+          img.src = defaultImage.url;
+          return;
+        }
+      }
+    }
+
+    // Different dimensions - show loading and preload with transition
+    setIsDimensionChange(true);
+    setLoading(true);
+    const img = new Image();
+    img.onload = () => {
+      loadedImagesRef.current.add(imageKey);
+      setDisplayedImage(defaultImage);
+      setLoading(false);
+    };
+    img.onerror = () => {
+      // On error, still display it and let the img tag's onError handle retries
+      setDisplayedImage(defaultImage);
+      setLoading(false);
+    };
+    img.src = defaultImage.url;
+
+    // Fallback timeout in case loading takes too long
+    const timeoutId = setTimeout(() => {
+      setDisplayedImage(defaultImage);
+      setLoading(false);
+    }, 1500);
+
+    return () => clearTimeout(timeoutId);
+  }, [imageKey, defaultImage]);
 
   // Fix memory leak: Use useCallback for imageOnError to prevent recreating on every render
   const imageOnError = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
@@ -162,29 +300,30 @@ export const ImageComponent = React.forwardRef(({thumbnails, defaultImage: provi
   }, []);
 
   const handleLoad = useCallback(() => {
-    if (imageUrl) {
-      loadedImagesRef.current.add(imageUrl);
+    if (imageKey) {
+      loadedImagesRef.current.add(imageKey);
     }
     setLoading(false);
-  }, [imageUrl]);
+  }, [imageKey]);
 
-  const classes = `bg-gray-300 ${className || ''} ${loading ? 'animate-pulse bg-opacity-15' : ''}`;
+  // Conditionally apply transition: only for dimension changes, not format changes
+  const transitionClass = isDimensionChange ? 'transition-opacity duration-300' : 'transition-none';
+  const classes = `bg-gray-300 ${transitionClass} ${className || ''} ${loading ? 'animate-pulse bg-opacity-15 opacity-0' : 'opacity-100'}`;
 
   return (
     <picture ref={ref}>
       {thumbnails && thumbnails.map(thumbnail => (
           <source srcSet={thumbnail.url} key={thumbnail.url} media={thumbnail.mediaQuery} type={thumbnail.type}/>
         ))}
-      {defaultImage && <img
+      {displayedImage && <img
         onLoad={handleLoad}
         onError={imageOnError}
         onClick={onClick}
-        width={defaultImage.width}
-        height={defaultImage.height}
-        src={defaultImage.url}
+        width={displayedImage.width}
+        height={displayedImage.height}
+        src={displayedImage.url}
         className={classes}
         alt={alt}
-        loading="lazy"
       />}
      </picture>
   )

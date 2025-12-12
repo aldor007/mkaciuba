@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { Loading, ErrorPage } from "@mkaciuba/ui-kit";
+import { Loading, ErrorPage, useSSRSafeQuery } from "@mkaciuba/ui-kit";
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client/react';
 import gql from  'graphql-tag'
@@ -24,13 +24,16 @@ export const OldPost = () => {
   const { loading, error, data } = useQuery<Query>(GET_POST, {
     variables: { permalink},
   });
+  const { shouldShowLoading } = useSSRSafeQuery(loading, data);
 
-  if (loading) return <Loading/>;
   if (error) {
     console.error('Post', error)
     return <ErrorPage code={500} message={error.message} />
    };
+
+  if (shouldShowLoading) return <Loading/>;
+
   return  (
-      <Navigate to={`${generatePath(AppRoutes.post.path, { slug: data.postByPermalink.slug })}`} replace />
+      <Navigate to={`${generatePath(AppRoutes.post.path, { slug: data!.postByPermalink.slug })}`} replace />
     )
 }

@@ -1,10 +1,10 @@
-import React, { RefObject, useCallback, useState  } from "react";
+import React, { RefObject, useCallback, useState } from "react";
 import { useQuery } from '@apollo/client/react';
 import gql from  'graphql-tag';
 import {useNavigate} from "react-router-dom"
 import { Link } from 'react-router-dom'
 import { generatePath, useLocation } from "react-router";
-import { findImageForWidth, ImageComponent } from "@mkaciuba/image";
+import { findImageForWidth, ImageComponent, useWebPSupportStable } from "@mkaciuba/image";
 import { Helmet } from 'react-helmet-async';
 import { Gallery, Query, Post } from '@mkaciuba/api';
 import {
@@ -12,7 +12,7 @@ import {
 } from '@react-hook/window-size';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { AppRoutes } from "../routes";
-import { ErrorPage, Loading, LoadingMore, useQueryParams } from "@mkaciuba/ui-kit";
+import { ErrorPage, Loading, LoadingMore, useQueryParams, useSSRSafeQuery } from "@mkaciuba/ui-kit";
 import { PostCard } from "./PostCard";
 import '../../assets/category.css';
 
@@ -111,7 +111,7 @@ export interface PostsProps {
 export const Posts = ( { id, type} : PostsProps) => {
   const navigate = useNavigate();
   const queryParams = useQueryParams();
-  const webp = false;//useWebPSupportCheck();
+  const webp = useWebPSupportStable();
   const width = 1800;
   const limit = 9;
   const [loadingMore, setLoadingMore] = useState(false);
@@ -134,6 +134,7 @@ export const Posts = ( { id, type} : PostsProps) => {
     variables: {  start: startPage , limit, id},
     notifyOnNetworkStatusChange: true
   });
+  const { shouldShowLoading } = useSSRSafeQuery(loading, data);
 
   const hasNextPage = () => {
     if (!data) {
@@ -173,12 +174,11 @@ export const Posts = ( { id, type} : PostsProps) => {
     return <ErrorPage code={500} message={error.message} />
    };
 
-   if (loading && !data) {
-    return (
-      <LoadingMore/>
-    );
+  if (shouldShowLoading) {
+    return <LoadingMore/>;
   }
-  const { posts } =  data;
+
+  const { posts } =  data!;
   const defaultImages = posts.reduce((acc, cur) => {
     if (!cur.image) {
       acc[cur.id] = null;

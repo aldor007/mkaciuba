@@ -7,7 +7,7 @@ import { ImageList } from '@mkaciuba/image';
 import { useQuery, gql, ApolloError } from '@apollo/client';
 import { Query } from '@mkaciuba/api';
 import { AppRoutes } from '../routes';
-import { Loading, ErrorPage, LoadingMore, Markdown } from '@mkaciuba/ui-kit'
+import { Loading, ErrorPage, LoadingMore, Markdown, useSSRSafeQuery } from '@mkaciuba/ui-kit'
 import { Helmet } from 'react-helmet-async';
 import ReactMarkdown from 'react-markdown';
 
@@ -49,7 +49,8 @@ export const Photos = () => {
   const { loading, error, data } = useQuery<Query>(GET_PHOTOS, {
     variables: { categorySlug, gallerySlug},
   });
-  if (loading) return <LoadingMore/>;
+  const { shouldShowLoading } = useSSRSafeQuery(loading, data);
+
   let authRequired = false;
   if (error && error.graphQLErrors.some(g => g.extensions?.code == 'UNAUTHENTICATED')) {
     authRequired = true;
@@ -66,8 +67,10 @@ export const Photos = () => {
     )
   }
 
-  const { categories, gallery } = data.galleryMenu;
-  const category = data.categoryBySlug;
+  if (shouldShowLoading) return <LoadingMore/>;
+
+  const { categories, gallery } = data!.galleryMenu;
+  const category = data!.categoryBySlug;
   const children  = categories.map((item) => {
     return {
      url: generatePath(AppRoutes.photos.path, {

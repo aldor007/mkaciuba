@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function Html({ content, state, meta, scripts, loadableScripts = [], loadableLinks = [] }) {
+export function Html({ content, state, meta, scripts, loadableScripts = [], loadableLinks = [], loadableStyles = [] }) {
   const scriptSrc = scripts.map(s => (
      <script key={s} src={s} defer></script>
   ))
@@ -9,6 +9,7 @@ export function Html({ content, state, meta, scripts, loadableScripts = [], load
     <html>
       <head>
         <div dangerouslySetInnerHTML={{ __html: meta}} />
+        {loadableStyles}
         {loadableLinks}
       </head>
 

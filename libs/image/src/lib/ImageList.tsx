@@ -1,15 +1,14 @@
-import React, { RefObject, useCallback, useState} from "react";
+import React, { RefObject, useCallback, useState, useMemo, useRef} from "react";
 import { gql, useQuery } from '@apollo/client';
-import { useWebPSupportCheck } from "react-use-webp-support-check";
 import {
   useWindowWidth
 } from '@react-hook/window-size';
 import { Helmet } from 'react-helmet-async';
 import { Query } from '@mkaciuba/types';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
-import { Loading, LoadingMore, ErrorPage } from '@mkaciuba/ui-kit'
+import { Loading, LoadingMore, ErrorPage, useSSRSafeQuery } from '@mkaciuba/ui-kit'
 import ReactGA from 'react-ga4'
-import { Image, ImageComponent } from './image';
+import { Image, ImageComponent, useWebPSupportStable } from './image';
 import { Gallery, Item } from 'react-photoswipe-gallery'
 import { findImageForWidthBigger } from "..";
 
@@ -109,8 +108,12 @@ function hasSSRData() {
 }
 
 export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps) => {
-  const webp = useWebPSupportCheck();
-  const width = typeof document === 'undefined' ? 1900 :  document.documentElement.clientWidth
+  const webp = useWebPSupportStable();
+  const initialWidth = useMemo(() => {
+    if (typeof document === 'undefined') return 1900;
+    return document.documentElement.clientWidth;
+  }, []);
+  const width = initialWidth;
 
   const [loadingMore, setLoadingMore] = useState(false);
   const limit = 30;
@@ -120,6 +123,7 @@ export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps)
     notifyOnNetworkStatusChange: true,
 
   });
+  const { shouldShowLoading } = useSSRSafeQuery(loading, data);
 
   const hasNextPage = () => {
     if (!data) {
@@ -160,26 +164,30 @@ export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps)
     delayInMs: 250,
   });
 
+  // Memoize image calculations - must be called before any early returns
+  const images = useMemo(() => data?.categoryBySlug?.medias || [], [data?.categoryBySlug?.medias]);
+  const category = data?.categoryBySlug;
+  const defaultImages = useMemo(() =>
+    images.map((item) => findImageForWidth(item.thumbnails, width, webp)),
+    [images, width, webp]
+  );
+  const defaultImagesFull = useMemo(() =>
+    images.map((item) => findImageForWidthBigger(item.thumbnails, width, webp)),
+    [images, width, webp]
+  );
+
   if (error) {
     console.error(error)
     return (<ErrorPage code={500} message={error.message}/>)
    };
 
-
-  if (loading && !data) {
-   return (
-     <LoadingMore/>
-   );
+  if (shouldShowLoading) {
+    return <LoadingMore/>;
   }
 
-
-   if (!data || !data.categoryBySlug) {
-     return <p> Not found </p>
-   }
-   const images = data.categoryBySlug.medias ;
-   const category = data.categoryBySlug;
-   const defaultImages = images.map((item) => findImageForWidth(item.thumbnails, width, webp));
-   const defaultImagesFull = images.map((item) => findImageForWidthBigger(item.thumbnails, width, webp));
+  if (!data!.categoryBySlug) {
+    return <p> Not found </p>
+  }
    let seoImage = defaultImages;
    if (category.image) {
     seoImage = images.map((item) => findImageForWidth(category.image.thumbnails, 1024, false));
@@ -222,7 +230,7 @@ export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps)
                   await handleLoadMore()
                  }
                 setTimeout(open, 50)
-               }} thumbnails={item.thumbnails} defaultImage={defaultImagesFull[index]} alt={item.alternativeText || item.name} />
+               }} thumbnails={item.thumbnails} defaultImage={defaultImagesFull[index]} alt={item.alternativeText || item.name} initialWidth={initialWidth} />
                   <div className="hidden overflow-hidden">
                     <div className="text-white text-lg">{item.alternativeText || item.name}</div>
                   </div>

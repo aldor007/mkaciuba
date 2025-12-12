@@ -138,6 +138,7 @@
     "mime-types": "^3.0.2",
     "mini-css-extract-plugin": "1.6.2",
     "node-gyp": "^10.0.0",
+    "null-loader": "^4.0.1",
     "patch-package": "^8.0.1",
     "postcss": "^8.4.49",
     "postcss-import": "^16.1.0",

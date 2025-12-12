@@ -13,7 +13,7 @@ import {
   createHttpLink,
   InMemoryCache
 } from '@apollo/client';
-import { getDataFromTree } from "@apollo/client/react/ssr";
+import { renderToStringWithData } from "@apollo/client/react/ssr";
 import React from 'react';
 import path from 'path';
 import { ChunkExtractor, ChunkExtractorManager } from '@loadable/server';
@@ -155,6 +155,7 @@ function renderErrorPage(code: number, message?: string) {
     scripts={scripts}
     loadableScripts={[]}
     loadableLinks={[]}
+    loadableStyles={[]}
   />;
   return renderToString(errorHtml);
 }
@@ -304,12 +305,14 @@ app.get('*', async (req, res) => {
     });
   }
 
+  // Pass the SSR-configured client directly to App component
+  // This ensures server-side queries use the correct absolute URL
   const staticApp = (
-          <StaticRouter location={req.url}>
-            <HelmetProvider context={helmetContext}>
-              <App client={client} routes={AppRoutesComponentSSR} />
-            </HelmetProvider>
-          </StaticRouter>
+            <StaticRouter location={req.url}>
+              <HelmetProvider context={helmetContext}>
+                <App client={client} />
+              </HelmetProvider>
+            </StaticRouter>
   )
 
   const cacheKey = getCacheKey(req)
@@ -324,13 +327,12 @@ app.get('*', async (req, res) => {
         </ChunkExtractorManager>
       ) : staticApp;
 
-      await getDataFromTree(wrappedApp);
+      // Use renderToStringWithData for single-pass SSR with data fetching
+      // This replaces: await getDataFromTree(wrappedApp) + renderToString(wrappedApp)
+      const appContent = await renderToStringWithData(wrappedApp);
+
       // Extract the entirety of the Apollo Client cache's current state
       const initialState = client.extract();
-
-      // Render the app content to string
-      // NOTE: This MUST happen before extracting helmet data!
-      const appContent = renderToString(wrappedApp);
 
       // Extract helmet data AFTER rendering (react-helmet-async populates context during renderToString)
       const { helmet } = helmetContext;
@@ -352,6 +354,7 @@ app.get('*', async (req, res) => {
       // Extract loadable scripts and links if extractor exists
       const loadableScripts = extractor ? extractor.getScriptElements() : [];
       const loadableLinks = extractor ? extractor.getLinkElements() : [];
+      const loadableStyles = extractor ? extractor.getStyleElements() : [];
 
       // Add both the page content and the cache state to a top-level component
       const html = <Html
@@ -361,6 +364,7 @@ app.get('*', async (req, res) => {
         content={appContent}
         loadableScripts={loadableScripts}
         loadableLinks={loadableLinks}
+        loadableStyles={loadableStyles}
       />;
       const headers = {
         'content-type': 'text/html; charset=UTF-8',

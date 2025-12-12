@@ -1,12 +1,11 @@
 import React from "react";
 import { useQuery } from '@apollo/client/react';
 import gql from  'graphql-tag';
-import { useWebPSupportCheck } from "react-use-webp-support-check";
 import { Query } from '@mkaciuba/api';
-import { toImage, ImageComponent } from "@mkaciuba/image";
+import { toImage, ImageComponent, useWebPSupportStable } from "@mkaciuba/image";
 import { generatePath, Link} from 'react-router-dom';
 import { AppRoutes } from '../routes';
-import { Loading, ErrorPage, LoadingMore} from "@mkaciuba/ui-kit";
+import { Loading, ErrorPage, LoadingMore, useSSRSafeQuery } from "@mkaciuba/ui-kit";
 import { Tag } from "./Tag";
 import { SafeFacebookPage } from "./SafeFacebookPage";
 
@@ -37,16 +36,22 @@ export const GET_FOOTER = gql`
 
 
 export const Footer = () => {
-  const webp = useWebPSupportCheck();
+  const webp = useWebPSupportStable();
   const {loading, error, data} = useQuery<Query>(GET_FOOTER, {
     variables: { webp }
   });
-  if (loading) return <LoadingMore/>;
+  const { shouldShowLoading } = useSSRSafeQuery(loading, data);
+
   if (error) {
     console.error('Footer', error)
     return <ErrorPage code={500} message={error.message} />
    };
-  if (!data || !data.categories) return null;
+
+  if (shouldShowLoading) {
+    return <LoadingMore/>;
+  }
+
+  if (!data!.categories) return null;
 
   const recentPhotos = data.categories.map(c => {
       const imagePath = generatePath(AppRoutes.photos.path, {
