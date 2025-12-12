@@ -1,3 +1,14 @@
+## [0.13.5](https://github.com/aldor007/mkaciuba/compare/photos-0.13.4...photos-0.13.5) (2025-12-12)
+
+
+### Bug Fixes
+
+* prevent manifest.json corruption when building photos-ssr ([8cc5cdd](https://github.com/aldor007/mkaciuba/commit/8cc5cdda30294336f954584ebf34ee23e4cf39da))
+* semanitc release ([6e80b1e](https://github.com/aldor007/mkaciuba/commit/6e80b1ee4ea57dac9d8546e54c04408edaecdb9b))
+* semanitc release ([f601ae7](https://github.com/aldor007/mkaciuba/commit/f601ae762906b63f96f59ce09adc967017450b53))
+* semanitc release no cache ([e09b10f](https://github.com/aldor007/mkaciuba/commit/e09b10f15ef74a8bc663306e711a6c23e02f82c2))
+* semanitcrelease ([c76e26e](https://github.com/aldor007/mkaciuba/commit/c76e26e927042f390f7728fea7e7b03b7c5869ff))
+
 ## [0.13.4](https://github.com/aldor007/mkaciuba/compare/photos-0.13.3...photos-0.13.4) (2025-12-12)
 
 
