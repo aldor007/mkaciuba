@@ -1,3 +1,11 @@
+## [0.13.4](https://github.com/aldor007/mkaciuba/compare/photos-0.13.3...photos-0.13.4) (2025-12-12)
+
+
+### Bug Fixes
+
+* better upload to s3 ([1406eed](https://github.com/aldor007/mkaciuba/commit/1406eedc8cbbf56c49d2cf8b872e706627f0fc79))
+* semanitcrelease ([4e3b150](https://github.com/aldor007/mkaciuba/commit/4e3b15003f6189c40e55d7ff8014708e4de14932))
+
 ## [0.13.3](https://github.com/aldor007/mkaciuba/compare/photos-0.13.2...photos-0.13.3) (2025-12-11)
 
 
