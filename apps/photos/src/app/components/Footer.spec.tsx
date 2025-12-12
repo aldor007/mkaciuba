@@ -13,9 +13,8 @@ jest.mock('./Tag', () => ({
   Tag: jest.fn(({ tag }) => <li data-testid="tag-item">{tag.name}</li>),
 }));
 
-jest.mock('react-facebook', () => ({
-  FacebookProvider: jest.fn(({ children }) => <div data-testid="facebook-provider">{children}</div>),
-  Page: jest.fn(() => <div data-testid="facebook-page">Facebook Page</div>),
+jest.mock('./SafeFacebookPage', () => ({
+  SafeFacebookPage: jest.fn(() => <div data-testid="safe-facebook-page">Facebook Page</div>),
 }));
 
 jest.mock('@mkaciuba/image', () => {
@@ -377,23 +376,13 @@ describe('Footer', () => {
       });
     });
 
-    test('should render FacebookProvider component', async () => {
+    test('should render SafeFacebookPage component', async () => {
       const mocks = [createFooterQueryMock()];
 
       renderFooter(mocks);
 
       await waitFor(() => {
-        expect(screen.getByTestId('facebook-provider')).toBeInTheDocument();
-      });
-    });
-
-    test('should render Facebook Page component', async () => {
-      const mocks = [createFooterQueryMock()];
-
-      renderFooter(mocks);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('facebook-page')).toBeInTheDocument();
+        expect(screen.getByTestId('safe-facebook-page')).toBeInTheDocument();
       });
     });
   });

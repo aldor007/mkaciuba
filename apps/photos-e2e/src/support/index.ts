@@ -15,3 +15,14 @@
 
 // Import commands.js using ES2015 syntax:
 import './commands';
+
+// Handle uncaught exceptions from third-party libraries
+Cypress.on('uncaught:exception', (err) => {
+  // Ignore Facebook SDK errors - the SDK may not be loaded in test environment
+  if (err.message.includes('Cannot read properties of undefined (reading \'XFBML\')') ||
+      err.message.includes('FB is not defined')) {
+    return false;
+  }
+  // Allow other errors to fail the test
+  return true;
+});
