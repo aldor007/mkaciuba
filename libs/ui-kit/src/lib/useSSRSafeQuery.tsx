@@ -38,9 +38,9 @@ export function useSSRSafeQuery<T = any>(loading: boolean, data: T | undefined) 
   // Check if SSR data is available
   const hasSSRData = typeof window !== 'undefined' && (window as any).__APOLLO_STATE__;
 
-  // During first render with SSR data, skip loading check ONLY if we also have data
-  // This ensures we don't skip checks when data is actually missing
-  const shouldSkipLoadingCheck = hasSSRData && isFirstRenderRef.current && data !== undefined;
+  // During first render with SSR data, skip loading check entirely
+  // This prevents hydration mismatches when Apollo temporarily returns loading: true
+  const shouldSkipLoadingCheck = hasSSRData && isFirstRenderRef.current;
 
   // Show loading if we don't have data (unless we're skipping the check)
   const shouldShowLoading = !shouldSkipLoadingCheck && data === undefined;

@@ -1,6 +1,6 @@
 /// <reference types="@testing-library/jest-dom" />
 import React from 'react';
-import { render, waitFor, screen, act } from '@testing-library/react';
+import { render, waitFor, act } from '@testing-library/react';
 import { mockImageVariants } from '../../../api/src/test-utils/factories';
 import { ImageComponent, Image } from './image';
 
@@ -15,7 +15,7 @@ jest.mock('@react-hook/window-size', () => ({
 }));
 
 // Helper to create mock images with specific dimensions
-const createMockImageWithDimensions = (url: string, width: number, height: number, webp: boolean = false): Image => ({
+const createMockImageWithDimensions = (url: string, width: number, height: number, webp = false): Image => ({
   url,
   width,
   height,

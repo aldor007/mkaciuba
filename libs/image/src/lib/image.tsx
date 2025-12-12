@@ -1,11 +1,8 @@
-
 import { UploadFile } from '@mkaciuba/types';
 import React, { RefObject, useState, useEffect, useCallback, useRef, useMemo} from 'react';
 import { findImageForWidth } from '..';
 import { useWebPSupportCheck } from "react-use-webp-support-check";
-import {
-  useWindowWidth
-} from '@react-hook/window-size';
+import { useWindowWidth } from '@react-hook/window-size';
 
 // Cache WebP support synchronously to prevent flicker
 let cachedWebPSupport: boolean | null = null;

@@ -1,12 +1,10 @@
-import React, { RefObject, useCallback, useState, useMemo, useRef} from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { RefObject, useCallback, useState, useMemo } from "react";
 import { gql, useQuery } from '@apollo/client';
-import {
-  useWindowWidth
-} from '@react-hook/window-size';
 import { Helmet } from 'react-helmet-async';
 import { Query } from '@mkaciuba/types';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
-import { Loading, LoadingMore, ErrorPage, useSSRSafeQuery } from '@mkaciuba/ui-kit'
+import { LoadingMore, ErrorPage, useSSRSafeQuery } from '@mkaciuba/ui-kit'
 import ReactGA from 'react-ga4'
 import { Image, ImageComponent, useWebPSupportStable } from './image';
 import { Gallery, Item } from 'react-photoswipe-gallery'
@@ -77,11 +75,7 @@ export const findImageForWidth = (images: Image[], width: number, webp: boolean)
     return null;
   }
 
-  const filterPresets = images.filter(p => {
-    if (p.webp == webp) {
-      return p;
-    }
-  });
+  const filterPresets = images.filter(p => p.webp === webp);
   let minIndex = 0;
   let minValue = Math.abs(width - filterPresets[0].width);
   filterPresets.forEach((p, index) => {
@@ -95,18 +89,6 @@ export const findImageForWidth = (images: Image[], width: number, webp: boolean)
   return filterPresets[minIndex];
 }
 
-function hasSSRData() {
-  if (typeof window == 'undefined') {
-    return false
-  }
-
-  if (window.__APOLLO_STATE__) {
-    return true
-  }
-
-  return false
-}
-
 export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps) => {
   const webp = useWebPSupportStable();
   const initialWidth = useMemo(() => {
@@ -115,7 +97,7 @@ export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps)
   }, []);
   const width = initialWidth;
 
-  const [loadingMore, setLoadingMore] = useState(false);
+  const [loadingMore] = useState(false);
   const limit = 30;
   const [start, setStart] = useState(limit)
   const { loading, error, data, fetchMore } = useQuery<Query>(GET_IMAGES, {
@@ -134,7 +116,7 @@ export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps)
       return false;
     }
 
-    if (data.categoryBySlug.medias.length == data.categoryBySlug.mediasCount) {
+    if (data.categoryBySlug.medias.length === data.categoryBySlug.mediasCount) {
       return false;
     }
 
@@ -157,7 +139,7 @@ export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps)
       }});
     }, [fetchMore, start, limit]);
 
-  const  [sentryRef, { rootRef }]  = useInfiniteScroll({
+  const  [sentryRef]  = useInfiniteScroll({
     loading: loadingMore,
     hasNextPage: hasNextPage(),
     onLoadMore: handleLoadMore,
@@ -185,7 +167,7 @@ export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps)
     return <LoadingMore/>;
   }
 
-  if (!data!.categoryBySlug) {
+  if (!data?.categoryBySlug) {
     return <p> Not found </p>
   }
    let seoImage = defaultImages;

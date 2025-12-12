@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /// <reference types="@testing-library/jest-dom" />
 import React from 'react';
-import { render, fireEvent, waitFor, screen, act } from '@testing-library/react';
+import { render, fireEvent, waitFor, act } from '@testing-library/react';
 import { mockImageVariants, createMockImage, createMockUploadFile } from '../../../api/src/test-utils/factories';
 import {
   ImageComponent,

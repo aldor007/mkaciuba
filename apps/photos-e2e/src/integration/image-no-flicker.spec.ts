@@ -161,9 +161,7 @@ describe('Image flickering prevention E2E', () => {
       cy.visit('/');
 
       // Get an image element
-      cy.get('img').first().then(($img) => {
-        const initialSrc = $img.attr('src');
-
+      cy.get('img').first().then(() => {
         // Check that no opacity-0 class appears unexpectedly
         cy.get('img').first().should('not.have.class', 'opacity-0');
 

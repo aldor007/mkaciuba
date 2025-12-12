@@ -73,8 +73,6 @@ describe('SSR Hydration', () => {
     });
 
     it('should not show hydration errors in console', () => {
-      const consoleErrors: string[] = [];
-
       // Listen for console errors
       cy.on('window:before:load', (win) => {
         cy.spy(win.console, 'error').as('consoleError');
@@ -87,8 +85,10 @@ describe('SSR Hydration', () => {
       cy.wait(2000);
 
       // Check for React hydration errors
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       cy.get('@consoleError').should((stub: any) => {
         const calls = stub.getCalls();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const hydrationErrors = calls.filter((call: any) => {
           const args = call.args.join(' ');
           return args.includes('Hydration') ||
@@ -99,6 +99,7 @@ describe('SSR Hydration', () => {
 
         // Log any hydration errors found
         if (hydrationErrors.length > 0) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           cy.log('Hydration errors found:', JSON.stringify(hydrationErrors.map((c: any) => c.args)));
         }
 
