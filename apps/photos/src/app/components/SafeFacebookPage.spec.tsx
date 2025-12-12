@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { SafeFacebookPage } from './SafeFacebookPage';
 
 // Mock react-facebook to test error handling
@@ -13,7 +13,9 @@ jest.mock('react-facebook', () => ({
 describe('SafeFacebookPage', () => {
   beforeEach(() => {
     // Suppress console warnings during tests
-    jest.spyOn(console, 'warn').mockImplementation(() => {});
+    jest.spyOn(console, 'warn').mockImplementation(() => {
+      // Intentionally empty to suppress warnings during tests
+    });
   });
 
   afterEach(() => {
