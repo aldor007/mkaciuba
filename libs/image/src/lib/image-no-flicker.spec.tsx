@@ -37,22 +37,29 @@ describe('ImageComponent flickering prevention', () => {
   });
 
   describe('initial displayedImage state', () => {
-    it('should not display image immediately on first view', () => {
+    it('should not display image immediately during SSR hydration', () => {
+      // Simulate SSR hydration scenario
+      (window as any).__APOLLO_STATE__ = {};
       const images = [createMockImageWithDimensions('https://example.com/image.jpg', 800, 600, false)];
 
       const { container } = render(<ImageComponent thumbnails={images} />);
 
-      // Image should not be rendered initially (displayedImage is null)
+      // Image should not be rendered initially during hydration (displayedImage is null)
       const imgElement = container.querySelector('img');
       expect(imgElement).not.toBeInTheDocument();
+
+      // Clean up
+      delete (window as any).__APOLLO_STATE__;
     });
 
-    it('should display image after preload completes', async () => {
+    it('should display image after preload completes in SSR hydration', async () => {
+      // Simulate SSR hydration scenario
+      (window as any).__APOLLO_STATE__ = {};
       const images = [createMockImageWithDimensions('https://example.com/image.jpg', 800, 600, false)];
 
       const { container } = render(<ImageComponent thumbnails={images} />);
 
-      // Initially no image
+      // Initially no image during hydration
       expect(container.querySelector('img')).not.toBeInTheDocument();
 
       // Fast-forward past the preload timeout
@@ -64,6 +71,9 @@ describe('ImageComponent flickering prevention', () => {
       await waitFor(() => {
         expect(container.querySelector('img')).toBeInTheDocument();
       });
+
+      // Clean up
+      delete (window as any).__APOLLO_STATE__;
     });
   });
 

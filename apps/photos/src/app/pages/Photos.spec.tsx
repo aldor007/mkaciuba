@@ -34,6 +34,10 @@ jest.mock('@mkaciuba/ui-kit', () => ({
     </div>
   )),
   Markdown: jest.fn(({ text }) => <div data-testid="markdown">{text}</div>),
+  useSSRSafeQuery: jest.fn((loading: boolean, data: any) => ({
+    shouldShowLoading: loading && !data,
+    isFirstRender: false,
+  })),
 }));
 
 describe('Photos', () => {

@@ -76,6 +76,10 @@ export const findImageForWidth = (images: Image[], width: number, webp: boolean)
   }
 
   const filterPresets = images.filter(p => p.webp === webp);
+  if (filterPresets.length === 0) {
+    return null;
+  }
+
   let minIndex = 0;
   let minValue = Math.abs(width - filterPresets[0].width);
   filterPresets.forEach((p, index) => {

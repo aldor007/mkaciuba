@@ -10,10 +10,17 @@ let hasMounted = false;
 
 function detectWebPSync(): boolean {
   if (typeof document === 'undefined') return false;
-  const canvas = document.createElement('canvas');
-  if (canvas.getContext && canvas.getContext('2d')) {
-    const dataURL = canvas.toDataURL('image/webp');
-    return dataURL.indexOf('data:image/webp') === 0;
+  try {
+    const canvas = document.createElement('canvas');
+    if (!canvas.getContext) return false;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      const dataURL = canvas.toDataURL('image/webp');
+      return dataURL.indexOf('data:image/webp') === 0;
+    }
+  } catch (e) {
+    // canvas.getContext might not be implemented in test environments (jsdom)
+    return false;
   }
   return false;
 }
@@ -89,6 +96,10 @@ export const findImageForWidthBigger = (images: Image[], width: number, webp: bo
       return p;
     }
   });
+  if (filterPresets.length === 0) {
+    return null;
+  }
+
   let minIndex = 0;
   let minValue = Math.abs(width - filterPresets[0].width);
   const lowerZero = [];
@@ -216,8 +227,10 @@ export const ImageComponent = React.forwardRef(({thumbnails, defaultImage: provi
   const hasLoadedBefore = imageKey && loadedImagesRef.current.has(imageKey);
   const [loading, setLoading] = useState(!hasLoadedBefore);
   const prevImageKeyRef = useRef<string | null>(null);
-  // Fix: Initialize displayedImage to null if not loaded before, to prevent flash
-  const [displayedImage, setDisplayedImage] = useState(hasLoadedBefore ? defaultImage : null);
+  // Fix: Initialize displayedImage to defaultImage in test/non-SSR environments to prevent missing img elements
+  // In SSR hydration scenarios, only set if loaded before to prevent flash
+  const initialDisplayedImage = hasLoadedBefore || !isHydratingRef.current ? defaultImage : null;
+  const [displayedImage, setDisplayedImage] = useState(initialDisplayedImage);
   // Track whether this is a dimension change (needs transition) vs format change (no transition)
   const [isDimensionChange, setIsDimensionChange] = useState(false);
 
@@ -321,6 +334,7 @@ export const ImageComponent = React.forwardRef(({thumbnails, defaultImage: provi
         src={displayedImage.url}
         className={classes}
         alt={alt}
+        loading="lazy"
       />}
      </picture>
   )

@@ -268,6 +268,7 @@ describe('ImageComponent', () => {
     test('should render successfully with thumbnails', () => {
       const mockThumbnails = [
         createMockImage({ url: 'https://example.com/image.jpg', width: 800, height: 600, webp: false }),
+        createMockImage({ url: 'https://example.com/image.webp', width: 800, height: 600, webp: true }),
       ];
 
       const { container } = render(<ImageComponent thumbnails={mockThumbnails} />);
