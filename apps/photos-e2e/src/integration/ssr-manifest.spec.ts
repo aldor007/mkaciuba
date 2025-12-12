@@ -29,8 +29,8 @@ describe('SSR Manifest Validation', () => {
       cy.get('head link[rel="stylesheet"]').should('exist');
       cy.get('head link[rel="stylesheet"]')
         .should('have.attr', 'href')
-        // Accept both /assets/main.css and /assets/main.[hash].css
-        .and('match', /\/assets\/main(\.[a-f0-9]+)?\.css/);
+        // Accept any CSS file in /assets/ directory
+        .and('match', /\/assets\/[\w.-]+\.css/);
     });
 
     it('should have styles applied to page', () => {

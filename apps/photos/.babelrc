@@ -3,6 +3,7 @@
     "@nrwl/react/babel"
   ],
   "plugins": [
+    "@loadable/babel-plugin",
     ["transform-imports", {
       "lodash": {
         "transform": "lodash/${member}",

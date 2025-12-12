@@ -7,8 +7,8 @@ import { toImage, ImageComponent } from "@mkaciuba/image";
 import { generatePath, Link} from 'react-router-dom';
 import { AppRoutes } from '../routes';
 import { Loading, ErrorPage, LoadingMore} from "@mkaciuba/ui-kit";
-import { FacebookProvider, Page } from 'react-facebook';
 import { Tag } from "./Tag";
+import { SafeFacebookPage } from "./SafeFacebookPage";
 
 export const GET_FOOTER = gql`
   query($webp: Boolean!) {
@@ -85,9 +85,11 @@ return (
     <div className="flex flex-col max-w-screen-xl  mx-auto  md:flex-row">
     <div className="flex-coll overflow-hidden sm:my-1 sm:px-1 sm:w-1/2 md:my-px md:px-px md:w-1/2 lg:my-2 lg:px-2 lg:w-1/3 xl:my-2 xl:px-2 xl:w-1/3 pb-6">
     <h1 className="uppercase px-1 my-1  text-lg  font-semibold leading-snug font-serif  text-xl text-center">Facebook</h1>
-      <FacebookProvider appId="1724717534454966">
-        <Page href="https://www.facebook.com/mkaciubapl" tabs="timeline" />
-      </FacebookProvider>
+      <SafeFacebookPage
+        appId="1724717534454966"
+        pageUrl="https://www.facebook.com/mkaciubapl"
+        tabs="timeline"
+      />
      </div>
 
     <div className="flex-coll overflow-hidden sm:my-1 sm:px-1 sm:w-1/2 md:my-px md:px-px md:w-1/2 lg:my-2 lg:px-2 lg:w-1/3 xl:my-2 xl:px-2 xl:w-1/3 pb-6">

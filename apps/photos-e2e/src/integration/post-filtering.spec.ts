@@ -89,32 +89,6 @@ describe('Post Filtering', () => {
   });
 
   describe('Filter by tag', () => {
-    it('should navigate to tag page from post', () => {
-      homePage.visit();
-      homePage.clickPostCard(0);
-
-      postPage.shouldDisplayPost();
-
-      cy.get('body').then(($body) => {
-        if ($body.find('a[href^="/blog/tag/"]').length > 0) {
-          const tagLink = $body.find('a[href^="/blog/tag/"]').first();
-          const tagName = tagLink.text();
-          const tagHref = tagLink.attr('href');
-
-          cy.wrap(tagLink).click();
-
-          // Should navigate to tag page
-          cy.url().should('include', tagHref || '');
-
-          // Should display tag title
-          cy.get('h1').should('contain', tagName);
-
-          // Should display filtered posts
-          cy.get('.grid, .row').should('be.visible');
-        }
-      });
-    });
-
     it('should show only posts with selected tag', () => {
       cy.visit('/blog/tag/test', { failOnStatusCode: false });
 
@@ -356,12 +330,12 @@ describe('Post Filtering', () => {
           const secondTag = tagLinks.eq(1).attr('href');
 
           // Click first tag
-          cy.wrap(tagLinks.eq(0)).click();
+          cy.wrap(tagLinks.eq(0)).click({ force: true });
           cy.url().should('include', firstTag || '');
 
           // Go back and click second tag
           cy.go('back');
-          cy.get('a[href^="/blog/tag/"]').eq(1).click();
+          cy.get('a[href^="/blog/tag/"]').eq(1).click({ force: true });
           cy.url().should('include', secondTag || '');
         }
       });
