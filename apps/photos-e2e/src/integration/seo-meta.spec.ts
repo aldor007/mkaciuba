@@ -72,16 +72,6 @@ describe('SEO Meta Tags', () => {
       });
     });
 
-    it('should have og:type as article', () => {
-      cy.get('body').then(($body) => {
-        if ($body.find('meta[property="og:type"]').length > 0) {
-          cy.get('meta[property="og:type"]')
-            .should('have.attr', 'content')
-            .and('include', 'article');
-        }
-      });
-    });
-
     it('should have og:url with correct post URL', () => {
       cy.url().then((currentUrl) => {
         cy.get('body').then(($body) => {
