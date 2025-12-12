@@ -1,3 +1,10 @@
+# [0.14.0](https://github.com/aldor007/mkaciuba/compare/photos-0.13.5...photos-0.14.0) (2025-12-12)
+
+
+### Features
+
+* chunks ([1e04140](https://github.com/aldor007/mkaciuba/commit/1e0414097e19b995887d5dfaac010c5ca9953a65))
+
 ## [0.13.5](https://github.com/aldor007/mkaciuba/compare/photos-0.13.4...photos-0.13.5) (2025-12-12)
 
 
