@@ -35,6 +35,13 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
   };
   config.output.scriptType = 'text/javascript';
 
+  // Force output hashing for JS files in production to prevent manifest corruption
+  // This ensures hashing is applied even when photos is rebuilt as a dependency
+  if (process.env.NODE_ENV === 'production') {
+    config.output.filename = '[name].[contenthash].js';
+    config.output.chunkFilename = '[name].[contenthash].js';
+  }
+
   // Add plugin to fix null layer values
   config.plugins.push(new FixCssLayerPlugin());
 

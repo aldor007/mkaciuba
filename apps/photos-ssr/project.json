@@ -16,7 +16,7 @@
         "tsConfig": "apps/photos-ssr/tsconfig.app.json",
         "webpackConfig": "apps/photos-ssr/webpack.config.ts",
         "assets": ["apps/photos-ssr/src/assets"],
-        "buildLibsFromSource": true
+        "buildLibsFromSource": false
       },
       "configurations": {
         "production": {
