@@ -4,6 +4,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const TerserPlugin = require("terser-webpack-plugin");
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const LoadablePlugin = require('@loadable/webpack-plugin');
 // S3 upload now handled by post-build script (tools/upload-to-s3.js)
 // const S3Plugin = require('webpack-s3-plugin');
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
@@ -30,7 +31,8 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
   if (!config.output) config.output = {};
   config.output.environment = {
     ...config.output.environment,
-    dynamicImport: false,
+    // dynamicImport must be true for code splitting to work
+    dynamicImport: true,
     module: false,
   };
   config.output.scriptType = 'text/javascript';
@@ -66,6 +68,12 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
       });
       return manifest;
     }
+  }));
+
+  // Add LoadablePlugin to generate loadable-stats.json for SSR
+  config.plugins.push(new LoadablePlugin({
+    filename: 'loadable-stats.json',
+    writeToDisk: true
   }));
 
   // S3 upload now handled by post-build script: node tools/upload-to-s3.js

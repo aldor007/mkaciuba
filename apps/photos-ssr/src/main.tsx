@@ -16,8 +16,9 @@ import {
 import { getDataFromTree } from "@apollo/client/react/ssr";
 import React from 'react';
 import path from 'path';
+import { ChunkExtractor, ChunkExtractorManager } from '@loadable/server';
 
-import { AppRoutesComponent, App, startLimitPagination } from '@mkaciuba/photos';
+import { AppRoutesComponentSSR, App, startLimitPagination } from '@mkaciuba/photos';
 // startLimitPagination imported from photos
 import { Html } from './html'
 import { renderToString } from 'react-dom/server';
@@ -44,6 +45,7 @@ const APP_VERSION = process.env.APP_VERSION || pkgJson.version;
 
 const assetsPath = path.join(__dirname, '../photos');
 const manifestPath = path.join(assetsPath, 'manifest.json');
+const loadableStatsPath = path.join(assetsPath, 'loadable-stats.json');
 let manifest;
 try {
   const manifestContent = fs.readFileSync(manifestPath, 'utf-8');
@@ -69,6 +71,17 @@ try {
   }
   console.error(`Failed to read manifest file at "${manifestPath}". Error: ${readError.message}`);
   throw new Error(`Cannot read manifest file: ${readError.message}`);
+}
+
+// Check if loadable-stats.json exists
+let loadableStatsExists = false;
+try {
+  fs.accessSync(loadableStatsPath, fs.constants.R_OK);
+  loadableStatsExists = true;
+  console.info('📦 Found loadable-stats.json at:', loadableStatsPath);
+} catch (err) {
+  console.warn('⚠️  loadable-stats.json not found at:', loadableStatsPath);
+  console.warn('⚠️  Code-split chunks will not be preloaded. Build photos app first.');
 }
 const cache = new Cache()
 setImmediate(async () => {
@@ -140,6 +153,8 @@ function renderErrorPage(code: number, message?: string) {
       <title>${code} Error | mkaciuba.pl</title>
     `}
     scripts={scripts}
+    loadableScripts={[]}
+    loadableLinks={[]}
   />;
   return renderToString(errorHtml);
 }
@@ -282,10 +297,11 @@ app.get('*', async (req, res) => {
   const staticApp = (
           <StaticRouter location={req.url}>
             <HelmetProvider context={helmetContext}>
-              <App client={client} />
+              <App client={client} routes={AppRoutesComponentSSR} />
             </HelmetProvider>
           </StaticRouter>
   )
+
   const cacheKey = getCacheKey(req)
   const cacheData = await cache.get(cacheKey);
   let cacheTTL = 600;
@@ -295,7 +311,7 @@ app.get('*', async (req, res) => {
       // Extract the entirety of the Apollo Client cache's current state
       const initialState = client.extract();
 
-      // Render the app content to string (forces lazy components to load)
+      // Render the app content to string
       // NOTE: This MUST happen before extracting helmet data!
       const appContent = renderToString(staticApp);
 
@@ -316,7 +332,12 @@ app.get('*', async (req, res) => {
         <link href="${getAssetPath('assets/default-skin.css')}" rel="stylesheet"/>
         <link href="${getAssetPath('assets/photos.css')}" rel="stylesheet"/>`
       // Add both the page content and the cache state to a top-level component
-      const html = <Html state={initialState} meta={meta} scripts={scripts} content={appContent} />;
+      const html = <Html
+        state={initialState}
+        meta={meta}
+        scripts={scripts}
+        content={appContent}
+      />;
       const headers = {
         'content-type': 'text/html; charset=UTF-8',
       };

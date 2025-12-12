@@ -1,4 +1,4 @@
-import React, { useEffect, Suspense } from 'react';
+import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 
@@ -38,6 +38,7 @@ export function ScrollToTop() {
 }
 export interface AppsProps {
   client?: any
+  routes?: React.ComponentType
 }
 
 declare global {
@@ -61,7 +62,9 @@ const authLink = setContext((_, { headers }) => {
   }
 });
 
-export const App = ({ client }: AppsProps) => {
+export const App = ({ client, routes }: AppsProps) => {
+  const RoutesComponent = routes || AppRoutesComponent;
+
   if (!client) {
       // Enable persisted queries in all environments for bandwidth savings
       const link = createPersistedQueryLink({
@@ -105,9 +108,7 @@ export const App = ({ client }: AppsProps) => {
     <ApolloProvider client={client}>
       <Tracking />
       <ScrollToTop />
-      <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-pulse text-lg">Loading...</div></div>}>
-        <AppRoutesComponent />
-      </Suspense>
+      <RoutesComponent />
     </ApolloProvider>
   );
 

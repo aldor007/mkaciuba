@@ -1,5 +1,6 @@
 {
   "presets": [],
+  "plugins": ["@loadable/babel-plugin"],
   "babelrcRoots": [
     "*"
   ]
