@@ -1,8 +1,9 @@
 /**
  * Generates a cache key from request parameters
- * Format: v4:{path}|{page}|{gallery-token-header}|{category-token-cookie}
+ * Format: v5:{path}|{page}|{gallery-token-header}|{category-token-cookie}
  *
  * Version History:
+ * - v5: Added loadable components for SSR code splitting
  * - v4: CSS fixes (photos build before photos-ssr, correct manifest paths)
  * - v3: Previous version
  */

@@ -7,7 +7,9 @@ export function Html({ content, state, meta, scripts, loadableScripts = [], load
 
   return (
     <html>
-      <head dangerouslySetInnerHTML={{ __html: meta}}>
+      <head>
+        <div dangerouslySetInnerHTML={{ __html: meta}} />
+        {loadableLinks}
       </head>
 
       <body>
