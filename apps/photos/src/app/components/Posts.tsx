@@ -145,7 +145,7 @@ export const Posts = ( { id, type} : PostsProps) => {
       return false;
     }
 
-    if (data.posts.length == data.postsCount) {
+    if (data.posts.length === data.postsCount) {
       return false;
     }
 
@@ -174,11 +174,11 @@ export const Posts = ( { id, type} : PostsProps) => {
     return <ErrorPage code={500} message={error.message} />
    };
 
-  if (shouldShowLoading) {
+  if (shouldShowLoading || !data?.posts) {
     return <LoadingMore/>;
   }
 
-  const { posts } =  data!;
+  const { posts } =  data;
   const defaultImages = posts.reduce((acc, cur) => {
     if (!cur.image) {
       acc[cur.id] = null;
@@ -192,7 +192,7 @@ export const Posts = ( { id, type} : PostsProps) => {
   const singlePost = (item: Post, index) => {
 
     return (
-      <PostCard post={item} inColumn={(index + 1) % 3 == 1} />
+      <PostCard post={item} inColumn={(index + 1) % 3 === 1} />
     )
   }
   // setStart(stagccrt + limit)
