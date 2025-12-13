@@ -42,9 +42,9 @@ export const Categories = () => {
     return <ErrorPage code={500} message={error.message} />
    };
 
-  if (shouldShowLoading) return <Loading/>;
+  if (shouldShowLoading || !data?.galleryMenu) return <Loading/>;
 
-  const { gallery, categories } = data!.galleryMenu;
+  const { gallery, categories } = data.galleryMenu;
   if (!gallery) {
     return <ErrorPage code={404} message={'Gallery no found'} />
   }

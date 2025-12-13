@@ -108,11 +108,11 @@ export const Navbar = function (props: NavbarProps) {
     return <ErrorPage code={500} message={error.message} />
    };
 
-  if (shouldShowLoading) {
+  if (shouldShowLoading || !data?.menu) {
     return <Loading/>;
   }
 
-  const social = data!.menu.socialIcons;
+  const social = data.menu.socialIcons;
   const { topMenu, mainMenu, brandName, brand } = data.menu;
   const socialIcons = social.map((icon) => (
     <li className="nav-item" key={icon.url}>

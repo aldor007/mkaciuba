@@ -52,9 +52,9 @@ export const Photos = () => {
   const { shouldShowLoading } = useSSRSafeQuery(loading, data);
 
   let authRequired = false;
-  if (error && error.graphQLErrors.some(g => g.extensions?.code == 'UNAUTHENTICATED')) {
+  if (error && error.graphQLErrors.some(g => g.extensions?.code === 'UNAUTHENTICATED')) {
     authRequired = true;
-  } else if (error && error.graphQLErrors.some(g => g.extensions?.code == 'FORBIDDEN')) {
+  } else if (error && error.graphQLErrors.some(g => g.extensions?.code === 'FORBIDDEN')) {
     authRequired = true;
   } else if (error) {
     console.error('Photos', error)
@@ -67,10 +67,10 @@ export const Photos = () => {
     )
   }
 
-  if (shouldShowLoading) return <LoadingMore/>;
+  if (shouldShowLoading || !data?.galleryMenu || !data?.categoryBySlug) return <LoadingMore/>;
 
-  const { categories, gallery } = data!.galleryMenu;
-  const category = data!.categoryBySlug;
+  const { categories, gallery } = data.galleryMenu;
+  const category = data.categoryBySlug;
   const children  = categories.map((item) => {
     return {
      url: generatePath(AppRoutes.photos.path, {
