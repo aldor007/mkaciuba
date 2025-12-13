@@ -507,9 +507,10 @@ describe('ImageComponent flickering prevention', () => {
 
       rerender(<ImageComponent thumbnails={newImages} />);
 
-      // Should show loading state (opacity-0 class)
+      // Should show loading state (opacity-0 class) immediately after dimension change
+      // Advance timers slightly to trigger render but not complete loading timeout
       act(() => {
-        jest.advanceTimersByTime(10);
+        jest.advanceTimersByTime(5);
       });
 
       const img = container.querySelector('img');
