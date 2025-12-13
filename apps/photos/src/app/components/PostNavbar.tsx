@@ -25,11 +25,11 @@ export const PostNavbar = () => {
     return <ErrorPage code={500} message={error.message} />
    };
 
-  if (shouldShowLoading) {
+  if (shouldShowLoading || !data?.postCategories) {
     return <Loading/>;
   }
 
-  const children  = data!.postCategories.map((item) => {
+  const children  = data.postCategories.map((item) => {
       return {
         url: generatePath(AppRoutes.postcategory.path, {
             slug: item.slug
