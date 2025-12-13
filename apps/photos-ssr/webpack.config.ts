@@ -39,40 +39,11 @@ module.exports = composePlugins(withNx(), (config) => {
     }
   });
 
-  config.module.rules.push(
-    {
-      test: /\.css$/,
-      use: [
-        {
-          // Interprets `@import` and `url()` like `import/require()` and will resolve them
-          loader: 'css-loader',
-          options: {
-            modules: {
-              exportOnlyLocals: true
-            }
-          }
-        },
-        {
-          loader: 'postcss-loader',
-          options: {
-            postcssOptions: {
-              plugins: [
-                ['tailwindcss', {
-                  purge: [
-                    './src/**/*.html',
-                    './src/**/*.jsx',
-                  ],
-                  theme: {},
-                  variants: {},
-                  plugins: [],
-                }],
-                require('autoprefixer'),
-              ],
-            },
-          },
-        },
-      ],
-    }
-  );
+  // SSR doesn't need to process CSS - client build handles it
+  // Use null-loader to ignore CSS imports on server
+  config.module.rules.push({
+    test: /\.css$/,
+    use: 'null-loader'
+  });
   return config;
 });

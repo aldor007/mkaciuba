@@ -8,6 +8,7 @@
   "targets": {
     "build": {
       "executor": "@nrwl/webpack:webpack",
+      "dependsOn": ["^build"],
       "options": {
         "target": "node",
         "compiler": "tsc",
@@ -29,6 +30,17 @@
               "with": "apps/photos-ssr/src/environments/environment.prod.ts"
             }
           ]
+        },
+        "e2e": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false,
+          "fileReplacements": [
+            {
+              "replace": "apps/photos-ssr/src/environments/environment.ts",
+              "with": "apps/photos-ssr/src/environments/environment.e2e.ts"
+            }
+          ]
         }
       },
       "outputs": ["{options.outputPath}"]
@@ -37,6 +49,14 @@
       "executor": "@nrwl/node:node",
       "options": {
         "buildTarget": "photos-ssr:build"
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "photos-ssr:build:production"
+        },
+        "e2e": {
+          "buildTarget": "photos-ssr:build:e2e"
+        }
       }
     },
     "lint": {

@@ -1,12 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /// <reference types="@testing-library/jest-dom" />
 import React from 'react';
-import { render, waitFor, screen, fireEvent } from '@testing-library/react';
+import { render, waitFor, screen } from '@testing-library/react';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { HelmetProvider } from 'react-helmet-async';
 import { BrowserRouter } from 'react-router-dom';
 import { ImageList, ImageListProps, GET_IMAGES } from './ImageList';
 import { createMockImage, createMockUploadFile, mockImageVariants } from '../../../api/src/test-utils/factories';
-import { Category, UploadFile } from '@mkaciuba/types';
+import { UploadFile } from '@mkaciuba/types';
 
 // Mock external dependencies
 jest.mock('react-use-webp-support-check', () => ({

@@ -73,7 +73,7 @@ describe('SEO Meta Tags', () => {
     });
 
     it('should have og:url with correct post URL', () => {
-      cy.url().then((currentUrl) => {
+      cy.url().then(() => {
         cy.get('body').then(($body) => {
           if ($body.find('meta[property="og:url"]').length > 0) {
             cy.get('meta[property="og:url"]')

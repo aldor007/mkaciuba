@@ -5,7 +5,7 @@ import { useQuery,  } from '@apollo/client/react';
 import gql from  'graphql-tag';
 import { Query } from '@mkaciuba/api';
 import { AppRoutes } from '../routes';
-import { Loading, ErrorPage } from '@mkaciuba/ui-kit'
+import { Loading, ErrorPage, useSSRSafeQuery } from '@mkaciuba/ui-kit'
 import { generatePath, useParams } from 'react-router-dom';
 import { Posts, POST_TYPE } from '../components/Posts';
 import { PostNavbar } from '../components/PostNavbar';
@@ -26,12 +26,16 @@ export const PostCategory = () => {
   const { loading, error, data } = useQuery<Query>(GET_POST_CATEGORY, {
     variables: { slug},
   });
-  if (loading) return <Loading/>;
+  const { shouldShowLoading } = useSSRSafeQuery(loading, data);
+
   if (error) {
     console.error('Categories', error)
     return <ErrorPage code={500} message={error.message} />
    };
-  const category = data.postCategoryBySlug;
+
+  if (shouldShowLoading) return <Loading/>;
+
+  const category = data!.postCategoryBySlug;
   if (!category) {
     return <ErrorPage code={404} message={'Category no found'} />
   }

@@ -7,7 +7,7 @@ import { ImageList } from '@mkaciuba/image';
 import { useQuery, gql, ApolloError } from '@apollo/client';
 import { Query } from '@mkaciuba/api';
 import { AppRoutes } from '../routes';
-import { Loading, ErrorPage, LoadingMore, Markdown } from '@mkaciuba/ui-kit'
+import { Loading, ErrorPage, LoadingMore, Markdown, useSSRSafeQuery } from '@mkaciuba/ui-kit'
 import { Helmet } from 'react-helmet-async';
 import ReactMarkdown from 'react-markdown';
 
@@ -49,11 +49,12 @@ export const Photos = () => {
   const { loading, error, data } = useQuery<Query>(GET_PHOTOS, {
     variables: { categorySlug, gallerySlug},
   });
-  if (loading) return <LoadingMore/>;
+  const { shouldShowLoading } = useSSRSafeQuery(loading, data);
+
   let authRequired = false;
-  if (error && error.graphQLErrors.some(g => g.extensions?.code == 'UNAUTHENTICATED')) {
+  if (error && error.graphQLErrors.some(g => g.extensions?.code === 'UNAUTHENTICATED')) {
     authRequired = true;
-  } else if (error && error.graphQLErrors.some(g => g.extensions?.code == 'FORBIDDEN')) {
+  } else if (error && error.graphQLErrors.some(g => g.extensions?.code === 'FORBIDDEN')) {
     authRequired = true;
   } else if (error) {
     console.error('Photos', error)
@@ -65,6 +66,8 @@ export const Photos = () => {
       <Navigate to={`${generatePath(AppRoutes.login.path)}?gallery=${gallerySlug}&category=${categorySlug}`} replace />
     )
   }
+
+  if (shouldShowLoading || !data?.galleryMenu || !data?.categoryBySlug) return <LoadingMore/>;
 
   const { categories, gallery } = data.galleryMenu;
   const category = data.categoryBySlug;

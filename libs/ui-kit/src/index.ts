@@ -3,3 +3,4 @@ export * from './lib/loading';
 export * from './lib/error';
 export * from './lib/qs';
 export * from './lib/markdown';
+export * from './lib/useSSRSafeQuery';

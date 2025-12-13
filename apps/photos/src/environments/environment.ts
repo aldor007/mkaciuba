@@ -3,7 +3,7 @@
 
 export const environment = {
   production: false,
-  // apiUrl: 'http://strapi.k8s.m39/graphql',
-  // apiUrl: 'http://localhost:1337/graphql',
-  apiUrl: '/graphql',
+  // Use absolute URL to support both SSR (Node.js fetch) and client (browser)
+  // SSR server proxies /graphql to Strapi, so this works in all environments
+  apiUrl: typeof window !== 'undefined' ? '/graphql' : 'https://mkaciuba.pl/graphql',
 };

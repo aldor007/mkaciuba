@@ -7,6 +7,7 @@
  * - v4: CSS fixes (photos build before photos-ssr, correct manifest paths)
  * - v3: Previous version
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const getCacheKey = (req: {
   path: string;
   query: Record<string, any>;

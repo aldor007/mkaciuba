@@ -8,7 +8,7 @@ import { faInstagram } from '@fortawesome/free-brands-svg-icons/faInstagram';
 import { faGithub } from '@fortawesome/free-brands-svg-icons/faGithub';
 import { faLinkedinIn } from '@fortawesome/free-brands-svg-icons/faLinkedinIn';
 import { faTwitter } from '@fortawesome/free-brands-svg-icons/faTwitter';
-import { Loading, ErrorPage } from "@mkaciuba/ui-kit";
+import { Loading, ErrorPage, useSSRSafeQuery } from "@mkaciuba/ui-kit";
 import { height } from "@fortawesome/free-solid-svg-icons/faArrowRight";
 
 const ICONS = {
@@ -101,11 +101,17 @@ export const Navbar = function (props: NavbarProps) {
   const [navbarOpen, setNavbarOpen] = React.useState(false);
   const { loading, error, data } = useQuery<Query,QueryMenuArgs>(GET_MENU, {
   });
-  if (loading) return <Loading/>;
+  const { shouldShowLoading } = useSSRSafeQuery(loading, data);
+
   if (error) {
     console.error('NavBar', error)
     return <ErrorPage code={500} message={error.message} />
    };
+
+  if (shouldShowLoading || !data?.menu) {
+    return <Loading/>;
+  }
+
   const social = data.menu.socialIcons;
   const { topMenu, mainMenu, brandName, brand } = data.menu;
   const socialIcons = social.map((icon) => (

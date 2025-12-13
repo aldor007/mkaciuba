@@ -3,12 +3,8 @@ import React from "react";
 
 import { Link } from 'react-router-dom'
 import { generatePath } from "react-router";
-import { findImageForWidth, ImageComponent } from "@mkaciuba/image";
-import { useWebPSupportCheck } from "react-use-webp-support-check";
+import { findImageForWidth, ImageComponent, useStableWindowWidth, useWebPSupportStable } from "@mkaciuba/image";
 import { Post } from '@mkaciuba/api';
-import {
-  useWindowWidth
-} from '@react-hook/window-size';
 import { AppRoutes } from "../routes";
 import { format } from "date-fns";
 
@@ -18,8 +14,8 @@ export interface PostCardProps {
 }
 
 export const PostCard = React.memo(({ post, inColumn }: PostCardProps) => {
-    const webp = useWebPSupportCheck();
-    const width = useWindowWidth();
+    const webp = useWebPSupportStable();
+    const width = useStableWindowWidth(1900, 300, 100);
     let headerClass ="relative  mx-auto max-w-screen-xl "
     let imageClass ="absolute text-lg bg-gray	leading-snug font-serif  top-1/3 sm:top-1/4 lg:top-1/2 z-10 h-16 min-w-full	 justify-center items-center  text-white"
     if (inColumn) {

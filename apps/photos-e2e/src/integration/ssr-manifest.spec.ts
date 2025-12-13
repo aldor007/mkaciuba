@@ -58,6 +58,7 @@ describe('SSR Manifest Validation', () => {
         }
 
         // Verify all values are strings with content
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         Object.values(manifest).forEach((value: any) => {
           expect(value).to.be.a('string');
           expect(value.length).to.be.greaterThan(0);

@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   ApolloClient,
   InMemoryCache,
-  ApolloLink,
-  Operation,
   FieldPolicy,
   Reference,
   gql,

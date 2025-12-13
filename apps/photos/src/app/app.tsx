@@ -3,7 +3,9 @@ import { useLocation } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 
 import '../assets/photos.css'
-import { AppRoutesComponent } from '../routes';
+// Always use SSR routes (direct imports) to ensure component types match during hydration
+// This sacrifices code splitting but fixes hydration mismatches
+import { AppRoutesComponent } from '../routes.ssr';
 import { ApolloProvider } from '@apollo/client/react';
 import {  ApolloClient, InMemoryCache, HttpLink  } from '@apollo/client/core';
 import { BatchHttpLink } from "@apollo/client/link/batch-http";
@@ -62,8 +64,12 @@ const authLink = setContext((_, { headers }) => {
   }
 });
 
-export const App = ({ client, routes }: AppsProps) => {
+export const App = ({ client: clientProp, routes }: AppsProps) => {
+  // Always use SSR routes (direct imports) to ensure consistent component types during hydration
   const RoutesComponent = routes || AppRoutesComponent;
+
+  // Use provided client (from SSR) or create a new one for client-side
+  let client = clientProp;
 
   if (!client) {
       // Enable persisted queries in all environments for bandwidth savings
@@ -91,10 +97,11 @@ export const App = ({ client, routes }: AppsProps) => {
           }
         }
       })
-    if (window.__APOLLO_STATE__ ) {
+    if (typeof window !== 'undefined' && window.__APOLLO_STATE__) {
       client = new ApolloClient({
         link,
         cache: cache.restore(window.__APOLLO_STATE__),
+        ssrForceFetchDelay: 100,
       });
     } else {
       client = new ApolloClient({
@@ -104,22 +111,15 @@ export const App = ({ client, routes }: AppsProps) => {
     }
   }
 
-  const content = (
+  // Don't wrap in HelmetProvider here - it should be provided by the parent
+  // (either SSR code in photos-ssr/main.tsx or client-side in main.tsx)
+  return (
     <ApolloProvider client={client}>
       <Tracking />
       <ScrollToTop />
       <RoutesComponent />
     </ApolloProvider>
   );
-
-  // Wrap in HelmetProvider only when running in browser
-  // During SSR (typeof window === 'undefined'), the SSR code in photos-ssr/main.tsx
-  // provides the HelmetProvider with helmetContext
-  if (typeof window !== 'undefined') {
-    return <HelmetProvider>{content}</HelmetProvider>;
-  }
-
-  return content;
 };
 
 export default App;

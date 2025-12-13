@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getCacheKey } from './cache-utils';
 
 describe('SSR Server - Cache Utilities', () => {

@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /// <reference types="@testing-library/jest-dom" />
 import React from 'react';
-import { render, fireEvent, waitFor, screen, act } from '@testing-library/react';
+import { render, fireEvent, waitFor, act } from '@testing-library/react';
 import { mockImageVariants, createMockImage, createMockUploadFile } from '../../../api/src/test-utils/factories';
 import {
   ImageComponent,
@@ -265,14 +266,26 @@ describe('ImageComponent', () => {
 
   describe('rendering', () => {
     test('should render successfully with thumbnails', () => {
+      // Simulate SSR hydration to render images immediately
+      (window as any).__APOLLO_STATE__ = {};
+
       const mockThumbnails = [
         createMockImage({ url: 'https://example.com/image.jpg', width: 800, height: 600, webp: false }),
+        createMockImage({ url: 'https://example.com/image.webp', width: 800, height: 600, webp: true }),
       ];
 
       const { container } = render(<ImageComponent thumbnails={mockThumbnails} />);
 
+      // Advance timers to complete any pending effects
+      act(() => {
+        jest.advanceTimersByTime(20);
+      });
+
       expect(container.querySelector('picture')).toBeInTheDocument();
       expect(container.querySelector('img')).toBeInTheDocument();
+
+      // Cleanup
+      delete (window as any).__APOLLO_STATE__;
     });
 
     test('should render with default image when provided', () => {
@@ -282,6 +295,10 @@ describe('ImageComponent', () => {
       const { container } = render(
         <ImageComponent thumbnails={mockThumbnails} defaultImage={defaultImage} />
       );
+
+      act(() => {
+        jest.advanceTimersByTime(20);
+      });
 
       const img = container.querySelector('img');
       expect(img).toHaveAttribute('src', 'https://example.com/default.jpg');
@@ -294,6 +311,10 @@ describe('ImageComponent', () => {
         <ImageComponent thumbnails={mockThumbnails} className="custom-class" />
       );
 
+      act(() => {
+        jest.advanceTimersByTime(20);
+      });
+
       const img = container.querySelector('img');
       expect(img).toHaveClass('custom-class');
     });
@@ -304,6 +325,10 @@ describe('ImageComponent', () => {
         <ImageComponent thumbnails={mockThumbnails} alt="Test alt text" />
       );
 
+      act(() => {
+        jest.advanceTimersByTime(20);
+      });
+
       const img = container.querySelector('img');
       expect(img).toHaveAttribute('alt', 'Test alt text');
     });
@@ -312,6 +337,10 @@ describe('ImageComponent', () => {
       const mockThumbnails = [createMockImage()];
       const { container } = render(<ImageComponent thumbnails={mockThumbnails} />);
 
+      act(() => {
+        jest.advanceTimersByTime(20);
+      });
+
       const img = container.querySelector('img');
       expect(img).toHaveAttribute('loading', 'lazy');
     });
@@ -319,16 +348,29 @@ describe('ImageComponent', () => {
 
   describe('loading states', () => {
     test('should show loading animation initially', () => {
+      // Simulate SSR hydration to render images immediately
+      (window as any).__APOLLO_STATE__ = {};
+
       const mockThumbnails = [createMockImage()];
       const { container } = render(<ImageComponent thumbnails={mockThumbnails} />);
 
       const img = container.querySelector('img');
+      // Image is rendered immediately during SSR hydration and should show loading state
       expect(img).toHaveClass('animate-pulse');
+      expect(img).toHaveClass('opacity-0');
+
+      // Cleanup
+      delete (window as any).__APOLLO_STATE__;
     });
 
     test('should remove loading animation after load', () => {
       const mockThumbnails = [createMockImage()];
       const { container } = render(<ImageComponent thumbnails={mockThumbnails} />);
+
+      // Advance timers to render the image
+      act(() => {
+        jest.advanceTimersByTime(20);
+      });
 
       const img = container.querySelector('img');
       fireEvent.load(img);
@@ -340,13 +382,12 @@ describe('ImageComponent', () => {
       const mockThumbnails = [createMockImage()];
       const { container } = render(<ImageComponent thumbnails={mockThumbnails} />);
 
-      const img = container.querySelector('img');
-
-      // Fast-forward time by 1500ms
+      // Fast-forward time to render image + complete loading timeout
       act(() => {
-        jest.advanceTimersByTime(1500);
+        jest.advanceTimersByTime(1520); // 20ms to render + 1500ms timeout
       });
 
+      const img = container.querySelector('img');
       expect(img).not.toHaveClass('animate-pulse');
     });
   });
@@ -356,13 +397,20 @@ describe('ImageComponent', () => {
       const mockThumbnails = [createMockImage({ url: 'https://example.com/image.jpg' })];
       const { container } = render(<ImageComponent thumbnails={mockThumbnails} />);
 
+      // Advance timers to render the image
+      act(() => {
+        jest.advanceTimersByTime(20);
+      });
+
       const img = container.querySelector('img');
       const originalSrc = img.getAttribute('src');
 
       fireEvent.error(img);
 
       // Fast-forward retry delay
-      jest.advanceTimersByTime(250);
+      act(() => {
+        jest.advanceTimersByTime(250);
+      });
 
       await waitFor(() => {
         const newSrc = img.getAttribute('src');
@@ -375,19 +423,28 @@ describe('ImageComponent', () => {
       const mockThumbnails = [createMockImage({ url: 'https://example.com/image.jpg' })];
       const { container } = render(<ImageComponent thumbnails={mockThumbnails} />);
 
+      // Advance timers to render the image
+      act(() => {
+        jest.advanceTimersByTime(20);
+      });
+
       const img = container.querySelector('img');
 
       // Trigger 5 errors
       for (let i = 0; i < 5; i++) {
         fireEvent.error(img);
-        jest.advanceTimersByTime(250);
+        act(() => {
+          jest.advanceTimersByTime(250);
+        });
       }
 
       const srcAfter4Errors = img.getAttribute('src');
 
       // Trigger one more error
       fireEvent.error(img);
-      jest.advanceTimersByTime(250);
+      act(() => {
+        jest.advanceTimersByTime(250);
+      });
 
       // URL should not change after 4th error
       expect(img.getAttribute('src')).toBe(srcAfter4Errors);
@@ -403,6 +460,11 @@ describe('ImageComponent', () => {
         <ImageComponent thumbnails={mockThumbnails} onClick={onClick} />
       );
 
+      // Advance timers to render the image
+      act(() => {
+        jest.advanceTimersByTime(20);
+      });
+
       const img = container.querySelector('img');
       fireEvent.click(img);
 
@@ -414,6 +476,11 @@ describe('ImageComponent', () => {
     test('should use DEFAULT sizing when not specified', () => {
       const mockThumbnails = mockImageVariants;
       const { container } = render(<ImageComponent thumbnails={mockThumbnails} initialWidth={800} />);
+
+      // Advance timers to render the image
+      act(() => {
+        jest.advanceTimersByTime(20);
+      });
 
       const img = container.querySelector('img');
       // With width=800, should select closest match (800)
@@ -429,6 +496,11 @@ describe('ImageComponent', () => {
           initialWidth={500}
         />
       );
+
+      // Advance timers to render the image
+      act(() => {
+        jest.advanceTimersByTime(20);
+      });
 
       const img = container.querySelector('img');
       // With width=500 and BIGGER sizing, should select next larger (800)

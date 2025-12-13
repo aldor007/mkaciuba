@@ -1,5 +1,4 @@
 import { Cache } from './redis';
-import RedisMock from 'ioredis-mock';
 
 // Mock ioredis module
 jest.mock('ioredis', () => require('ioredis-mock'));

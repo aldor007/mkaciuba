@@ -60,7 +60,7 @@ describe('Post Filtering', () => {
 
       cy.get('body').then(($body) => {
         if (!$body.text().includes('404') && !$body.text().includes('500')) {
-          cy.url().then((categoryUrl) => {
+          cy.url().then(() => {
             // Click pagination if exists
             if ($body.find('button:contains("Więcej")').length > 0) {
               cy.contains('button', 'Więcej').click();

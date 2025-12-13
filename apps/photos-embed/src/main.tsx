@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { gql, useQuery, ApolloProvider, ApolloClient, InMemoryCache  } from '@apollo/client';
+import { ApolloProvider, ApolloClient, InMemoryCache  } from '@apollo/client';
 
 import { ImageList } from '@mkaciuba/image';
 

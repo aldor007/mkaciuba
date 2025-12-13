@@ -1,6 +1,7 @@
 import { cleanup, render, screen } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import App from './app';
 
 // Mock routes to avoid routing issues in tests
@@ -31,7 +32,9 @@ describe('App', () => {
   it('should render successfully', () => {
     const { baseElement } = render(
       <MemoryRouter>
-        <App />
+        <HelmetProvider>
+          <App />
+        </HelmetProvider>
       </MemoryRouter>
     );
     expect(baseElement).toBeTruthy();
