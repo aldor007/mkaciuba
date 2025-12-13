@@ -37,37 +37,51 @@ describe('ImageComponent flickering prevention', () => {
   });
 
   describe('initial displayedImage state', () => {
-    it('should not display image immediately during SSR hydration', () => {
+    it('should display image immediately during SSR hydration to match server rendering', async () => {
       // Simulate SSR hydration scenario
       (window as any).__APOLLO_STATE__ = {};
       const images = [createMockImageWithDimensions('https://example.com/image.jpg', 800, 600, false)];
 
       const { container } = render(<ImageComponent thumbnails={images} />);
 
-      // Image should not be rendered initially during hydration (displayedImage is null)
-      const imgElement = container.querySelector('img');
-      expect(imgElement).not.toBeInTheDocument();
+      // Advance timers to ensure any pending effects run
+      act(() => {
+        jest.advanceTimersByTime(20);
+      });
+
+      // Image SHOULD be rendered initially during hydration to match server HTML
+      // This prevents hydration mismatches
+      await waitFor(() => {
+        const imgElement = container.querySelector('img');
+        expect(imgElement).toBeInTheDocument();
+      });
 
       // Clean up
       delete (window as any).__APOLLO_STATE__;
     });
 
-    it('should display image after preload completes in SSR hydration', async () => {
+    it('should display image immediately in SSR hydration to prevent mismatch', async () => {
       // Simulate SSR hydration scenario
       (window as any).__APOLLO_STATE__ = {};
       const images = [createMockImageWithDimensions('https://example.com/image.jpg', 800, 600, false)];
 
       const { container } = render(<ImageComponent thumbnails={images} />);
 
-      // Initially no image during hydration
-      expect(container.querySelector('img')).not.toBeInTheDocument();
+      // Advance timers for initial render
+      act(() => {
+        jest.advanceTimersByTime(20);
+      });
 
-      // Fast-forward past the preload timeout
+      // Image should be displayed immediately during hydration to match server HTML
+      await waitFor(() => {
+        expect(container.querySelector('img')).toBeInTheDocument();
+      });
+
+      // Image should remain displayed after hydration completes
       act(() => {
         jest.advanceTimersByTime(1500);
       });
 
-      // Image should now be displayed
       await waitFor(() => {
         expect(container.querySelector('img')).toBeInTheDocument();
       });
