@@ -95,10 +95,11 @@ export const findImageForWidth = (images: Image[], width: number, webp: boolean)
 
 export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps) => {
   const webp = useWebPSupportStable();
-  const initialWidth = useMemo(() => {
-    if (typeof document === 'undefined') return 1900;
-    return document.documentElement.clientWidth;
-  }, []);
+  // Always use 1900 for SSR consistency across server and client
+  // This prevents hydration mismatches where server renders with 1900
+  // but client first render uses actual viewport width
+  // The ImageComponent will handle responsive sizing with CSS (w-full h-auto)
+  const initialWidth = 1900;
   const width = initialWidth;
 
   const [loadingMore] = useState(false);

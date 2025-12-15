@@ -41,6 +41,8 @@ const presetList = [
   new Preset('bigwebp', 700, null, '(max-width: 1000px)', 'webp'),
   new Preset('big1000webp', 1000, null, '(max-width: 1300px)', 'webp'),
   new Preset('big1300webp', 1300, null, '(max-width: 1600px)', 'webp'),
+  new Preset('big1900webp', 1900, null, '(max-width: 2100px)', 'webp'),
+  new Preset('big2400webp', 2400, null, '(min-width: 2100px)', 'webp'),
   new Preset('big', 700, null, '(max-width: 1000px)', 'jpeg'),
   new Preset('small', 80, null, '(max-width: 100px)', 'jpeg'),
   new Preset('smallwebp', 80, null, '(max-width: 100px)', 'webp'),
@@ -48,6 +50,8 @@ const presetList = [
   new Preset('big300webp', 300, null, '(max-width: 300px)', 'webp'),
   new Preset('big1000', 1000, null, '(max-width: 1300px)', 'jpeg'),
   new Preset('big1300', 1300, null, '(max-width: 1600px)', 'jpeg'),
+  new Preset('big1900', 1900, null, '(max-width: 2100px)', 'jpeg'),
+  new Preset('big2400', 2400, null, '(min-width: 2100px)', 'jpeg'),
 ]
 exports.presetList = presetList;
 
