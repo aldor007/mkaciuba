@@ -1,6 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
 import { AppRoutes } from './app/routes';
-
 // Direct imports for SSR - no code splitting on server
 import { Home } from './app/pages/Home';
 import { Categories } from './app/pages/Categories';
