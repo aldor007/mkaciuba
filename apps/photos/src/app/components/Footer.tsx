@@ -65,7 +65,7 @@ export const Footer = () => {
     return  (
       <div key={c.slug}>
       <Link to={imagePath}>
-      <img  src={image.url} height={image.height}  width={image.width} alt={image.alt} />
+      <ImageComponent thumbnails={[image]} defaultImage={image} initialWidth={200} alt={image.alt} />
       </Link>
       </div>
    )

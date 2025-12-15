@@ -174,6 +174,19 @@ const addDatePrefix = (url) => {
     return url + prefix + 'cache=' + Date.now()
 }
 
+/**
+ * Anti-flicker ImageComponent with comprehensive SSR hydration support
+ *
+ * Flicker Prevention Strategy:
+ * 1. WebP Detection: Cached synchronously to prevent format switching between renders
+ * 2. Window Width: Debounced with threshold to prevent excessive image changes on resize
+ * 3. Image Preloading: New images are preloaded before display using Image() constructor
+ * 4. Loaded Image Cache: Tracks loaded images to display them immediately on subsequent renders
+ * 5. SSR Hydration: Locks image selection to initialWidth during hydration to match server HTML
+ * 6. Dimension vs Format: Different handling for size changes (with transition) vs format changes (instant)
+ * 7. Memoization: Image selection is memoized to prevent unnecessary recalculations
+ * 8. Stable Initial State: Uses same image on server, during hydration, and after mount
+ */
 export const ImageComponent = React.forwardRef(({thumbnails, defaultImage: providedDefaultImage, onClick, alt, className, defaultImgSizing, initialWidth=1900}:ImageComponentProps, ref: RefObject<HTMLImageElement>) => {
   const errorCounterRef = useRef(0);
   const webp = useWebPSupportStable();
@@ -181,11 +194,19 @@ export const ImageComponent = React.forwardRef(({thumbnails, defaultImage: provi
   const loadedImagesRef = useRef(new Set<string>());
 
   // SSR hydration detection to prevent image switching during hydration
-  const isHydratingRef = useRef(typeof window !== 'undefined' && (window as any).__APOLLO_STATE__ !== undefined);
+  // Check for SSR by looking for window and React hydration markers
+  const isSSR = typeof window === 'undefined';
+  const isHydratingRef = useRef(!isSSR && (
+    (window as any).__APOLLO_STATE__ !== undefined ||
+    document.querySelector('[data-reactroot]') !== null ||
+    document.querySelector('[data-reactid]') !== null
+  ));
   const [hydrationComplete, setHydrationComplete] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
-  // Mark hydration as complete after a delay (slightly longer than Apollo's ssrForceFetchDelay)
+  // Mark hydration as complete after component mounts and a small delay
   useEffect(() => {
+    setIsMounted(true);
     if (isHydratingRef.current) {
       const timer = setTimeout(() => {
         setHydrationComplete(true);
@@ -198,8 +219,10 @@ export const ImageComponent = React.forwardRef(({thumbnails, defaultImage: provi
 
   // Memoize the default image calculation to prevent flickering on re-renders
   const defaultImage = useMemo(() => {
-    // During hydration, lock to initialWidth to prevent image switching
-    const effectiveWidth = (isHydratingRef.current && !hydrationComplete) ? initialWidth : width;
+    // During hydration and before mount, lock to initialWidth to prevent image switching
+    // This ensures server-rendered HTML matches initial client render
+    const isHydrating = (isHydratingRef.current && !hydrationComplete) || !isMounted;
+    const effectiveWidth = isHydrating ? initialWidth : width;
 
     if (providedDefaultImage) {
       return providedDefaultImage;
@@ -210,7 +233,7 @@ export const ImageComponent = React.forwardRef(({thumbnails, defaultImage: provi
     } else {
       return findImageForWidthBigger(thumbnails, effectiveWidth, webp);
     }
-  }, [providedDefaultImage, thumbnails, width, webp, defaultImgSizing, hydrationComplete, initialWidth]);
+  }, [providedDefaultImage, thumbnails, width, webp, defaultImgSizing, hydrationComplete, initialWidth, isMounted]);
 
   // Track images by key including dimensions to prevent flicker on format changes
   const imageUrl = defaultImage?.url;
@@ -218,12 +241,13 @@ export const ImageComponent = React.forwardRef(({thumbnails, defaultImage: provi
   const hasLoadedBefore = imageKey && loadedImagesRef.current.has(imageKey);
   const [loading, setLoading] = useState(!hasLoadedBefore);
   const prevImageKeyRef = useRef<string | null>(null);
-  // Fix: Always use defaultImage during SSR or initial hydration to prevent mismatch
-  // Server (typeof window === 'undefined') always uses defaultImage
-  // Client during hydration (isHydratingRef.current = true) must also use defaultImage to match server
-  // Client after hydration can optimize by only showing if hasLoadedBefore
-  const isServerOrInitialHydration = typeof window === 'undefined' || isHydratingRef.current;
-  const initialDisplayedImage = (isServerOrInitialHydration || hasLoadedBefore) ? defaultImage : null;
+  // Fix: Always use defaultImage during SSR and initial client render to prevent mismatch
+  // We use !isMounted because it's false during both SSR and initial client render
+  // This ensures server HTML matches client's first render
+  // Server: isMounted is false → shows defaultImage
+  // Client (before useEffect): isMounted is false → shows defaultImage (matches server!)
+  // Client (after useEffect): isMounted is true → can optimize based on hasLoadedBefore
+  const initialDisplayedImage = (!isMounted || hasLoadedBefore) ? defaultImage : null;
   const [displayedImage, setDisplayedImage] = useState(initialDisplayedImage);
   // Track whether this is a dimension change (needs transition) vs format change (no transition)
   const [isDimensionChange, setIsDimensionChange] = useState(false);

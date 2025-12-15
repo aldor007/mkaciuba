@@ -132,11 +132,11 @@ export const Post = () => {
     return <ErrorPage code={500} message={error.message} />
    };
 
-  if (shouldShowLoading) return <LoadingMore/>;
+  if (shouldShowLoading || !data) return <LoadingMore/>;
 
-  const post = data!.postBySlug;
+  const post = data.postBySlug;
   if (!post) {
-    console.error('Post', 'not-fount')
+    console.error('Post', 'not-found')
     return <ErrorPage code={404} message={'Post not found'} />
   }
   const [prevPost, nextPost] = data.prevNextPost || [];
