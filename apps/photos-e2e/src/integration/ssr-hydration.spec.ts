@@ -87,7 +87,8 @@ describe('SSR Hydration', () => {
 
       // Wait for page to be fully loaded and hydrated
       cy.get('.max-w-screen-xl', { timeout: 10000 }).should('be.visible');
-      cy.get('body').should('have.class', 'loaded').or('exist'); // Wait for page ready
+      // Wait a bit for hydration to complete
+      cy.wait(500);
 
       // Check for React hydration errors
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -228,29 +229,33 @@ describe('SSR Hydration', () => {
             // Wait for content area to be ready
             cy.get('body').should('exist');
 
-            // Check for duplicate post content in the main content area
-            // Focus on the actual post content, not navigation or other page elements
-            cy.get('body').then(($body) => {
-            const allH1s = $body.find('h1');
-            cy.log(`Total h1 elements found: ${allH1s.length}`);
+            // Check for duplicate post titles by text content
+            // This is more reliable than counting h1s in specific containers
+            cy.get('h1').then(($h1s) => {
+              const h1Texts = new Map<string, number>();
 
-            // Get h1s that are likely post titles (not in nav, footer, etc.)
-            const contentH1s = $body.find('article h1, .post-content h1, main h1, [class*="post"] h1');
-            cy.log(`H1s in post content area: ${contentH1s.length}`);
+              // Count occurrences of each h1 text
+              $h1s.each((index, el) => {
+                const text = Cypress.$(el).text().trim();
+                // Only count non-empty h1s with substantial text (likely post titles)
+                if (text && text.length > 10) {
+                  const count = h1Texts.get(text) || 0;
+                  h1Texts.set(text, count + 1);
+                  cy.log(`H1 ${index + 1}: "${text.substring(0, 50)}"`);
+                }
+              });
 
-            // Log where the h1s are for debugging
-            allH1s.each((index, el) => {
-              const text = Cypress.$(el).text().substring(0, 50);
-              const parent = Cypress.$(el).parent().attr('class') || 'no-class';
-              cy.log(`H1 ${index + 1}: "${text}" in ${parent}`);
+              // Check for duplicates
+              const duplicates: string[] = [];
+              h1Texts.forEach((count, text) => {
+                if (count > 1) {
+                  duplicates.push(`"${text.substring(0, 50)}" (appears ${count} times)`);
+                }
+              });
+
+              // Fail if any h1 text appears more than once
+              expect(duplicates, 'No h1 text should be duplicated').to.have.lengthOf(0);
             });
-
-            // The main post title should appear only once in the content area
-            expect(contentH1s.length, 'Post title should not be duplicated in content').to.be.lessThan(3);
-          });
-
-          // Check that the main content area exists only once
-          cy.get('article, .post-content, main').should('have.length.lessThan', 3);
         }
       });
     });
