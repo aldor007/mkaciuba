@@ -339,7 +339,8 @@ export const ImageComponent = React.forwardRef(({thumbnails, defaultImage: provi
 
   // Conditionally apply transition: only for dimension changes, not format changes
   const transitionClass = isDimensionChange ? 'transition-opacity duration-300' : 'transition-none';
-  const classes = `bg-gray-300 ${transitionClass} ${className || ''} ${loading ? 'animate-pulse bg-opacity-15 opacity-0' : 'opacity-100'}`;
+  // Add responsive image classes: w-full makes images fill container width, h-auto maintains aspect ratio
+  const classes = `w-full h-auto bg-gray-300 ${transitionClass} ${className || ''} ${loading ? 'animate-pulse bg-opacity-15 opacity-0' : 'opacity-100'}`;
 
   return (
     <picture ref={ref}>
