@@ -59,11 +59,15 @@ const allPresets = presetList.concat([
   new Preset('categorylistwebps', 300, 225, '(max-width: 600px)', 'webp'),
   new Preset('categorylists', 300, 225, '(max-width: 600px)', 'jpeg'),
 
+  new Preset('postlistdesktopwebp', 2400, 1600, '(min-width: 1300px)', 'webp'),
+  new Preset('postlistdesktop', 2400, 1600, '(min-width: 1300px)', 'jpeg'),
   new Preset('postlistwebp', 1500, 1000, '(max-width: 1300px)', 'webp'),
   new Preset('postlist', 1500, 1000, '(max-width: 1300px)', 'jpeg'),
   new Preset('postlistwebps', 750, 750, '(max-width: 375px)', 'webp'),
   new Preset('postlists', 750, 750, '(max-width: 375px)', 'jpeg'),
 
+  new Preset('postimg_ac_desktopwebp', 2400, 1600, '(min-width: 1300px)', 'webp'),
+  new Preset('postimg_ac_desktop', 2400, 1600, '(min-width: 1300px)', 'jpeg'),
   new Preset('postimg_ac_webp', 1500, 1000, '(max-width: 1300px)', 'webp'),
   new Preset('postimg_ac', 1500, 1000, '(max-width: 1300px)', 'jpeg'),
   new Preset('postimg_ac_webps', 750, 740, '(max-width: 600px)', 'webp'),
