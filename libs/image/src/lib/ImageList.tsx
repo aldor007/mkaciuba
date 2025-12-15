@@ -6,7 +6,7 @@ import { Query } from '@mkaciuba/types';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { LoadingMore, ErrorPage, useSSRSafeQuery } from '@mkaciuba/ui-kit'
 import ReactGA from 'react-ga4'
-import { Image, ImageComponent, useWebPSupportStable } from './image';
+import { Image, ImageComponent, useWebPSupportStable, DefaultImgSizing } from './image';
 import { Gallery, Item } from 'react-photoswipe-gallery'
 import { findImageForWidthBigger } from "..";
 
@@ -154,13 +154,10 @@ export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps)
   // Memoize image calculations - must be called before any early returns
   const images = useMemo(() => data?.categoryBySlug?.medias || [], [data?.categoryBySlug?.medias]);
   const category = data?.categoryBySlug;
+  // For SEO meta tags, calculate a default image at 1024px
   const defaultImages = useMemo(() =>
-    images.map((item) => findImageForWidth(item.thumbnails, width, webp)),
-    [images, width, webp]
-  );
-  const defaultImagesFull = useMemo(() =>
-    images.map((item) => findImageForWidthBigger(item.thumbnails, width, webp)),
-    [images, width, webp]
+    images.map((item) => findImageForWidth(item.thumbnails, 1024, webp)),
+    [images, webp]
   );
 
   if (error) {
@@ -199,32 +196,41 @@ export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps)
           action: 'open',
           label: window.location.href,
           })}}>
-            {images.map( (item, index) => (
+            {images.map( (item, index) => {
+              // Calculate large image for photoswipe lightbox (independent of viewport)
+              const lightboxImage = findImageForWidthBigger(item.thumbnails, 1900, webp);
+              return (
             <Item
-              original={defaultImagesFull[index].url}
-              thumbnail={defaultImagesFull[index].url}
-              width={defaultImagesFull[index].width}
-              height={defaultImagesFull[index].height}
-              // id={item.id}
-
+              original={lightboxImage.url}
+              thumbnail={lightboxImage.url}
+              width={lightboxImage.width}
+              height={lightboxImage.height}
               key={item.id}
               title={item.caption || item.alternativeText || item.name}
             >
             {({ ref, open }) => (
                 <div className={imageClass}>
-               <ImageComponent ref={ref as RefObject<HTMLImageElement>} onClick={async () => {
-                 if (hasNextPage()) {
-                  await handleLoadMore()
-                 }
-                setTimeout(open, 50)
-               }} thumbnails={item.thumbnails} defaultImage={defaultImagesFull[index]} alt={item.alternativeText || item.name} initialWidth={initialWidth} />
+               <ImageComponent
+                 ref={ref as RefObject<HTMLImageElement>}
+                 onClick={async () => {
+                   if (hasNextPage()) {
+                     await handleLoadMore()
+                   }
+                   setTimeout(open, 50)
+                 }}
+                 thumbnails={item.thumbnails}
+                 alt={item.alternativeText || item.name}
+                 initialWidth={initialWidth}
+                 defaultImgSizing={DefaultImgSizing.BIGGER}
+               />
                   <div className="hidden overflow-hidden">
                     <div className="text-white text-lg">{item.alternativeText || item.name}</div>
                   </div>
                 </div>
             )}
       </Item>
-      ))}
+              )}
+      )}
       </Gallery>
 </div>
 
