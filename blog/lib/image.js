@@ -52,6 +52,10 @@ const presetList = [
   new Preset('big1300', 1300, null, '(max-width: 1600px)', 'jpeg'),
   new Preset('big1900', 1900, null, '(max-width: 2100px)', 'jpeg'),
   new Preset('big2400', 2400, null, '(min-width: 2100px)', 'jpeg'),
+  new Preset('big1000webp', 1000, null, '(max-width: 1300px)', 'webp'),
+  new Preset('big1300webp', 1300, null, '(max-width: 1600px)', 'webp'),
+  new Preset('big1900webp', 1900, null, '(max-width: 2100px)', 'webp'),
+  new Preset('big2400webp', 2400, null, '(min-width: 2100px)', 'webp'),
 ]
 exports.presetList = presetList;
 
