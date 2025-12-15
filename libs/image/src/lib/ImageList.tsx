@@ -100,7 +100,6 @@ export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps)
   // but client first render uses actual viewport width
   // The ImageComponent will handle responsive sizing with CSS (w-full h-auto)
   const initialWidth = 1900;
-  const width = initialWidth;
 
   const [loadingMore] = useState(false);
   const limit = 30;

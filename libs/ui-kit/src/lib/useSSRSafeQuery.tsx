@@ -35,15 +35,16 @@ export function useSSRSafeQuery<T = any>(loading: boolean, data: T | undefined) 
     }
   }, []);
 
-  // Check if SSR data is available
-  const hasSSRData = typeof window !== 'undefined' && (window as any).__APOLLO_STATE__;
-
-  // During first render with SSR data, skip loading check entirely
-  // This prevents hydration mismatches when Apollo temporarily returns loading: true
-  const shouldSkipLoadingCheck = hasSSRData && isFirstRenderRef.current;
-
-  // Show loading if we don't have data (unless we're skipping the check)
-  const shouldShowLoading = !shouldSkipLoadingCheck && data === undefined;
+  // CRITICAL: Always show loading when data is undefined
+  // This prevents "Cannot read properties of undefined" crashes
+  //
+  // If data exists (even if it's null, {}, 0, '', false), we can render it.
+  // If data is undefined, we MUST show loading to prevent crashes.
+  //
+  // Note: This prioritizes safety over SSR optimization. Previously, the hook
+  // would skip showing loading during SSR first render even if data was undefined,
+  // which caused crashes when the data never hydrated.
+  const shouldShowLoading = data === undefined;
 
   return {
     shouldShowLoading,
