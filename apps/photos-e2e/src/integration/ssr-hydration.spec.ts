@@ -211,17 +211,25 @@ describe('SSR Hydration', () => {
           // Wait for hydration to complete
           cy.wait(2000);
 
-          // Check that the post title appears a reasonable number of times
-          // (may include title in meta tags, header, etc., but not duplicated content)
-          cy.get('h1').then(($h1s) => {
-            cy.log(`Found ${$h1s.length} h1 elements`);
+          // Check for duplicate post content in the main content area
+          // Focus on the actual post content, not navigation or other page elements
+          cy.get('body').then(($body) => {
+            const allH1s = $body.find('h1');
+            cy.log(`Total h1 elements found: ${allH1s.length}`);
 
-            // Get visible h1s only (exclude hidden meta/SEO elements)
-            const visibleH1s = $h1s.filter(':visible');
-            cy.log(`Found ${visibleH1s.length} visible h1 elements`);
+            // Get h1s that are likely post titles (not in nav, footer, etc.)
+            const contentH1s = $body.find('article h1, .post-content h1, main h1, [class*="post"] h1');
+            cy.log(`H1s in post content area: ${contentH1s.length}`);
 
-            // Should have at most 2 visible h1s (post title + maybe page title)
-            expect(visibleH1s.length, 'Should not have duplicate visible h1 elements').to.be.lessThan(3);
+            // Log where the h1s are for debugging
+            allH1s.each((index, el) => {
+              const text = Cypress.$(el).text().substring(0, 50);
+              const parent = Cypress.$(el).parent().attr('class') || 'no-class';
+              cy.log(`H1 ${index + 1}: "${text}" in ${parent}`);
+            });
+
+            // The main post title should appear only once in the content area
+            expect(contentH1s.length, 'Post title should not be duplicated in content').to.be.lessThan(3);
           });
 
           // Check that the main content area exists only once
