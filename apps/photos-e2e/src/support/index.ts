@@ -20,9 +20,18 @@ import './commands';
 let hydrationWarnings: string[] = [];
 let allConsoleErrors: string[] = [];
 let lastHydrationError: any = null;
+let appWindow: Window | null = null; // Store reference to application window
 
 // Intercept console errors to capture hydration details
 Cypress.on('window:before:load', (win) => {
+  // Only intercept if this is the application window (not Cypress internal frames)
+  if (win.location.href.includes('__cypress')) {
+    return; // Skip Cypress internal frames
+  }
+
+  // Store reference to application window for DOM inspection
+  appWindow = win;
+
   const originalConsoleError = win.console.error;
   const originalConsoleWarn = win.console.warn;
   const originalConsoleLog = win.console.log;
@@ -120,25 +129,29 @@ Cypress.on('uncaught:exception', (err, runnable) => {
       err.message.includes('hydration');
 
   if (isHydrationError) {
-    // Collect DOM information
+    // Collect DOM information from the application window
     let domInfo = null;
     try {
-      if (typeof window !== 'undefined' && window.document) {
-        const body = window.document.body;
+      const targetWindow = appWindow || (typeof window !== 'undefined' ? window : null);
+      if (targetWindow && targetWindow.document) {
+        const body = targetWindow.document.body;
         if (body) {
           const reactRoot = body.querySelector('#root, [data-reactroot], [data-reactid]');
           const suppressedElements = body.querySelectorAll('[suppresshydrationwarning]');
 
           domInfo = {
-            url: window.location.href,
-            path: window.location.pathname,
+            url: targetWindow.location.href,
+            path: targetWindow.location.pathname,
             bodyClasses: body.className || 'none',
             childCount: body.children.length,
             reactRoot: reactRoot ? `${reactRoot.tagName} ${reactRoot.id ? '#' + reactRoot.id : ''}` : null,
             suppressedElements: suppressedElements.length,
-            bodyHtml: body.innerHTML.substring(0, 1000) + (body.innerHTML.length > 1000 ? `\n... (${body.innerHTML.length - 1000} more characters)` : '')
+            bodyHtml: body.innerHTML.substring(0, 1000) + (body.innerHTML.length > 1000 ? `\n... (${body.innerHTML.length - 1000} more characters)` : ''),
+            isAppWindow: targetWindow === appWindow
           };
         }
+      } else {
+        domInfo = { error: 'Application window not available for inspection' };
       }
     } catch (domError) {
       domInfo = { error: 'Could not extract DOM information: ' + String(domError) };
@@ -177,6 +190,14 @@ Cypress.on('uncaught:exception', (err, runnable) => {
 
   // Allow errors to fail the test
   return true;
+});
+
+// Clear state before each test
+beforeEach(function() {
+  hydrationWarnings = [];
+  allConsoleErrors = [];
+  lastHydrationError = null;
+  appWindow = null;
 });
 
 // Log hydration errors to Node.js console after each test (visible in GitHub Actions)

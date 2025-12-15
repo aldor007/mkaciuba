@@ -80,18 +80,28 @@ export default defineConfig({
           if (data.domInfo) {
             console.log('\n\n📄 CURRENT DOM STATE:');
             console.log('─────────────────────────────────────────────────────────');
-            console.log(`   URL: ${data.domInfo.url}`);
-            console.log(`   Path: ${data.domInfo.path}`);
-            console.log(`   Body classes: ${data.domInfo.bodyClasses || 'none'}`);
-            console.log(`   Direct children: ${data.domInfo.childCount}`);
-            if (data.domInfo.reactRoot) {
-              console.log(`   React root found: ${data.domInfo.reactRoot}`);
+
+            if (data.domInfo.error) {
+              console.log(`   ⚠️  ${data.domInfo.error}`);
+            } else {
+              console.log(`   Window source: ${data.domInfo.isAppWindow ? 'Application window ✓' : 'Fallback window'}`);
+              console.log(`   URL: ${data.domInfo.url}`);
+              console.log(`   Path: ${data.domInfo.path}`);
+              console.log(`   Body classes: ${data.domInfo.bodyClasses || 'none'}`);
+              console.log(`   Direct children: ${data.domInfo.childCount}`);
+              if (data.domInfo.reactRoot) {
+                console.log(`   React root found: ${data.domInfo.reactRoot}`);
+              }
+              if (data.domInfo.suppressedElements > 0) {
+                console.log(`   Elements with suppressHydrationWarning: ${data.domInfo.suppressedElements}`);
+              }
+              console.log('\n   Body HTML (first 1000 chars):');
+              console.log(data.domInfo.bodyHtml);
             }
-            if (data.domInfo.suppressedElements > 0) {
-              console.log(`   Elements with suppressHydrationWarning: ${data.domInfo.suppressedElements}`);
-            }
-            console.log('\n   Body HTML (first 1000 chars):');
-            console.log(data.domInfo.bodyHtml);
+          } else {
+            console.log('\n\n📄 CURRENT DOM STATE:');
+            console.log('─────────────────────────────────────────────────────────');
+            console.log('   ⚠️  No DOM information available');
           }
 
           console.log('\n\n╔═══════════════════════════════════════════════════════════╗');
