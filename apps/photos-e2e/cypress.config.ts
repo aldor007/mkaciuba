@@ -32,6 +32,23 @@ export default defineConfig({
           console.log(message);
           return null;
         },
+        logConsoleState(data) {
+          console.log('\n🔍 CONSOLE INTERCEPTION STATE:');
+          console.log('─────────────────────────────────────────────────────────');
+          console.log(`   Hydration warnings captured: ${data.warningsCount}`);
+          console.log(`   All console errors captured: ${data.errorsCount}`);
+          console.log(`   App window set: ${data.hasAppWindow ? 'Yes ✓' : 'No ✗'}`);
+          if (data.warnings && data.warnings.length > 0) {
+            console.log('\n   Recent warnings:');
+            data.warnings.forEach((w: string) => console.log(`     - ${w.substring(0, 100)}...`));
+          }
+          if (data.errors && data.errors.length > 0) {
+            console.log('\n   Recent errors:');
+            data.errors.forEach((e: string) => console.log(`     - ${e.substring(0, 100)}...`));
+          }
+          console.log('─────────────────────────────────────────────────────────\n');
+          return null;
+        },
         logError(data) {
           console.log('\n\n');
           console.log('╔═══════════════════════════════════════════════════════════╗');

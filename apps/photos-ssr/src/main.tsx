@@ -146,12 +146,15 @@ function renderErrorPage(code: number, message?: string) {
   const errorHtml = <Html
     content={errorContent}
     state={{}}
-    meta={`
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <link href="${getAssetPath('main.css')}" rel="stylesheet"/>
-      <title>${code} Error | mkaciuba.pl</title>
-    `}
+    helmet={{
+      title: { toComponent: () => <title>{code} Error | mkaciuba.pl</title> },
+      meta: { toComponent: () => null },
+      link: { toComponent: () => null },
+      script: { toComponent: () => null }
+    }}
+    mainCssPath={getAssetPath('main.css')}
+    defaultSkinCssPath={getAssetPath('assets/default-skin.css')}
+    photosCssPath={getAssetPath('assets/photos.css')}
     scripts={scripts}
     loadableScripts={[]}
     loadableLinks={[]}
@@ -337,20 +340,6 @@ app.get('*', async (req, res) => {
       // Extract helmet data AFTER rendering (react-helmet-async populates context during renderToString)
       const { helmet } = helmetContext;
 
-      const headTags = `
-        ${helmet?.title?.toString() || ''}
-        ${helmet?.meta?.toString() || ''}
-        ${helmet?.link?.toString() || ''}
-        ${helmet?.script?.toString() || ''}
-      `;
-
-      const meta =    `${headTags}
-        <link href="${getAssetPath('main.css')}" rel="stylesheet"/>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="${getAssetPath('assets/default-skin.css')}" rel="stylesheet"/>
-        <link href="${getAssetPath('assets/photos.css')}" rel="stylesheet"/>`
-
       // Extract loadable scripts and links if extractor exists
       const loadableScripts = extractor ? extractor.getScriptElements() : [];
       const loadableLinks = extractor ? extractor.getLinkElements() : [];
@@ -359,7 +348,10 @@ app.get('*', async (req, res) => {
       // Add both the page content and the cache state to a top-level component
       const html = <Html
         state={initialState}
-        meta={meta}
+        helmet={helmet}
+        mainCssPath={getAssetPath('main.css')}
+        defaultSkinCssPath={getAssetPath('assets/default-skin.css')}
+        photosCssPath={getAssetPath('assets/photos.css')}
         scripts={scripts}
         content={appContent}
         loadableScripts={loadableScripts}

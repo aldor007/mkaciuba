@@ -32,6 +32,13 @@ Cypress.on('window:before:load', (win) => {
   // Store reference to application window for DOM inspection
   appWindow = win;
 
+  // Force immediate log to Node.js to verify interception is set up
+  Cypress.log({
+    name: 'Console Interception',
+    message: `Setup for ${win.location.pathname}`,
+    consoleProps: () => ({ URL: win.location.href })
+  });
+
   const originalConsoleError = win.console.error;
   const originalConsoleWarn = win.console.warn;
   const originalConsoleLog = win.console.log;
@@ -66,6 +73,17 @@ Cypress.on('window:before:load', (win) => {
 
   win.console.error = function (...args: any[]) {
     const message = formatMessage(args);
+
+    // Debug: Log that we intercepted a console.error
+    try {
+      Cypress.log({
+        name: '📢 console.error',
+        message: message.substring(0, 100),
+        consoleProps: () => ({ 'Full Message': message })
+      });
+    } catch (e) {
+      // Ignore Cypress log errors
+    }
 
     // Store all console errors with timestamp
     allConsoleErrors.push(`[ERROR ${new Date().toISOString()}] ${message}`);
@@ -202,6 +220,17 @@ beforeEach(function() {
 
 // Log hydration errors to Node.js console after each test (visible in GitHub Actions)
 afterEach(function() {
+  // Always log console state for debugging (only in failed tests)
+  if (this.currentTest?.state === 'failed') {
+    cy.task('logConsoleState', {
+      warningsCount: hydrationWarnings.length,
+      errorsCount: allConsoleErrors.length,
+      hasAppWindow: appWindow !== null,
+      warnings: hydrationWarnings.slice(-5), // Last 5
+      errors: allConsoleErrors.slice(-5)      // Last 5
+    }, { log: false });
+  }
+
   if (lastHydrationError) {
     cy.task('logError', lastHydrationError, { log: false });
     lastHydrationError = null;

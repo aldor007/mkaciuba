@@ -1,6 +1,17 @@
 import React from 'react';
 
-export function Html({ content, state, meta, scripts, loadableScripts = [], loadableLinks = [], loadableStyles = [] }) {
+export function Html({
+  content,
+  state,
+  helmet,
+  mainCssPath,
+  defaultSkinCssPath,
+  photosCssPath,
+  scripts,
+  loadableScripts = [],
+  loadableLinks = [],
+  loadableStyles = []
+}) {
   const scriptSrc = scripts.map(s => (
      <script key={s} src={s} defer></script>
   ))
@@ -8,7 +19,15 @@ export function Html({ content, state, meta, scripts, loadableScripts = [], load
   return (
     <html>
       <head>
-        <div dangerouslySetInnerHTML={{ __html: meta}} />
+        {helmet?.title?.toComponent()}
+        {helmet?.meta?.toComponent()}
+        {helmet?.link?.toComponent()}
+        {helmet?.script?.toComponent()}
+        <link href={mainCssPath} rel="stylesheet" />
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link href={defaultSkinCssPath} rel="stylesheet" />
+        <link href={photosCssPath} rel="stylesheet" />
         {loadableStyles}
         {loadableLinks}
       </head>
