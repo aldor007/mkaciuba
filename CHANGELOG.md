@@ -1,3 +1,10 @@
+## [0.16.1](https://github.com/aldor007/mkaciuba/compare/photos-0.16.0...photos-0.16.1) (2025-12-15)
+
+
+### Bug Fixes
+
+* manifests check ([9891418](https://github.com/aldor007/mkaciuba/commit/9891418acb27a5820ba43d93ddb3d4a518eedf18))
+
 # [0.16.0](https://github.com/aldor007/mkaciuba/compare/photos-0.15.0...photos-0.16.0) (2025-12-15)
 
 
