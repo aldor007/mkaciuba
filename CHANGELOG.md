@@ -1,3 +1,16 @@
+# [0.16.0](https://github.com/aldor007/mkaciuba/compare/photos-0.15.0...photos-0.16.0) (2025-12-15)
+
+
+### Bug Fixes
+
+* manifests check ([8ec445f](https://github.com/aldor007/mkaciuba/commit/8ec445f12f43b202bd6ae30aa63308ecb60119ac))
+* use Node 14 for Strapi semantic-release ([791764f](https://github.com/aldor007/mkaciuba/commit/791764f09cef3d6df8cc885ee5ff536b2a3d7915))
+
+
+### Features
+
+* more presets ([f62bf1a](https://github.com/aldor007/mkaciuba/commit/f62bf1ae004d58d547bf4a6c761b53734707eed1))
+
 # [0.15.0](https://github.com/aldor007/mkaciuba/compare/photos-0.14.0...photos-0.15.0) (2025-12-15)
 
 
