@@ -56,6 +56,13 @@ RUN CSS_FILE=$(find dist/apps/photos/ -name "main*.css" -type f -not -path "*/as
     echo "✓ CSS validation passed: $(basename $CSS_FILE) ($(wc -c < $CSS_FILE) bytes)" || \
     (echo "ERROR: CSS validation failed" && exit 1)
 
+# Copy verification tools
+COPY tools/verify-manifest.js ./tools/
+
+# Verify manifest.json references match actual files
+RUN node tools/verify-manifest.js dist/apps/photos || \
+    (echo "ERROR: Manifest verification failed" && exit 1)
+
 # Production stage
 FROM node:20-alpine
 
@@ -79,11 +86,18 @@ RUN --mount=type=cache,target=/usr/local/share/.cache/yarn-v2 \
 # Copy built artifacts from builder
 COPY --from=builder /opt/app/dist ./dist
 
+# Copy verification tools from builder
+COPY --from=builder /opt/app/tools/verify-manifest.js ./tools/
+
 # Verify assets in production image
 RUN CSS_FILE=$(find dist/apps/photos/ -name "main*.css" -type f -not -path "*/assets/*" | head -1) && \
     [ -n "$CSS_FILE" ] && \
     echo "✓ Assets verified: $(find dist/apps/photos/ -name '*.css' -type f | wc -l) CSS files" || \
     (echo "ERROR: Assets missing in production" && exit 1)
+
+# Verify manifest.json references in production image
+RUN node tools/verify-manifest.js dist/apps/photos || \
+    (echo "ERROR: Manifest verification failed in production image" && exit 1)
 
 # Set production environment and expose port
 ENV NODE_ENV=production

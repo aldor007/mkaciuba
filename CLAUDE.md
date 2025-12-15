@@ -9,15 +9,16 @@ This is a React-based photo gallery and portfolio application (mkaciuba.pl) buil
 ## Project Structure
 
 ### Monorepo Architecture
-- **Nx Workspace**: Uses Nx 12.x for monorepo management with multiple apps and shared libraries
-- **blog/**: Strapi v3 application serving as the CMS and GraphQL API backend
+- **Nx Workspace**: Uses Nx 15.9.0 for monorepo management with multiple apps and shared libraries
+- **blog/**: Strapi v3.6.x application serving as the CMS and GraphQL API backend
 - **apps/photos**: Main React SPA frontend for browsing photos/galleries
 - **apps/photos-ssr**: Express server providing Server-Side Rendering (SSR) with Redis caching
 - **apps/photos-embed**: Embeddable photo widget/component
 - **apps/photos-e2e**: Cypress E2E tests for photos app
 - **apps/photos-embed-e2e**: Cypress E2E tests for photos-embed app
-- **libs/api**: GraphQL type definitions and shared API interfaces (auto-generated from Strapi schema)
+- **libs/api**: GraphQL type definitions and shared API interfaces (auto-generated from Strapi schema via blog/graphql.tsx)
 - **libs/image**: Reusable image components (ImageList, Placeholder, responsive image handling)
+- **libs/types**: Shared TypeScript type definitions
 - **libs/ui-kit**: Shared UI components
 
 ### Key Architecture Patterns
@@ -25,17 +26,23 @@ This is a React-based photo gallery and portfolio application (mkaciuba.pl) buil
 **Data Flow**: Strapi CMS (MySQL) → GraphQL API → Apollo Client → React Components
 
 **SSR with Caching**: The photos-ssr app renders React on the server, implements a two-tier caching strategy:
-- In-memory LRU cache (10 items, 1 minute TTL, allows stale)
-- Redis cache (optional, configurable TTL per route type)
-- Cache keys include path, page query param, and authentication tokens
+- In-memory LRU cache (100 items, 1 minute TTL, allows stale) - see apps/photos-ssr/src/redis.ts:10-14
+- Redis cache (optional, configurable TTL per route type, default 600s)
+- Cache keys include path, page query param, and authentication tokens - see apps/photos-ssr/src/cache-utils.ts
 - Cache-control headers vary by content type (published posts: 3600s, unpublished: 60s, galleries with auth: private)
 - Purge API: `DELETE /v1/purge?path=<url>` with X-API-KEY header
+- Asset versioning uses APP_VERSION env var (from semantic-release/CI) or package.json version
 
 **Apollo Client Pagination**: Custom `startLimitPagination` field policy in apps/photos/src/app/apollo.ts implements offset-based pagination using `start`/`limit` arguments
 
-**GraphQL Code Generation**: Strapi schema is code-generated to TypeScript types in libs/api/src/lib/graphql.ts using graphql-codegen (see blog/codegen.yml)
+**GraphQL Code Generation**: Strapi schema is code-generated to TypeScript types using graphql-codegen:
+- Config: blog/codegen.yml
+- Output: blog/graphql.tsx (hooks) and blog/graphql.schema.json (introspection)
+- Run: `cd blog && npm run generate`
 
-**Image Handling**: Custom Strapi upload provider (strapi-provider-upload-mort) for image optimization. Images served through responsive picture elements with WebP support
+**Image Handling**: Custom Strapi upload provider (strapi-provider-upload-mort) in blog/providers/ for image optimization. Images served through responsive picture elements with WebP support
+
+**Code Splitting**: Uses @loadable/component for dynamic imports and SSR code splitting (manifest.json, loadable-stats.json)
 
 ## Common Commands
 
@@ -81,17 +88,24 @@ npm test
 nx test photos
 nx test api
 nx test image
+nx test photos-ssr
+
+# Run single test file
+nx test photos --testFile=src/app/app.spec.tsx
+
+# Run tests in watch mode
+nx test photos --watch
+
+# Run tests with coverage
+nx test photos --coverage
 
 # Run E2E tests
 npm run e2e
 nx e2e photos-e2e
-
-# Run tests with race detection (as per user preference)
-nx test photos -- --race
-
-# Run single test file
-nx test photos --testFile=app.spec.tsx
+nx e2e photos-embed-e2e
 ```
+
+**Note**: Tests use Jest with ts-jest transformer. Test files should use `*.spec.ts` or `*.spec.tsx` naming convention.
 
 ### Linting and Formatting
 ```bash
@@ -147,8 +161,15 @@ npm start
 - `API_KEY`: Required for cache purge endpoint authentication
 
 ### Strapi (blog)
-- Database configuration in `blog/config/`
-- See `blog/.env.example` for required environment variables
+Database configuration in `blog/config/database.js`:
+- `DATABASE_CLIENT`: Database client type (e.g., 'mysql')
+- `DATABASE_HOST`: Database host
+- `DATABASE_PORT`: Database port
+- `DATABASE_NAME`: Database name
+- `DATABASE_USERNAME`: Database username
+- `DATABASE_PASSWORD`: Database password
+
+See `blog/.env.example` for all required environment variables
 
 ## Important Conventions
 
@@ -160,10 +181,11 @@ npm start
 
 ### Code Style
 - TypeScript for all frontend code
-- TailwindCSS for styling (configuration in tailwind.config.js)
-- React 17 with functional components
-- Apollo Client for GraphQL data fetching
+- TailwindCSS v3 for styling (configuration in tailwind.config.js)
+- React 18.3.1 with functional components and hooks
+- Apollo Client 3.8.10 for GraphQL data fetching
 - ESLint + Prettier for code quality
+- React Router v6 for routing
 
 ### File Naming
 - React components: PascalCase (e.g., `ImageList.tsx`, `PostCard.tsx`)
@@ -178,17 +200,31 @@ npm start
 
 ## Data Model Overview
 
-Main Strapi content types:
-- **Post**: Blog posts with title, text, images, galleries, categories, tags, publication dates
-- **Category**: Photo gallery categories with media collections, public/private access tokens
-- **Gallery**: Top-level gallery containers holding multiple categories
-- **PostCategory**: Classification for blog posts
-- **Tag**: Taxonomy for posts
+Main Strapi content types (in blog/api/):
+- **Post** (blog/api/post): Blog posts with title, text, images, galleries, categories, tags, publication dates
+- **Category** (blog/api/category): Photo gallery categories with media collections, public/private access tokens
+- **Gallery** (blog/api/gallery): Top-level gallery containers holding multiple categories
+- **PostCategory** (blog/api/post-category): Classification for blog posts
+- **Tag** (blog/api/tag): Taxonomy for posts
+- **Page** (blog/api/page): Static pages
+- **Menu/Footer** (blog/api/menu, blog/api/footer): Site navigation and configuration
 - **UploadFile**: Media files with responsive image variants (thumbnails, webp support)
-- **Menu/Footer**: Site navigation and configuration
 
 ## Known Issues/Quirks
-- Using Strapi v3.6.x (older version, not latest v4)
-- Node version constraint: >=10.0.0 (see .nvm file for exact version)
+- Using Strapi v3.6.x (older version, not latest v4) with Node 14 in blog directory
+- Node version: Root project uses Node 20.18.1 (.nvmrc), blog uses Node 14 (blog/.nvm)
+- npm version: Root requires npm >=10.0.0, blog requires npm >=6.0.0
 - Some webpack customizations in app-specific webpack.config.ts files
 - photos-ssr proxies /graphql requests to Strapi backend
+- Strapi has custom extensions in blog/extensions/ for graphql, upload, and users-permissions plugins
+
+## Deployment
+
+The project uses Docker for deployment:
+- Multi-stage Dockerfile with builder and runtime stages
+- Uses Node 20 Alpine base images
+- Accepts APP_VERSION build arg for versioning
+- Supports pre-built dist/ artifacts (for CI/CD workflows)
+- Production build sets NODE_ENV=production and NX_DAEMON=false
+- Final image runs: `node dist/apps/photos-ssr/main.js`
+- Environment files are copied during build (environment.prod.ts → environment.ts)
