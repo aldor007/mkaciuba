@@ -73,13 +73,45 @@ jobs:
       - name: Setup E2E environment
         run: cp apps/photos-ssr/src/environments/environment.e2e.ts apps/photos-ssr/src/environments/environment.ts
 
+      - name: Build photos
+        run: yarn nx build photos --production --optimization
+        env:
+          NODE_ENV: production
+
+      - name: Validate CSS files are emitted
+        run: |
+          echo "Checking for CSS files in build output..."
+
+          # Check for main.css (with or without hash) in photos build
+          CSS_FILE=$(find dist/apps/photos/ -name "main*.css" -type f -not -path "*/assets/*" | head -1)
+          if [ -z "$CSS_FILE" ]; then
+            echo "ERROR: No main CSS file found in dist/apps/photos/"
+            echo "Available files:"
+            find dist/apps/photos/ -name "*.css" -type f || echo "No CSS files found"
+            exit 1
+          fi
+
+          # Check for manifest.json in photos build
+          if [ ! -f "dist/apps/photos/manifest.json" ]; then
+            echo "ERROR: manifest.json not found in dist/apps/photos/"
+            exit 1
+          fi
+
+          echo "✓ CSS files validated successfully"
+          echo "  - CSS file: $(basename $CSS_FILE) ($(wc -c < $CSS_FILE) bytes)"
+          echo "  - manifest.json: found"
+
       - name: Build photos-ssr
-        run: yarn build photos-ssr --verbose
+        run: yarn nx build photos-ssr --production --optimization
+        env:
+          NODE_ENV: production
 
       - name: Start photos-ssr server
         run: |
           yarn start photos-ssr > photos-ssr.log 2>&1 &
           echo $! > photos-ssr.pid
+        env:
+          NODE_ENV: production
         id: ssr
 
       - name: Wait for SSR server
