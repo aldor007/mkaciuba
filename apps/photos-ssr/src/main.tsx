@@ -136,31 +136,31 @@ app.use(cookeParser())
 
 async function toCacheObject(cacheData) {
   return {
-    html: renderToString(cacheData.html),
+    html: cacheData.html,
     headers: cacheData.headers
   }
 }
 
 function renderErrorPage(code: number, message?: string) {
   const errorContent = renderToString(<ErrorPage code={code} message={message} />);
-  const errorHtml = <Html
-    content={errorContent}
-    state={{}}
-    helmet={{
-      title: { toComponent: () => <title>{code} Error | mkaciuba.pl</title> },
-      meta: { toComponent: () => null },
-      link: { toComponent: () => null },
-      script: { toComponent: () => null }
-    }}
-    mainCssPath={getAssetPath('main.css')}
-    defaultSkinCssPath={getAssetPath('assets/default-skin.css')}
-    photosCssPath={getAssetPath('assets/photos.css')}
-    scripts={scripts}
-    loadableScripts={[]}
-    loadableLinks={[]}
-    loadableStyles={[]}
-  />;
-  return renderToString(errorHtml);
+  const errorHtml = Html({
+    content: errorContent,
+    state: {},
+    helmet: {
+      title: `<title>${code} Error | mkaciuba.pl</title>`,
+      meta: '',
+      link: '',
+      script: ''
+    },
+    mainCssPath: getAssetPath('main.css'),
+    defaultSkinCssPath: getAssetPath('assets/default-skin.css'),
+    photosCssPath: getAssetPath('assets/photos.css'),
+    scripts: scripts,
+    loadableScripts: [],
+    loadableLinks: [],
+    loadableStyles: []
+  });
+  return errorHtml;
 }
 
 app.use('/graphql', proxy(process.env.STRAPI_URL || environment.strapiUrl, {
@@ -345,19 +345,27 @@ app.get('*', async (req, res) => {
       const loadableLinks = extractor ? extractor.getLinkElements() : [];
       const loadableStyles = extractor ? extractor.getStyleElements() : [];
 
+      // Extract helmet data as HTML strings for SSR
+      const helmetData = {
+        title: helmet?.title?.toString() || '',
+        meta: helmet?.meta?.toString() || '',
+        link: helmet?.link?.toString() || '',
+        script: helmet?.script?.toString() || ''
+      };
+
       // Add both the page content and the cache state to a top-level component
-      const html = <Html
-        state={initialState}
-        helmet={helmet}
-        mainCssPath={getAssetPath('main.css')}
-        defaultSkinCssPath={getAssetPath('assets/default-skin.css')}
-        photosCssPath={getAssetPath('assets/photos.css')}
-        scripts={scripts}
-        content={appContent}
-        loadableScripts={loadableScripts}
-        loadableLinks={loadableLinks}
-        loadableStyles={loadableStyles}
-      />;
+      const html = Html({
+        state: initialState,
+        helmet: helmetData,
+        mainCssPath: getAssetPath('main.css'),
+        defaultSkinCssPath: getAssetPath('assets/default-skin.css'),
+        photosCssPath: getAssetPath('assets/photos.css'),
+        scripts: scripts,
+        content: appContent,
+        loadableScripts: loadableScripts,
+        loadableLinks: loadableLinks,
+        loadableStyles: loadableStyles
+      });
       const headers = {
         'content-type': 'text/html; charset=UTF-8',
       };
@@ -430,8 +438,7 @@ app.get('*', async (req, res) => {
     const cacheData = await renderPage()
     if (cacheData) {
       res.set(cacheData.headers)
-      const htmlString = renderToString(cacheData.html);
-      res.send(htmlString);
+      res.send(cacheData.html);
       await cache.set(cacheKey, await toCacheObject(cacheData), cacheTTL)
     }
   }
