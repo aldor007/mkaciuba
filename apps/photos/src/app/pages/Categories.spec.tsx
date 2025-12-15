@@ -34,6 +34,10 @@ jest.mock('@mkaciuba/ui-kit', () => ({
       Error {code}: {message}
     </div>
   )),
+  useSSRSafeQuery: jest.fn((loading: boolean, data: any) => ({
+    shouldShowLoading: loading && !data,
+    isFirstRender: false,
+  })),
 }));
 
 const GET_GALLERY = gql`

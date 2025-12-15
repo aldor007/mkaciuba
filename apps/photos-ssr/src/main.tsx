@@ -13,7 +13,7 @@ import {
   createHttpLink,
   InMemoryCache
 } from '@apollo/client';
-import { getDataFromTree } from "@apollo/client/react/ssr";
+import { renderToStringWithData } from "@apollo/client/react/ssr";
 import React from 'react';
 import path from 'path';
 import { ChunkExtractor, ChunkExtractorManager } from '@loadable/server';
@@ -136,27 +136,31 @@ app.use(cookeParser())
 
 async function toCacheObject(cacheData) {
   return {
-    html: renderToString(cacheData.html),
+    html: cacheData.html,
     headers: cacheData.headers
   }
 }
 
 function renderErrorPage(code: number, message?: string) {
   const errorContent = renderToString(<ErrorPage code={code} message={message} />);
-  const errorHtml = <Html
-    content={errorContent}
-    state={{}}
-    meta={`
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <link href="${getAssetPath('main.css')}" rel="stylesheet"/>
-      <title>${code} Error | mkaciuba.pl</title>
-    `}
-    scripts={scripts}
-    loadableScripts={[]}
-    loadableLinks={[]}
-  />;
-  return renderToString(errorHtml);
+  const errorHtml = Html({
+    content: errorContent,
+    state: {},
+    helmet: {
+      title: `<title>${code} Error | mkaciuba.pl</title>`,
+      meta: '',
+      link: '',
+      script: ''
+    },
+    mainCssPath: getAssetPath('main.css'),
+    defaultSkinCssPath: getAssetPath('assets/default-skin.css'),
+    photosCssPath: getAssetPath('assets/photos.css'),
+    scripts: scripts,
+    loadableScripts: [],
+    loadableLinks: [],
+    loadableStyles: []
+  });
+  return errorHtml;
 }
 
 app.use('/graphql', proxy(process.env.STRAPI_URL || environment.strapiUrl, {
@@ -304,12 +308,14 @@ app.get('*', async (req, res) => {
     });
   }
 
+  // Pass the SSR-configured client directly to App component
+  // This ensures server-side queries use the correct absolute URL
   const staticApp = (
-          <StaticRouter location={req.url}>
-            <HelmetProvider context={helmetContext}>
-              <App client={client} routes={AppRoutesComponentSSR} />
-            </HelmetProvider>
-          </StaticRouter>
+            <StaticRouter location={req.url}>
+              <HelmetProvider context={helmetContext}>
+                <App client={client} />
+              </HelmetProvider>
+            </StaticRouter>
   )
 
   const cacheKey = getCacheKey(req)
@@ -324,44 +330,44 @@ app.get('*', async (req, res) => {
         </ChunkExtractorManager>
       ) : staticApp;
 
-      await getDataFromTree(wrappedApp);
+      // Use renderToStringWithData for single-pass SSR with data fetching
+      // This replaces: await getDataFromTree(wrappedApp) + renderToString(wrappedApp)
+      const appContent = await renderToStringWithData(wrappedApp);
+
       // Extract the entirety of the Apollo Client cache's current state
       const initialState = client.extract();
-
-      // Render the app content to string
-      // NOTE: This MUST happen before extracting helmet data!
-      const appContent = renderToString(wrappedApp);
 
       // Extract helmet data AFTER rendering (react-helmet-async populates context during renderToString)
       const { helmet } = helmetContext;
 
-      const headTags = `
-        ${helmet?.title?.toString() || ''}
-        ${helmet?.meta?.toString() || ''}
-        ${helmet?.link?.toString() || ''}
-        ${helmet?.script?.toString() || ''}
-      `;
-
-      const meta =    `${headTags}
-        <link href="${getAssetPath('main.css')}" rel="stylesheet"/>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="${getAssetPath('assets/default-skin.css')}" rel="stylesheet"/>
-        <link href="${getAssetPath('assets/photos.css')}" rel="stylesheet"/>`
-
       // Extract loadable scripts and links if extractor exists
       const loadableScripts = extractor ? extractor.getScriptElements() : [];
       const loadableLinks = extractor ? extractor.getLinkElements() : [];
+      const loadableStyles = extractor ? extractor.getStyleElements() : [];
+
+      // Extract helmet data as HTML strings for SSR
+      const helmetData = {
+        title: helmet?.title?.toString() || '',
+        meta: helmet?.meta?.toString() || '',
+        link: helmet?.link?.toString() || '',
+        script: helmet?.script?.toString() || ''
+      };
 
       // Add both the page content and the cache state to a top-level component
-      const html = <Html
-        state={initialState}
-        meta={meta}
-        scripts={scripts}
-        content={appContent}
-        loadableScripts={loadableScripts}
-        loadableLinks={loadableLinks}
-      />;
+      // Only use manual scripts when loadable-stats.json doesn't exist
+      // Otherwise loadable handles all script injection
+      const html = Html({
+        state: initialState,
+        helmet: helmetData,
+        mainCssPath: getAssetPath('main.css'),
+        defaultSkinCssPath: getAssetPath('assets/default-skin.css'),
+        photosCssPath: getAssetPath('assets/photos.css'),
+        scripts: extractor ? [] : scripts,
+        content: appContent,
+        loadableScripts: loadableScripts,
+        loadableLinks: loadableLinks,
+        loadableStyles: loadableStyles
+      });
       const headers = {
         'content-type': 'text/html; charset=UTF-8',
       };
@@ -434,8 +440,7 @@ app.get('*', async (req, res) => {
     const cacheData = await renderPage()
     if (cacheData) {
       res.set(cacheData.headers)
-      const htmlString = renderToString(cacheData.html);
-      res.send(htmlString);
+      res.send(cacheData.html);
       await cache.set(cacheKey, await toCacheObject(cacheData), cacheTTL)
     }
   }

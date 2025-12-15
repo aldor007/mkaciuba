@@ -1,9 +1,9 @@
-import React, { RefObject, useCallback, useState  } from "react";
+import React, { RefObject, useCallback, useState } from "react";
 import { useQuery } from '@apollo/client/react';
 import gql from  'graphql-tag';
 import { Link } from 'react-router-dom'
 import { generatePath } from "react-router";
-import { findImageForWidth, ImageComponent } from "@mkaciuba/image";
+import { findImageForWidth, ImageComponent, useWebPSupportStable } from "@mkaciuba/image";
 import { Helmet } from 'react-helmet-async';
 import { Gallery, Query } from '@mkaciuba/api';
 import {useNavigate} from "react-router-dom"
@@ -12,7 +12,7 @@ import {
 } from '@react-hook/window-size';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { AppRoutes } from "../routes";
-import { ErrorPage, Loading, LoadingMore, useQueryParams } from "@mkaciuba/ui-kit";
+import { ErrorPage, Loading, LoadingMore, useQueryParams, useSSRSafeQuery } from "@mkaciuba/ui-kit";
 import '../../assets/category.css';
 
 
@@ -46,7 +46,7 @@ export interface CategoriesListProps {
 }
 
 export const CategoriesList = ({ gallery}: CategoriesListProps) => {
-  const webp = false;// useWebPSupportCheck();
+  const webp = useWebPSupportStable();
   const width = useWindowWidth();
   const [loadingMore, setLoadingMore] = useState(false);
   const limit = 10;
@@ -57,6 +57,7 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
     variables: { galleryId: gallery.id, start: 0, limit},
     notifyOnNetworkStatusChange: true
   });
+  const { shouldShowLoading } = useSSRSafeQuery(loading, data);
 
   const hasNextPage = () => {
     if (!data) {
@@ -95,16 +96,11 @@ export const CategoriesList = ({ gallery}: CategoriesListProps) => {
     return <ErrorPage code={500} message={error.message} />
    };
 
-   // first loader
-   // laoding = true and data null
-   if (loading && !data) {
-    return (
-      <Loading/>
-    );
+  if (shouldShowLoading) {
+    return <Loading/>;
   }
 
-
-  const { categories } =  data;
+  const { categories } =  data!;
   // setStart(stagccrt + limit)
   const defaultImages = categories.reduce((acc, cur) => {
     if (!cur.image ) {

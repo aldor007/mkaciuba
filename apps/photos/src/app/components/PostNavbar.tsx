@@ -5,7 +5,7 @@ import { Query } from '@mkaciuba/api';
 import { useQuery } from '@apollo/client/react';
 import { generatePath } from "react-router";
 import { Navbar } from "./Navbar";
-import { ErrorPage, Loading } from "@mkaciuba/ui-kit";
+import { ErrorPage, Loading, useSSRSafeQuery } from "@mkaciuba/ui-kit";
 
 const GET_POST_CAT = gql`
 query {
@@ -18,12 +18,16 @@ query {
 
 export const PostNavbar = () => {
   const { loading, error, data } = useQuery<Query>(GET_POST_CAT);
+  const { shouldShowLoading } = useSSRSafeQuery(loading, data);
 
-  if (loading) return <Loading/>;
   if (error) {
     console.error('Post', error)
     return <ErrorPage code={500} message={error.message} />
    };
+
+  if (shouldShowLoading || !data?.postCategories) {
+    return <Loading/>;
+  }
 
   const children  = data.postCategories.map((item) => {
       return {

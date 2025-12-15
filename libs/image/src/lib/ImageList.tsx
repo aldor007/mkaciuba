@@ -1,15 +1,12 @@
-import React, { RefObject, useCallback, useState} from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { RefObject, useCallback, useState, useMemo } from "react";
 import { gql, useQuery } from '@apollo/client';
-import { useWebPSupportCheck } from "react-use-webp-support-check";
-import {
-  useWindowWidth
-} from '@react-hook/window-size';
 import { Helmet } from 'react-helmet-async';
 import { Query } from '@mkaciuba/types';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
-import { Loading, LoadingMore, ErrorPage } from '@mkaciuba/ui-kit'
+import { LoadingMore, ErrorPage, useSSRSafeQuery } from '@mkaciuba/ui-kit'
 import ReactGA from 'react-ga4'
-import { Image, ImageComponent } from './image';
+import { Image, ImageComponent, useWebPSupportStable, DefaultImgSizing } from './image';
 import { Gallery, Item } from 'react-photoswipe-gallery'
 import { findImageForWidthBigger } from "..";
 
@@ -78,11 +75,11 @@ export const findImageForWidth = (images: Image[], width: number, webp: boolean)
     return null;
   }
 
-  const filterPresets = images.filter(p => {
-    if (p.webp == webp) {
-      return p;
-    }
-  });
+  const filterPresets = images.filter(p => p.webp === webp);
+  if (filterPresets.length === 0) {
+    return null;
+  }
+
   let minIndex = 0;
   let minValue = Math.abs(width - filterPresets[0].width);
   filterPresets.forEach((p, index) => {
@@ -96,23 +93,15 @@ export const findImageForWidth = (images: Image[], width: number, webp: boolean)
   return filterPresets[minIndex];
 }
 
-function hasSSRData() {
-  if (typeof window == 'undefined') {
-    return false
-  }
-
-  if (window.__APOLLO_STATE__) {
-    return true
-  }
-
-  return false
-}
-
 export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps) => {
-  const webp = useWebPSupportCheck();
-  const width = typeof document === 'undefined' ? 1900 :  document.documentElement.clientWidth
+  const webp = useWebPSupportStable();
+  // Always use 1900 for SSR consistency across server and client
+  // This prevents hydration mismatches where server renders with 1900
+  // but client first render uses actual viewport width
+  // The ImageComponent will handle responsive sizing with CSS (w-full h-auto)
+  const initialWidth = 1900;
 
-  const [loadingMore, setLoadingMore] = useState(false);
+  const [loadingMore] = useState(false);
   const limit = 30;
   const [start, setStart] = useState(limit)
   const { loading, error, data, fetchMore } = useQuery<Query>(GET_IMAGES, {
@@ -120,6 +109,7 @@ export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps)
     notifyOnNetworkStatusChange: true,
 
   });
+  const { shouldShowLoading } = useSSRSafeQuery(loading, data);
 
   const hasNextPage = () => {
     if (!data) {
@@ -130,7 +120,7 @@ export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps)
       return false;
     }
 
-    if (data.categoryBySlug.medias.length == data.categoryBySlug.mediasCount) {
+    if (data.categoryBySlug.medias.length === data.categoryBySlug.mediasCount) {
       return false;
     }
 
@@ -153,33 +143,34 @@ export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps)
       }});
     }, [fetchMore, start, limit]);
 
-  const  [sentryRef, { rootRef }]  = useInfiniteScroll({
+  const  [sentryRef]  = useInfiniteScroll({
     loading: loadingMore,
     hasNextPage: hasNextPage(),
     onLoadMore: handleLoadMore,
     delayInMs: 250,
   });
 
+  // Memoize image calculations - must be called before any early returns
+  const images = useMemo(() => data?.categoryBySlug?.medias || [], [data?.categoryBySlug?.medias]);
+  const category = data?.categoryBySlug;
+  // For SEO meta tags, calculate a default image at 1024px
+  const defaultImages = useMemo(() =>
+    images.map((item) => findImageForWidth(item.thumbnails, 1024, webp)),
+    [images, webp]
+  );
+
   if (error) {
     console.error(error)
     return (<ErrorPage code={500} message={error.message}/>)
    };
 
-
-  if (loading && !data) {
-   return (
-     <LoadingMore/>
-   );
+  if (shouldShowLoading) {
+    return <LoadingMore/>;
   }
 
-
-   if (!data || !data.categoryBySlug) {
-     return <p> Not found </p>
-   }
-   const images = data.categoryBySlug.medias ;
-   const category = data.categoryBySlug;
-   const defaultImages = images.map((item) => findImageForWidth(item.thumbnails, width, webp));
-   const defaultImagesFull = images.map((item) => findImageForWidthBigger(item.thumbnails, width, webp));
+  if (!data?.categoryBySlug) {
+    return <p> Not found </p>
+  }
    let seoImage = defaultImages;
    if (category.image) {
     seoImage = images.map((item) => findImageForWidth(category.image.thumbnails, 1024, false));
@@ -204,32 +195,41 @@ export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps)
           action: 'open',
           label: window.location.href,
           })}}>
-            {images.map( (item, index) => (
+            {images.map( (item, index) => {
+              // Calculate large image for photoswipe lightbox (independent of viewport)
+              const lightboxImage = findImageForWidthBigger(item.thumbnails, 1900, webp);
+              return (
             <Item
-              original={defaultImagesFull[index].url}
-              thumbnail={defaultImagesFull[index].url}
-              width={defaultImagesFull[index].width}
-              height={defaultImagesFull[index].height}
-              // id={item.id}
-
+              original={lightboxImage.url}
+              thumbnail={lightboxImage.url}
+              width={lightboxImage.width}
+              height={lightboxImage.height}
               key={item.id}
               title={item.caption || item.alternativeText || item.name}
             >
             {({ ref, open }) => (
                 <div className={imageClass}>
-               <ImageComponent ref={ref as RefObject<HTMLImageElement>} onClick={async () => {
-                 if (hasNextPage()) {
-                  await handleLoadMore()
-                 }
-                setTimeout(open, 50)
-               }} thumbnails={item.thumbnails} defaultImage={defaultImagesFull[index]} alt={item.alternativeText || item.name} />
+               <ImageComponent
+                 ref={ref as RefObject<HTMLImageElement>}
+                 onClick={async () => {
+                   if (hasNextPage()) {
+                     await handleLoadMore()
+                   }
+                   setTimeout(open, 50)
+                 }}
+                 thumbnails={item.thumbnails}
+                 alt={item.alternativeText || item.name}
+                 initialWidth={initialWidth}
+                 defaultImgSizing={DefaultImgSizing.BIGGER}
+               />
                   <div className="hidden overflow-hidden">
                     <div className="text-white text-lg">{item.alternativeText || item.name}</div>
                   </div>
                 </div>
             )}
       </Item>
-      ))}
+              )}
+      )}
       </Gallery>
 </div>
 

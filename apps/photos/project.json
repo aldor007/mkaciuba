@@ -41,6 +41,21 @@
               "maximumError": "5mb"
             }
           ]
+        },
+        "e2e": {
+          "fileReplacements": [
+            {
+              "replace": "apps/photos/src/environments/environment.ts",
+              "with": "apps/photos/src/environments/environment.e2e.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "extractCss": true,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false
         }
       },
       "outputs": ["{options.outputPath}"]

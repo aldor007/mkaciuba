@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 const { composePlugins, withNx } = require('@nrwl/webpack');
 const { withReact } = require('@nrwl/react');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -113,7 +114,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
   });
 
 //   config.plugins.push(    new BundleAnalyzerPlugin())
-  if (process.env.NODE_ENV == 'production') {
+  if (process.env.NODE_ENV === 'production') {
     config.optimization = {
       splitChunks: {
         chunks: 'all',

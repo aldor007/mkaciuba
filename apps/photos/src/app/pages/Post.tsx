@@ -2,7 +2,7 @@ import { Footer } from '../components/Footer';
 import { Posts } from '../components/Posts';
 import React, { useEffect, useState } from 'react';
 import  Header from '../Header';
-import { Loading, ErrorPage, LoadingMore, Markdown } from "@mkaciuba/ui-kit";
+import { Loading, ErrorPage, LoadingMore, Markdown, useSSRSafeQuery } from "@mkaciuba/ui-kit";
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client/react';
 import gql from  'graphql-tag'
@@ -125,15 +125,18 @@ export const Post = () => {
   const { loading, error, data } = useQuery<Query>(GET_POST, {
     variables: { postSlug: slug},
   });
-  if (loading) return <LoadingMore/>;
+  const { shouldShowLoading } = useSSRSafeQuery(loading, data);
+
   if (error) {
     console.error('Post', error)
     return <ErrorPage code={500} message={error.message} />
    };
 
+  if (shouldShowLoading || !data) return <LoadingMore/>;
+
   const post = data.postBySlug;
   if (!post) {
-    console.error('Post', 'not-fount')
+    console.error('Post', 'not-found')
     return <ErrorPage code={404} message={'Post not found'} />
   }
   const [prevPost, nextPost] = data.prevNextPost || [];

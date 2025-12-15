@@ -41,6 +41,8 @@ const presetList = [
   new Preset('bigwebp', 700, null, '(max-width: 1000px)', 'webp'),
   new Preset('big1000webp', 1000, null, '(max-width: 1300px)', 'webp'),
   new Preset('big1300webp', 1300, null, '(max-width: 1600px)', 'webp'),
+  new Preset('big1900webp', 1900, null, '(max-width: 2100px)', 'webp'),
+  new Preset('big2400webp', 2400, null, '(min-width: 2100px)', 'webp'),
   new Preset('big', 700, null, '(max-width: 1000px)', 'jpeg'),
   new Preset('small', 80, null, '(max-width: 100px)', 'jpeg'),
   new Preset('smallwebp', 80, null, '(max-width: 100px)', 'webp'),
@@ -48,6 +50,8 @@ const presetList = [
   new Preset('big300webp', 300, null, '(max-width: 300px)', 'webp'),
   new Preset('big1000', 1000, null, '(max-width: 1300px)', 'jpeg'),
   new Preset('big1300', 1300, null, '(max-width: 1600px)', 'jpeg'),
+  new Preset('big1900', 1900, null, '(max-width: 2100px)', 'jpeg'),
+  new Preset('big2400', 2400, null, '(min-width: 2100px)', 'jpeg'),
 ]
 exports.presetList = presetList;
 
@@ -59,11 +63,15 @@ const allPresets = presetList.concat([
   new Preset('categorylistwebps', 300, 225, '(max-width: 600px)', 'webp'),
   new Preset('categorylists', 300, 225, '(max-width: 600px)', 'jpeg'),
 
+  new Preset('postlistdesktopwebp', 2400, 1600, '(min-width: 1300px)', 'webp'),
+  new Preset('postlistdesktop', 2400, 1600, '(min-width: 1300px)', 'jpeg'),
   new Preset('postlistwebp', 1500, 1000, '(max-width: 1300px)', 'webp'),
   new Preset('postlist', 1500, 1000, '(max-width: 1300px)', 'jpeg'),
   new Preset('postlistwebps', 750, 750, '(max-width: 375px)', 'webp'),
   new Preset('postlists', 750, 750, '(max-width: 375px)', 'jpeg'),
 
+  new Preset('postimg_ac_desktopwebp', 2400, 1600, '(min-width: 1300px)', 'webp'),
+  new Preset('postimg_ac_desktop', 2400, 1600, '(min-width: 1300px)', 'jpeg'),
   new Preset('postimg_ac_webp', 1500, 1000, '(max-width: 1300px)', 'webp'),
   new Preset('postimg_ac', 1500, 1000, '(max-width: 1300px)', 'jpeg'),
   new Preset('postimg_ac_webps', 750, 740, '(max-width: 600px)', 'webp'),

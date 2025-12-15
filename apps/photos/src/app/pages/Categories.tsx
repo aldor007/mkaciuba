@@ -8,7 +8,7 @@ import gql from  'graphql-tag';
 import { generatePath, useParams } from 'react-router-dom';
 import { Query } from '@mkaciuba/api';
 import { AppRoutes } from '../routes';
-import { Loading, ErrorPage } from "@mkaciuba/ui-kit";
+import { Loading, ErrorPage, useSSRSafeQuery } from "@mkaciuba/ui-kit";
 
 const GET_GALLERY = gql`
 query  galleryMenu($gallerySlug: String!) {
@@ -35,11 +35,15 @@ export const Categories = () => {
   const { loading, error, data } = useQuery<Query>(GET_GALLERY, {
     variables: { gallerySlug },
   });
-  if (loading) return <Loading/>;
+  const { shouldShowLoading } = useSSRSafeQuery(loading, data);
+
   if (error) {
     console.error('Categories', error)
     return <ErrorPage code={500} message={error.message} />
    };
+
+  if (shouldShowLoading || !data?.galleryMenu) return <Loading/>;
+
   const { gallery, categories } = data.galleryMenu;
   if (!gallery) {
     return <ErrorPage code={404} message={'Gallery no found'} />

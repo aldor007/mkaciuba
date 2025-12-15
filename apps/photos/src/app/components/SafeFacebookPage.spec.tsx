@@ -34,8 +34,10 @@ describe('SafeFacebookPage', () => {
 
       // Component should render without throwing
       expect(container).toBeInTheDocument();
-      // Should not render anything when there's an error
-      expect(container.firstChild).toBeNull();
+      // Should render placeholder div to prevent hydration mismatches
+      const placeholder = container.querySelector('div[aria-label="Facebook feed unavailable"]');
+      expect(placeholder).toBeInTheDocument();
+      expect(placeholder).toHaveStyle({ minHeight: '180px' });
     });
 
     test('should log warning when Facebook SDK fails', () => {
@@ -64,8 +66,10 @@ describe('SafeFacebookPage', () => {
         />
       );
 
-      // Should not throw and render nothing
-      expect(container.firstChild).toBeNull();
+      // Should not throw and render placeholder div
+      const placeholder = container.querySelector('div[aria-label="Facebook feed unavailable"]');
+      expect(placeholder).toBeInTheDocument();
+      expect(placeholder).toHaveStyle({ minHeight: '180px' });
     });
   });
 

@@ -1,26 +1,70 @@
-import React from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
 
-export function Html({ content, state, meta, scripts, loadableScripts = [], loadableLinks = [] }) {
-  const scriptSrc = scripts.map(s => (
-     <script key={s} src={s} defer></script>
-  ))
+interface HelmetData {
+  title: string;
+  meta: string;
+  link: string;
+  script: string;
+}
 
-  return (
-    <html>
-      <head>
-        <div dangerouslySetInnerHTML={{ __html: meta}} />
-        {loadableLinks}
-      </head>
+export function Html({
+  content,
+  state,
+  helmet,
+  mainCssPath,
+  defaultSkinCssPath,
+  photosCssPath,
+  scripts,
+  loadableScripts = [],
+  loadableLinks = [],
+  loadableStyles = []
+}: {
+  content: string;
+  state: any;
+  helmet: HelmetData;
+  mainCssPath: string;
+  defaultSkinCssPath: string;
+  photosCssPath: string;
+  scripts: string[];
+  loadableScripts?: any[];
+  loadableLinks?: any[];
+  loadableStyles?: any[];
+}): string {
+  // Render loadable components to strings
+  const loadableStylesHtml = loadableStyles.length > 0
+    ? loadableStyles.map(s => renderToStaticMarkup(s)).join('')
+    : '';
+  const loadableLinksHtml = loadableLinks.length > 0
+    ? loadableLinks.map(l => renderToStaticMarkup(l)).join('')
+    : '';
+  const loadableScriptsHtml = loadableScripts.length > 0
+    ? loadableScripts.map(s => renderToStaticMarkup(s)).join('')
+    : '';
 
-      <body>
-        <div id="root" dangerouslySetInnerHTML={{ __html: content }} />
-        <script dangerouslySetInnerHTML={{
-          __html: `window.__APOLLO_STATE__=${JSON.stringify(state).replace(/</g, '\\u003c')};`,
-        }} />
-        {loadableScripts}
-        {scriptSrc}
-        </body>
+  // Build script tags for main scripts
+  const scriptTags = scripts.map(src => `<script src="${src}" defer></script>`).join('');
 
-    </html>
-  );
+  // Build the complete HTML document as a string
+  return `<!DOCTYPE html>
+<html>
+  <head>
+    ${helmet.title}
+    ${helmet.meta}
+    ${helmet.link}
+    ${helmet.script}
+    <link href="${mainCssPath}" rel="stylesheet" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="${defaultSkinCssPath}" rel="stylesheet" />
+    <link href="${photosCssPath}" rel="stylesheet" />
+    ${loadableStylesHtml}
+    ${loadableLinksHtml}
+  </head>
+  <body>
+    <div id="root">${content}</div>
+    <script>window.__APOLLO_STATE__=${JSON.stringify(state).replace(/</g, '\\u003c')};</script>
+    ${loadableScriptsHtml}
+    ${scriptTags}
+  </body>
+</html>`;
 }
