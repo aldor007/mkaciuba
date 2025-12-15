@@ -22,10 +22,13 @@ let allConsoleErrors: string[] = [];
 
 // Intercept console errors to capture hydration details
 Cypress.on('window:before:load', (win) => {
+  console.log('🔧 Setting up console interception for:', win.location.href);
+
   const originalConsoleError = win.console.error;
   const originalConsoleWarn = win.console.warn;
 
   win.console.error = function (...args: any[]) {
+    console.log('📢 Console.error intercepted, args:', args.length);
     const message = args.map(arg => {
       if (typeof arg === 'object') {
         try {
@@ -84,15 +87,29 @@ Cypress.on('window:before:load', (win) => {
 
 // Handle uncaught exceptions from third-party libraries
 Cypress.on('uncaught:exception', (err, runnable) => {
+  // Log EVERY error to see what's happening
+  console.log('\n\n🔍 EXCEPTION HANDLER TRIGGERED');
+  console.log('Error message:', err.message);
+  console.log('Error type:', typeof err.message);
+  console.log('Contains "Hydration failed"?', err.message.includes('Hydration failed'));
+  console.log('Contains "does not match"?', err.message.includes('does not match'));
+
   // Ignore Facebook SDK errors - the SDK may not be loaded in test environment
   if (err.message.includes('Cannot read properties of undefined (reading \'XFBML\')') ||
       err.message.includes('FB is not defined')) {
+    console.log('⏭️  Ignoring Facebook SDK error');
     return false;
   }
 
   // Enhanced logging for hydration errors using programmatic API
-  if (err.message.includes('Hydration failed') ||
-      err.message.includes('does not match what was rendered on the server')) {
+  const isHydrationError = err.message.includes('Hydration failed') ||
+      err.message.includes('does not match what was rendered on the server') ||
+      err.message.includes('Hydration') ||
+      err.message.includes('hydration');
+
+  console.log('Is hydration error?', isHydrationError);
+
+  if (isHydrationError) {
 
     console.log('\n\n');
     console.log('╔═══════════════════════════════════════════════════════════╗');
