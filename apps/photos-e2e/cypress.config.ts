@@ -45,25 +45,36 @@ export default defineConfig({
           console.log('\n📚 STACK TRACE:');
           console.log(data.stack);
 
+          console.log('\n\n📋 RELATED HYDRATION WARNINGS:');
+          console.log('─────────────────────────────────────────────────────────');
           if (data.warnings && data.warnings.length > 0) {
-            console.log('\n\n📋 RELATED HYDRATION WARNINGS (' + data.warnings.length + ' total):');
-            console.log('─────────────────────────────────────────────────────────');
+            console.log(`Found ${data.warnings.length} hydration warning(s):\n`);
             data.warnings.forEach((warning: string, idx: number) => {
-              console.log(`\n[${idx + 1}/${data.warnings.length}]`);
+              console.log(`[${idx + 1}/${data.warnings.length}]`);
               console.log(warning);
               console.log('─────────────────────────────────────────────────────────');
             });
+          } else {
+            console.log('⚠️  No hydration-specific warnings were captured.');
+            console.log('This usually means:');
+            console.log('  • The error occurred before React could log detailed warnings');
+            console.log('  • Console warnings were logged before interception was set up');
+            console.log('  • The warning pattern didn\'t match our detection rules');
           }
 
+          console.log('\n\n📝 ALL CONSOLE ERRORS (last 10):');
+          console.log('─────────────────────────────────────────────────────────');
           if (data.allErrors && data.allErrors.length > 0) {
-            console.log('\n\n📝 ALL CONSOLE ERRORS (last 10):');
-            console.log('─────────────────────────────────────────────────────────');
+            console.log(`Found ${data.allErrors.length} console error(s):\n`);
             const recentErrors = data.allErrors.slice(-10);
             recentErrors.forEach((error: string, idx: number) => {
-              console.log(`\n[${idx + 1}/${recentErrors.length}]`);
+              console.log(`[${idx + 1}/${recentErrors.length}]`);
               console.log(error);
               console.log('─────────────────────────────────────────────────────────');
             });
+          } else {
+            console.log('⚠️  No console errors were captured.');
+            console.log('This may indicate console interception wasn\'t active yet.');
           }
 
           if (data.domInfo) {
