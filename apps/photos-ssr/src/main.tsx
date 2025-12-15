@@ -354,13 +354,15 @@ app.get('*', async (req, res) => {
       };
 
       // Add both the page content and the cache state to a top-level component
+      // Only use manual scripts when loadable-stats.json doesn't exist
+      // Otherwise loadable handles all script injection
       const html = Html({
         state: initialState,
         helmet: helmetData,
         mainCssPath: getAssetPath('main.css'),
         defaultSkinCssPath: getAssetPath('assets/default-skin.css'),
         photosCssPath: getAssetPath('assets/photos.css'),
-        scripts: scripts,
+        scripts: extractor ? [] : scripts,
         content: appContent,
         loadableScripts: loadableScripts,
         loadableLinks: loadableLinks,
