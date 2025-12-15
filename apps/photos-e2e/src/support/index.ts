@@ -30,7 +30,12 @@ Cypress.on('window:before:load', (win) => {
         message.includes('Hydration failed') ||
         message.includes('There was an error while hydrating')) {
       hydrationWarnings.push(message);
-      cy.log('🔴 Hydration Warning Detected:', message);
+      // Use Cypress.log programmatic API instead of cy.log
+      Cypress.log({
+        name: '🔴 Hydration Warning',
+        message: message.substring(0, 200),
+        consoleProps: () => ({ 'Full Message': message })
+      });
     }
 
     // Still call original console.error
@@ -46,41 +51,67 @@ Cypress.on('uncaught:exception', (err, runnable) => {
     return false;
   }
 
-  // Enhanced logging for hydration errors
+  // Enhanced logging for hydration errors using programmatic API
   if (err.message.includes('Hydration failed') ||
       err.message.includes('does not match what was rendered on the server')) {
-    cy.log('🔴 HYDRATION ERROR DETECTED');
-    cy.log('Error Message:', err.message);
-    cy.log('Stack:', err.stack);
+
+    console.log('═══════════════════════════════════════════════');
+    console.log('🔴 HYDRATION ERROR DETECTED');
+    console.log('═══════════════════════════════════════════════');
+    console.log('Test:', runnable.title);
+    console.log('Error Message:', err.message);
+    console.log('Stack:', err.stack);
 
     // Log any captured hydration warnings
     if (hydrationWarnings.length > 0) {
-      cy.log('📋 Related Hydration Warnings:');
+      console.log('\n📋 Related Hydration Warnings:');
       hydrationWarnings.forEach((warning, idx) => {
-        cy.log(`Warning ${idx + 1}:`, warning);
+        console.log(`\nWarning ${idx + 1}:`);
+        console.log(warning);
       });
     }
 
-    // Try to extract the element that caused the mismatch
-    cy.window().then((win) => {
-      const body = win.document.body;
-      cy.log('📄 Document Body HTML (first 500 chars):', body.innerHTML.substring(0, 500));
+    // Try to extract DOM information
+    try {
+      if (typeof window !== 'undefined' && window.document) {
+        const body = window.document.body;
+        if (body) {
+          console.log('\n📄 Document Body HTML (first 500 chars):');
+          console.log(body.innerHTML.substring(0, 500));
 
-      // Check for any elements with suppressHydrationWarning issues
-      const elementsWithData = body.querySelectorAll('[data-reactroot], [data-reactid]');
-      if (elementsWithData.length > 0) {
-        cy.log(`Found ${elementsWithData.length} React root elements`);
+          // Check for React root elements
+          const elementsWithData = body.querySelectorAll('[data-reactroot], [data-reactid]');
+          if (elementsWithData.length > 0) {
+            console.log(`\nFound ${elementsWithData.length} React root elements`);
+          }
+        }
       }
-    });
+    } catch (domError) {
+      console.log('Could not extract DOM information:', domError);
+    }
+
+    console.log('═══════════════════════════════════════════════\n');
 
     // Clear warnings for next test
     hydrationWarnings = [];
+
+    // Use programmatic log for Cypress UI
+    Cypress.log({
+      name: '🔴 Hydration Error',
+      message: err.message,
+      consoleProps: () => ({
+        'Error': err.message,
+        'Stack': err.stack,
+        'Test': runnable.title,
+        'Warnings': hydrationWarnings
+      })
+    });
+  } else {
+    // Log all other errors
+    console.log('🔴 Uncaught Exception:', err.message);
+    console.log('Test:', runnable.title);
   }
 
-  // Log all other errors with context
-  cy.log('🔴 Uncaught Exception:', err.message);
-  cy.log('Test:', runnable.title);
-
-  // Allow other errors to fail the test
+  // Allow errors to fail the test
   return true;
 });
