@@ -204,52 +204,47 @@ describe('Image flickering prevention E2E', () => {
       cy.get('.grid img', { timeout: 10000 }).should('have.length.greaterThan', 0);
       cy.get('.grid img').first().click({ force: true });
 
-      // Wait for modal to open
-      cy.wait(1000);
+      // Wait for modal to be fully initialized
+      cy.get('.pswp', { timeout: 5000 }).should('have.class', 'pswp--open');
 
-      // Simulate navigation (if navigation buttons exist and are visible)
+      // Wait for modal content to be visible
+      cy.get('.pswp img, .pswp picture', { timeout: 5000 }).should('be.visible');
+
+      // Try to navigate through gallery images if navigation buttons exist
       cy.get('body').then(($body) => {
-        // Check if modal is open and navigation buttons exist
-        const hasNavButtons = $body.find('.pswp__button--arrow--right:visible, .pswp .pswp__button--next:visible').length > 0;
+        // Check if modal has navigation buttons
+        const nextButton = $body.find('.pswp__button--arrow--right:visible, .pswp .pswp__button--next:visible');
 
-        if (hasNavButtons) {
+        if (nextButton.length > 0) {
           cy.log('Gallery navigation buttons found, testing navigation');
 
-          // Click next button multiple times with proper visibility checks
-          const clickNext = () => {
-            // Wait for button to be visible before clicking
-            cy.get('.pswp__button--arrow--right, .pswp .pswp__button--next')
-              .filter(':visible')
-              .first()
-              .should('be.visible')
-              .click({ force: true }); // Use force to avoid flaky visibility issues
+          // Navigate through 3 images with proper checks
+          for (let i = 0; i < 3; i++) {
+            // Check if modal is still open before clicking
+            cy.get('.pswp').should('have.class', 'pswp--open').then(($modal) => {
+              if ($modal.hasClass('pswp--open')) {
+                // Find and click next button
+                cy.get('.pswp__button--arrow--right, .pswp .pswp__button--next')
+                  .filter(':visible')
+                  .first()
+                  .then(($btn) => {
+                    if ($btn.length > 0 && $btn.is(':visible')) {
+                      cy.wrap($btn).click({ force: true });
 
-            cy.wait(200);
+                      // Wait for image transition with timeout
+                      cy.wait(300);
 
-            // Images should be visible, not stuck in loading state
-            cy.get('.pswp img:visible, .pswp picture:visible').should('exist');
-          };
-
-          // Try to navigate, but don't fail if modal closes
-          cy.get('.pswp').then(($modal) => {
-            if ($modal.is(':visible')) {
-              clickNext();
-
-              // Check if modal is still open before continuing
-              cy.get('.pswp').then(($m) => {
-                if ($m.is(':visible')) {
-                  clickNext();
-                  cy.get('.pswp').then(($m2) => {
-                    if ($m2.is(':visible')) {
-                      clickNext();
+                      // Verify image is visible after navigation
+                      cy.get('.pswp img:visible, .pswp picture:visible', { timeout: 3000 })
+                        .should('exist')
+                        .and('be.visible');
                     }
                   });
-                }
-              });
-            }
-          });
+              }
+            });
+          }
         } else {
-          cy.log('Gallery navigation buttons not found or not visible');
+          cy.log('Gallery navigation buttons not found - skipping navigation test');
         }
       });
     });
