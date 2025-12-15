@@ -1,3 +1,40 @@
+# [0.15.0](https://github.com/aldor007/mkaciuba/compare/photos-0.14.0...photos-0.15.0) (2025-12-15)
+
+
+### Bug Fixes
+
+* add null check for postCategories in PostNavbar ([4b0a535](https://github.com/aldor007/mkaciuba/commit/4b0a535162e59a08a4611d9d5a25670f53f1bae7))
+* add null check for posts in Posts component ([434ba7e](https://github.com/aldor007/mkaciuba/commit/434ba7e1bb551ce76e57bc79855182044e779e13))
+* add null checks for data in Photos, Categories, and Navbar ([9e7fa28](https://github.com/aldor007/mkaciuba/commit/9e7fa283ba0e10dc48296130de6738bf73897356))
+* improve E2E test resilience for h1 detection and modal navigation ([f3250e4](https://github.com/aldor007/mkaciuba/commit/f3250e4229a6665d63efff5f867745c754116824))
+* more fixes ([ac9bea9](https://github.com/aldor007/mkaciuba/commit/ac9bea9a2f104c5983c7649886039d4b3c7f1f1c))
+* more fixes ([1cffe9e](https://github.com/aldor007/mkaciuba/commit/1cffe9e5dbdf86e4649ea5e0e76fbb030d4c668a))
+* more fixes ([3969cf3](https://github.com/aldor007/mkaciuba/commit/3969cf3190f99d413d511120ae9cda5321eb2629))
+* more fixes ([7f6a5ca](https://github.com/aldor007/mkaciuba/commit/7f6a5cab1b5c768f514b0cb4a0678f3976c8fb4a))
+* more fixes ([09d6da2](https://github.com/aldor007/mkaciuba/commit/09d6da2bad6bdbaf4cba4a7df5ad86f64fad0758))
+* more fixes ([76c4ffb](https://github.com/aldor007/mkaciuba/commit/76c4ffbf2e201c2ab42ad9d5756a116d4857fbde))
+* more fixes ([aaf6495](https://github.com/aldor007/mkaciuba/commit/aaf649564311d1e50bec0ea9951af651b0f28542))
+* more fixes ([084713d](https://github.com/aldor007/mkaciuba/commit/084713dd6d734cc96468e8f26e08f40cc1b444ec))
+* more fixes ([0265372](https://github.com/aldor007/mkaciuba/commit/02653723529c33463b07960d574a1f3ce23b2671))
+* more fixes ([671f03e](https://github.com/aldor007/mkaciuba/commit/671f03e28e3c6057ad84b06b162dd190351d78ca))
+* more fixes ([d2356eb](https://github.com/aldor007/mkaciuba/commit/d2356eb843a2bb93cce5a26ff7968912e6df09ec))
+* more fixes ([fd5c3b0](https://github.com/aldor007/mkaciuba/commit/fd5c3b0a039c4e24bbe1ad988231473feeafc0bf))
+* more fixes ([a5f1a65](https://github.com/aldor007/mkaciuba/commit/a5f1a65b2b2b4f7ed5a29823a6a14ece26252c82))
+* more fixes ([2414503](https://github.com/aldor007/mkaciuba/commit/24145037eaa8b98ef1c4e4e2aad60ead8b364cbd))
+* more fixes ([f3f004f](https://github.com/aldor007/mkaciuba/commit/f3f004f6a4095928f745cc0deebc665ac1a79b42))
+* more fixes ([8da48ac](https://github.com/aldor007/mkaciuba/commit/8da48acd79209e579bf201d33ab7733d7436755c))
+* more fixes ([ec91f07](https://github.com/aldor007/mkaciuba/commit/ec91f07a89dee7fd06389384d6959a15f7c63d3f))
+* prevent undefined data access in useSSRSafeQuery hook ([3d7bbbe](https://github.com/aldor007/mkaciuba/commit/3d7bbbe173bc6ab90be93603c1bffe1d682be705))
+* resolve Cypress command usage errors in SSR hydration tests ([543ac45](https://github.com/aldor007/mkaciuba/commit/543ac456778709e8f2dff25147c0568c49e1715d))
+* resolve SSR image sizing and hydration mismatch issues ([86c1fb1](https://github.com/aldor007/mkaciuba/commit/86c1fb1d158652faeed190db38ac3e4c16d15a29))
+
+
+### Features
+
+* add desktop-sized image presets for better resolution ([0c173c0](https://github.com/aldor007/mkaciuba/commit/0c173c0fc697e76d87dd7cd9dc0a14dd16dbda04))
+* add responsive CSS to ImageComponent ([4a793d6](https://github.com/aldor007/mkaciuba/commit/4a793d6d1680c25fb7f3722481a6bca493fb9739))
+* make gallery images responsive for mobile devices ([7379423](https://github.com/aldor007/mkaciuba/commit/737942310c78901ff68e3ad30dd15df1a1c4fb5b))
+
 # [0.14.0](https://github.com/aldor007/mkaciuba/compare/photos-0.13.5...photos-0.14.0) (2025-12-12)
 
 
