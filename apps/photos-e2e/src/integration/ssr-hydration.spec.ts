@@ -121,7 +121,7 @@ describe('SSR Hydration', () => {
       cy.wait(2000);
 
       // Verify the post count hasn't changed (no discarding of SSR content)
-      cy.get('.max-w-screen-xl').should(($posts) => {
+      cy.get('.max-w-screen-xl').then(($posts) => {
         const finalPostCount = $posts.length;
         cy.log(`Final posts after hydration: ${finalPostCount}`);
         expect(finalPostCount).to.be.gte(initialPostCount);
@@ -191,7 +191,7 @@ describe('SSR Hydration', () => {
       cy.wait(2000);
 
       // Grid should maintain or increase image count (not decrease)
-      cy.get('.grid img').should(($images) => {
+      cy.get('.grid img').then(($images) => {
         const finalImageCount = $images.length;
         cy.log(`Final images after hydration: ${finalImageCount}`);
         expect(finalImageCount).to.be.gte(initialImageCount);
@@ -211,8 +211,18 @@ describe('SSR Hydration', () => {
           // Wait for hydration to complete
           cy.wait(2000);
 
-          // Check that the post title appears only once
-          cy.get('h1').should('have.length.lessThan', 3);
+          // Check that the post title appears a reasonable number of times
+          // (may include title in meta tags, header, etc., but not duplicated content)
+          cy.get('h1').then(($h1s) => {
+            cy.log(`Found ${$h1s.length} h1 elements`);
+
+            // Get visible h1s only (exclude hidden meta/SEO elements)
+            const visibleH1s = $h1s.filter(':visible');
+            cy.log(`Found ${visibleH1s.length} visible h1 elements`);
+
+            // Should have at most 2 visible h1s (post title + maybe page title)
+            expect(visibleH1s.length, 'Should not have duplicate visible h1 elements').to.be.lessThan(3);
+          });
 
           // Check that the main content area exists only once
           cy.get('article, .post-content, main').should('have.length.lessThan', 3);
