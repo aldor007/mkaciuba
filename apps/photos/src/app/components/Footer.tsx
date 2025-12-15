@@ -47,11 +47,11 @@ export const Footer = () => {
     return <ErrorPage code={500} message={error.message} />
    };
 
-  if (shouldShowLoading) {
+  if (shouldShowLoading || !data) {
     return <LoadingMore/>;
   }
 
-  if (!data!.categories) return null;
+  if (!data.categories) return null;
 
   const recentPhotos = data.categories.map(c => {
       const imagePath = generatePath(AppRoutes.photos.path, {
