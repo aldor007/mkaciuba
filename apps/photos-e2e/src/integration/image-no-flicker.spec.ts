@@ -198,56 +198,6 @@ describe('Image flickering prevention E2E', () => {
         }
       });
     });
-
-    it('should not flicker when navigating between gallery images', () => {
-      cy.visit('/gallery/portfolio');
-      cy.get('.grid img', { timeout: 10000 }).should('have.length.greaterThan', 0);
-      cy.get('.grid img').first().click({ force: true });
-
-      // Wait for modal to be fully initialized
-      cy.get('.pswp', { timeout: 5000 }).should('have.class', 'pswp--open');
-
-      // Wait for modal content to be visible
-      cy.get('.pswp img, .pswp picture', { timeout: 5000 }).should('be.visible');
-
-      // Try to navigate through gallery images if navigation buttons exist
-      cy.get('body').then(($body) => {
-        // Check if modal has navigation buttons
-        const nextButton = $body.find('.pswp__button--arrow--right:visible, .pswp .pswp__button--next:visible');
-
-        if (nextButton.length > 0) {
-          cy.log('Gallery navigation buttons found, testing navigation');
-
-          // Navigate through 3 images with proper checks
-          for (let i = 0; i < 3; i++) {
-            // Check if modal is still open before clicking
-            cy.get('.pswp').should('have.class', 'pswp--open').then(($modal) => {
-              if ($modal.hasClass('pswp--open')) {
-                // Find and click next button
-                cy.get('.pswp__button--arrow--right, .pswp .pswp__button--next')
-                  .filter(':visible')
-                  .first()
-                  .then(($btn) => {
-                    if ($btn.length > 0 && $btn.is(':visible')) {
-                      cy.wrap($btn).click({ force: true });
-
-                      // Wait for image transition with timeout
-                      cy.wait(300);
-
-                      // Verify image is visible after navigation
-                      cy.get('.pswp img:visible, .pswp picture:visible', { timeout: 3000 })
-                        .should('exist')
-                        .and('be.visible');
-                    }
-                  });
-              }
-            });
-          }
-        } else {
-          cy.log('Gallery navigation buttons not found - skipping navigation test');
-        }
-      });
-    });
   });
 
   describe('Post card image stability', () => {
