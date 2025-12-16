@@ -6,6 +6,10 @@
  * - v5: Added loadable components for SSR code splitting
  * - v4: CSS fixes (photos build before photos-ssr, correct manifest paths)
  * - v3: Previous version
+ *
+ * Note: We use browser-native responsive images (srcset) so all devices
+ * receive the same HTML with all image variants. The browser decides which
+ * image to load based on viewport, DPR, and network conditions.
  */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const getCacheKey = (req: {

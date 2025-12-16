@@ -17,7 +17,8 @@ export function Html({
   scripts,
   loadableScripts = [],
   loadableLinks = [],
-  loadableStyles = []
+  loadableStyles = [],
+  initialViewport
 }: {
   content: string;
   state: any;
@@ -29,6 +30,7 @@ export function Html({
   loadableScripts?: any[];
   loadableLinks?: any[];
   loadableStyles?: any[];
+  initialViewport?: number;
 }): string {
   // Render loadable components to strings
   const loadableStylesHtml = loadableStyles.length > 0
@@ -59,6 +61,7 @@ export function Html({
     <link href="${photosCssPath}" rel="stylesheet" />
     ${loadableStylesHtml}
     ${loadableLinksHtml}
+    <script>window.__INITIAL_VIEWPORT__=${initialViewport || 1900};</script>
   </head>
   <body>
     <div id="root">${content}</div>

@@ -8,7 +8,10 @@
     "start": "strapi start",
     "build": "strapi build",
     "strapi": "strapi",
-    "generate": "graphql-codegen --config codegen.yml"
+    "generate": "graphql-codegen --config codegen.yml",
+    "test": "jest --runInBand",
+    "test:watch": "jest --watch --runInBand",
+    "test:coverage": "jest --coverage --runInBand"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "2.13.7",
@@ -19,7 +22,8 @@
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/commit-analyzer": "^9.0.2",
     "@semantic-release/git": "^10.0.1",
-    "@semantic-release/release-notes-generator": "10.0.3"
+    "@semantic-release/release-notes-generator": "10.0.3",
+    "jest": "^27.0.0"
   },
   "dependencies": {
     "agentkeepalive": "^4.1.3",

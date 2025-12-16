@@ -141,7 +141,7 @@ async function toCacheObject(cacheData) {
   }
 }
 
-function renderErrorPage(code: number, message?: string) {
+function renderErrorPage(code: number, message?: string, initialViewport?: number) {
   const errorContent = renderToString(<ErrorPage code={code} message={message} />);
   const errorHtml = Html({
     content: errorContent,
@@ -158,7 +158,8 @@ function renderErrorPage(code: number, message?: string) {
     scripts: scripts,
     loadableScripts: [],
     loadableLinks: [],
-    loadableStyles: []
+    loadableStyles: [],
+    initialViewport: initialViewport
   });
   return errorHtml;
 }
@@ -267,9 +268,13 @@ app.delete('/v1/purge', async (req, res) => {
   }
 })
 
+// Use desktop viewport for SSR (1900px)
+// Browser will select appropriate image from srcset based on actual viewport/DPR
+
 app.get('*', async (req, res) => {
   const helmetContext = {} as FilledContext;
   const reqPath = req.path;
+  const detectedViewport = 1900; // Always render with desktop viewport
 
   const client = new ApolloClient({
     ssrMode: true,
@@ -366,7 +371,8 @@ app.get('*', async (req, res) => {
         content: appContent,
         loadableScripts: loadableScripts,
         loadableLinks: loadableLinks,
-        loadableStyles: loadableStyles
+        loadableStyles: loadableStyles,
+        initialViewport: detectedViewport
       });
       const headers = {
         'content-type': 'text/html; charset=UTF-8',
@@ -425,7 +431,7 @@ app.get('*', async (req, res) => {
         'expires': '0',
         'content-type': 'text/html; charset=UTF-8'
       });
-      res.send(renderErrorPage(500, e.message));
+      res.send(renderErrorPage(500, e.message, detectedViewport));
     }
   }
   if (cacheData) {
