@@ -33,7 +33,7 @@ import proxy from 'express-http-proxy';
 import fs from 'fs';
 import pkgJson from  '../../../package.json';
 import { Cache } from './redis';
-import { getCacheKey, detectDeviceClass, deviceClassToViewport } from './cache-utils';
+import { getCacheKey } from './cache-utils';
 
 const API_KEY = process.env.API_KEY || '123';
 const CLOUDFLARE_ZONE_ID = process.env.CLOUDFLARE_ZONE_ID;
@@ -268,14 +268,13 @@ app.delete('/v1/purge', async (req, res) => {
   }
 })
 
-// Device detection now handled by cache-utils.ts
-// This ensures cache key and viewport detection use same logic
+// Use desktop viewport for SSR (1900px)
+// Browser will select appropriate image from srcset based on actual viewport/DPR
 
 app.get('*', async (req, res) => {
   const helmetContext = {} as FilledContext;
   const reqPath = req.path;
-  const deviceClass = detectDeviceClass(req);
-  const detectedViewport = deviceClassToViewport(deviceClass);
+  const detectedViewport = 1900; // Always render with desktop viewport
 
   const client = new ApolloClient({
     ssrMode: true,
