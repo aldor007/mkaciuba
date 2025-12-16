@@ -1,3 +1,17 @@
+# [0.7.0](https://github.com/aldor007/mkaciuba/compare/strapi-0.6.0...strapi-0.7.0) (2025-12-16)
+
+
+### Bug Fixes
+
+* manifests check ([9891418](https://github.com/aldor007/mkaciuba/commit/9891418acb27a5820ba43d93ddb3d4a518eedf18))
+* manifests check ([8ec445f](https://github.com/aldor007/mkaciuba/commit/8ec445f12f43b202bd6ae30aa63308ecb60119ac))
+
+
+### Features
+
+* per device img ([dabfb8c](https://github.com/aldor007/mkaciuba/commit/dabfb8cfdf481c0d1a70852cc62b5cc921a05f57))
+* per device img ([28e5a92](https://github.com/aldor007/mkaciuba/commit/28e5a92863590b2d41cd01f1b981297b01abd2d0))
+
 # [0.6.0](https://github.com/aldor007/mkaciuba/compare/strapi-0.5.1...strapi-0.6.0) (2025-12-15)
 
 
