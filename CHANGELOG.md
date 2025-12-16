@@ -1,3 +1,16 @@
+# [0.17.0](https://github.com/aldor007/mkaciuba/compare/photos-0.16.1...photos-0.17.0) (2025-12-16)
+
+
+### Bug Fixes
+
+* fix release ([101208b](https://github.com/aldor007/mkaciuba/commit/101208bec1fd9dba3e06d08044f4a17a00b3c6b1))
+
+
+### Features
+
+* per device img ([dabfb8c](https://github.com/aldor007/mkaciuba/commit/dabfb8cfdf481c0d1a70852cc62b5cc921a05f57))
+* per device img ([28e5a92](https://github.com/aldor007/mkaciuba/commit/28e5a92863590b2d41cd01f1b981297b01abd2d0))
+
 ## [0.16.1](https://github.com/aldor007/mkaciuba/compare/photos-0.16.0...photos-0.16.1) (2025-12-15)
 
 
