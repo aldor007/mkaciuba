@@ -38,6 +38,15 @@ class Preset {
 
 const presetList = [
   new Preset('icon', 35, null, '(max-width: 75px)', 'jpeg'),
+  // Mobile phone presets (375px, 414px viewports)
+  new Preset('mobile375webp', 375, null, '(max-width: 450px)', 'webp'),
+  new Preset('mobile375', 375, null, '(max-width: 450px)', 'jpeg'),
+  new Preset('mobile750webp', 750, null, '(max-width: 450px) and (min-resolution: 2dppx)', 'webp'),
+  new Preset('mobile750', 750, null, '(max-width: 450px) and (min-resolution: 2dppx)', 'jpeg'),
+  new Preset('mobile414webp', 414, null, '(max-width: 500px)', 'webp'),
+  new Preset('mobile414', 414, null, '(max-width: 500px)', 'jpeg'),
+  new Preset('mobile828webp', 828, null, '(max-width: 500px) and (min-resolution: 2dppx)', 'webp'),
+  new Preset('mobile828', 828, null, '(max-width: 500px) and (min-resolution: 2dppx)', 'jpeg'),
   new Preset('bigwebp', 700, null, '(max-width: 1000px)', 'webp'),
   new Preset('big1000webp', 1000, null, '(max-width: 1300px)', 'webp'),
   new Preset('big1300webp', 1300, null, '(max-width: 1600px)', 'webp'),

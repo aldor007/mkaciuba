@@ -33,7 +33,7 @@ import proxy from 'express-http-proxy';
 import fs from 'fs';
 import pkgJson from  '../../../package.json';
 import { Cache } from './redis';
-import { getCacheKey } from './cache-utils';
+import { getCacheKey, detectDeviceClass, deviceClassToViewport } from './cache-utils';
 
 const API_KEY = process.env.API_KEY || '123';
 const CLOUDFLARE_ZONE_ID = process.env.CLOUDFLARE_ZONE_ID;
@@ -141,7 +141,7 @@ async function toCacheObject(cacheData) {
   }
 }
 
-function renderErrorPage(code: number, message?: string) {
+function renderErrorPage(code: number, message?: string, initialViewport?: number) {
   const errorContent = renderToString(<ErrorPage code={code} message={message} />);
   const errorHtml = Html({
     content: errorContent,
@@ -158,7 +158,8 @@ function renderErrorPage(code: number, message?: string) {
     scripts: scripts,
     loadableScripts: [],
     loadableLinks: [],
-    loadableStyles: []
+    loadableStyles: [],
+    initialViewport: initialViewport
   });
   return errorHtml;
 }
@@ -267,9 +268,14 @@ app.delete('/v1/purge', async (req, res) => {
   }
 })
 
+// Device detection now handled by cache-utils.ts
+// This ensures cache key and viewport detection use same logic
+
 app.get('*', async (req, res) => {
   const helmetContext = {} as FilledContext;
   const reqPath = req.path;
+  const deviceClass = detectDeviceClass(req);
+  const detectedViewport = deviceClassToViewport(deviceClass);
 
   const client = new ApolloClient({
     ssrMode: true,
@@ -366,7 +372,8 @@ app.get('*', async (req, res) => {
         content: appContent,
         loadableScripts: loadableScripts,
         loadableLinks: loadableLinks,
-        loadableStyles: loadableStyles
+        loadableStyles: loadableStyles,
+        initialViewport: detectedViewport
       });
       const headers = {
         'content-type': 'text/html; charset=UTF-8',
@@ -425,7 +432,7 @@ app.get('*', async (req, res) => {
         'expires': '0',
         'content-type': 'text/html; charset=UTF-8'
       });
-      res.send(renderErrorPage(500, e.message));
+      res.send(renderErrorPage(500, e.message, detectedViewport));
     }
   }
   if (cacheData) {

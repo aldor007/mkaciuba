@@ -6,9 +6,8 @@ import { Query } from '@mkaciuba/types';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { LoadingMore, ErrorPage, useSSRSafeQuery } from '@mkaciuba/ui-kit'
 import ReactGA from 'react-ga4'
-import { Image, ImageComponent, useWebPSupportStable, DefaultImgSizing } from './image';
+import { Image, ImageComponent, useWebPSupportStable, DefaultImgSizing, findImageForWidthClosestWithDPR } from './image';
 import { Gallery, Item } from 'react-photoswipe-gallery'
-import { findImageForWidthBigger } from "..";
 
 // import 'photoswipe/dist/photoswipe.css'
 // import 'photoswipe/dist/default-skin/default-skin.css'
@@ -17,6 +16,7 @@ import { findImageForWidthBigger } from "..";
 declare global {
   interface Window {
     __APOLLO_STATE__?: any;
+    __INITIAL_VIEWPORT__?: number;
   }
 }
 
@@ -95,11 +95,15 @@ export const findImageForWidth = (images: Image[], width: number, webp: boolean)
 
 export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps) => {
   const webp = useWebPSupportStable();
-  // Always use 1900 for SSR consistency across server and client
-  // This prevents hydration mismatches where server renders with 1900
-  // but client first render uses actual viewport width
-  // The ImageComponent will handle responsive sizing with CSS (w-full h-auto)
-  const initialWidth = 1900;
+  // Use SSR-detected viewport from server-side device detection
+  // This ensures mobile devices get appropriately-sized images on first load
+  // Falls back to 1900 for desktop/unknown devices
+  const initialWidth = typeof window !== 'undefined' && window.__INITIAL_VIEWPORT__
+    ? window.__INITIAL_VIEWPORT__
+    : 1900;
+
+  // Detect device pixel ratio for retina displays
+  const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
 
   const [loadingMore] = useState(false);
   const limit = 30;
@@ -153,9 +157,9 @@ export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps)
   // Memoize image calculations - must be called before any early returns
   const images = useMemo(() => data?.categoryBySlug?.medias || [], [data?.categoryBySlug?.medias]);
   const category = data?.categoryBySlug;
-  // For SEO meta tags, calculate a default image at 1024px
+  // For SEO meta tags, calculate a default image at 1024px using DPR-aware algorithm
   const defaultImages = useMemo(() =>
-    images.map((item) => findImageForWidth(item.thumbnails, 1024, webp)),
+    images.map((item) => findImageForWidthClosestWithDPR(item.thumbnails, 1024, webp, 1)),
     [images, webp]
   );
 
@@ -173,7 +177,7 @@ export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps)
   }
    let seoImage = defaultImages;
    if (category.image) {
-    seoImage = images.map((item) => findImageForWidth(category.image.thumbnails, 1024, false));
+    seoImage = images.map((item) => findImageForWidthClosestWithDPR(category.image.thumbnails, 1024, false, 1));
    }
 
    let imageClass = "mx-auto my-1 px-1 w-1/1 overflow-hidden sm:w-1/1 md:w-1/2 lg:w-1/3 xl:w-1/4"
@@ -196,8 +200,8 @@ export const ImageList = ({ categorySlug, minSize, disableSEO }: ImageListProps)
           label: window.location.href,
           })}}>
             {images.map( (item, index) => {
-              // Calculate large image for photoswipe lightbox (independent of viewport)
-              const lightboxImage = findImageForWidthBigger(item.thumbnails, 1900, webp);
+              // Calculate large image for photoswipe lightbox using DPR-aware algorithm
+              const lightboxImage = findImageForWidthClosestWithDPR(item.thumbnails, 1900, webp, dpr);
               return (
             <Item
               original={lightboxImage.url}

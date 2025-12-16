@@ -1,6 +1,5 @@
 import { UploadFile } from '@mkaciuba/types';
 import React, { RefObject, useState, useEffect, useCallback, useRef, useMemo} from 'react';
-import { findImageForWidth } from '..';
 import { useWebPSupportCheck } from "react-use-webp-support-check";
 import { useWindowWidth } from '@react-hook/window-size';
 
@@ -123,6 +122,36 @@ export const findImageForWidthBigger = (images: Image[], width: number, webp: bo
   return filterPresets[minIndex];
 }
 
+export const findImageForWidthClosestWithDPR = (
+  images: Image[],
+  width: number,
+  webp: boolean,
+  dpr = 1
+): Image | null => {
+  const filterPresets = images.filter(p => p.webp === webp);
+  if (filterPresets.length === 0) {
+    return null;
+  }
+
+  // Adjust width for device pixel ratio, cap at 2x to prevent over-fetching
+  const effectiveDPR = Math.min(dpr, 2);
+  const targetWidth = width * effectiveDPR;
+
+  // Find closest match
+  let bestIndex = 0;
+  let minDiff = Math.abs(targetWidth - filterPresets[0].width);
+
+  filterPresets.forEach((p, index) => {
+    const diff = Math.abs(targetWidth - p.width);
+    if (diff < minDiff) {
+      minDiff = diff;
+      bestIndex = index;
+    }
+  });
+
+  return filterPresets[bestIndex];
+};
+
 
 export const toImage = (upload: UploadFile) =>  {
   const image: Image = {
@@ -223,16 +252,19 @@ export const ImageComponent = React.forwardRef(({thumbnails, defaultImage: provi
     // This ensures server-rendered HTML matches initial client render
     const isHydrating = (isHydratingRef.current && !hydrationComplete) || !isMounted;
     const effectiveWidth = isHydrating ? initialWidth : width;
+    const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
 
     if (providedDefaultImage) {
       return providedDefaultImage;
     }
 
-    if (!defaultImgSizing || defaultImgSizing === DefaultImgSizing.DEFAULT) {
-      return findImageForWidth(thumbnails, effectiveWidth, webp);
-    } else {
+    // Support legacy BIGGER sizing mode for backwards compatibility
+    if (defaultImgSizing === DefaultImgSizing.BIGGER) {
       return findImageForWidthBigger(thumbnails, effectiveWidth, webp);
     }
+
+    // Use DPR-aware closest matching algorithm for better mobile performance
+    return findImageForWidthClosestWithDPR(thumbnails, effectiveWidth, webp, dpr);
   }, [providedDefaultImage, thumbnails, width, webp, defaultImgSizing, hydrationComplete, initialWidth, isMounted]);
 
   // Track images by key including dimensions to prevent flicker on format changes
@@ -344,9 +376,47 @@ export const ImageComponent = React.forwardRef(({thumbnails, defaultImage: provi
 
   return (
     <picture ref={ref}>
-      {thumbnails && thumbnails.map(thumbnail => (
-          <source srcSet={thumbnail.url} key={thumbnail.url} media={thumbnail.mediaQuery} type={thumbnail.type}/>
-        ))}
+      {thumbnails && (() => {
+        // Group thumbnails by media query for proper srcset generation
+        const groupedByMedia = thumbnails.reduce((acc, thumb) => {
+          const key = thumb.mediaQuery || 'default';
+          if (!acc[key]) acc[key] = [];
+          acc[key].push(thumb);
+          return acc;
+        }, {} as Record<string, Image[]>);
+
+        // Generate source elements with proper srcset (width descriptors)
+        return Object.entries(groupedByMedia).map(([mediaQuery, thumbs]) => {
+          // Sort by width and separate by format
+          const webpThumbs = thumbs.filter(t => t.webp).sort((a, b) => (a.width || 0) - (b.width || 0));
+          const jpegThumbs = thumbs.filter(t => !t.webp).sort((a, b) => (a.width || 0) - (b.width || 0));
+
+          // Generate srcset strings (e.g., "image-750w.webp 750w, image-1000w.webp 1000w")
+          const webpSrcset = webpThumbs.filter(t => t.width).map(t => `${t.url} ${t.width}w`).join(', ');
+          const jpegSrcset = jpegThumbs.filter(t => t.width).map(t => `${t.url} ${t.width}w`).join(', ');
+
+          return (
+            <React.Fragment key={mediaQuery}>
+              {webpSrcset && (
+                <source
+                  srcSet={webpSrcset}
+                  sizes="100vw"
+                  media={mediaQuery !== 'default' ? mediaQuery : undefined}
+                  type="image/webp"
+                />
+              )}
+              {jpegSrcset && (
+                <source
+                  srcSet={jpegSrcset}
+                  sizes="100vw"
+                  media={mediaQuery !== 'default' ? mediaQuery : undefined}
+                  type="image/jpeg"
+                />
+              )}
+            </React.Fragment>
+          );
+        });
+      })()}
       {displayedImage && <img
         onLoad={handleLoad}
         onError={imageOnError}
