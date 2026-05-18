@@ -71,6 +71,14 @@ export const Photos = () => {
 
   const { categories, gallery } = data.galleryMenu;
   const category = data.categoryBySlug;
+
+  if (!gallery) {
+    return <ErrorPage code={404} message={`Gallery "${gallerySlug}" not found`} />
+  }
+
+  if (!category) {
+    return <ErrorPage code={404} message={'Category not found'} />
+  }
   const children  = categories.map((item) => {
     return {
      url: generatePath(AppRoutes.photos.path, {

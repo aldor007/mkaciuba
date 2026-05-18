@@ -337,7 +337,14 @@ app.get('*', async (req, res) => {
 
       // Use renderToStringWithData for single-pass SSR with data fetching
       // This replaces: await getDataFromTree(wrappedApp) + renderToString(wrappedApp)
-      const appContent = await renderToStringWithData(wrappedApp);
+      let appContent = await renderToStringWithData(wrappedApp);
+
+      // Validate that content was rendered - empty string indicates a rendering issue
+      // (e.g., all components returned null, or a silent error occurred)
+      if (!appContent || appContent.trim() === '') {
+        console.error('SSR render returned empty content. Path:', reqPath, 'URL:', req.url);
+        throw new Error(`Empty SSR render for path: ${reqPath}`);
+      }
 
       // Extract the entirety of the Apollo Client cache's current state
       const initialState = client.extract();

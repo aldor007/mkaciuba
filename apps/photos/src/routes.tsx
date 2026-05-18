@@ -22,6 +22,9 @@ export const AppRoutesComponent = () => (
   <Routes>
     <Route path={AppRoutes.photos.path} element={<Photos />} />
     <Route path={AppRoutes.categoryList.path} element={<Categories />} />
+    {/* Polish galeria alias for galleries */}
+    <Route path="/galeria/:gallerySlug/:categorySlug" element={<Photos />} />
+    <Route path="/galeria/:gallerySlug" element={<Categories />} />
     <Route path={AppRoutes.iframePhotos.path} element={<IframePhotos />} />
     <Route path={AppRoutes.login.path} element={<Login />} />
     <Route path={AppRoutes.post.path} element={<Post />} />
