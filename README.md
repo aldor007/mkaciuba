@@ -9,4 +9,3 @@ React photogallery/portfolio demo in Polish -> https://mkaciuba.pl/. For CSS it 
 * apps/photos - React app, front-end of blog
 * apps/photo-ssr - Server Side Rendering of photos
 
-
