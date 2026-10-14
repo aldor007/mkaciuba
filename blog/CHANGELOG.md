@@ -1,3 +1,11 @@
+## [0.7.2](https://github.com/aldor007/mkaciuba/compare/strapi-0.7.1...strapi-0.7.2) (2026-10-14)
+
+
+### Bug Fixes
+
+* move product spec out of Strapi's api loader path ([0d3d17b](https://github.com/aldor007/mkaciuba/commit/0d3d17badeda2a2e741076b00d5de043b4317458))
+* release ([d546fc6](https://github.com/aldor007/mkaciuba/commit/d546fc6803c4b1b50045cc14f3d88261e68d4680))
+
 ## [0.7.1](https://github.com/aldor007/mkaciuba/compare/strapi-0.7.0...strapi-0.7.1) (2026-10-14)
 
 
