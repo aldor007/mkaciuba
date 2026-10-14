@@ -1,4 +1,4 @@
-const productModel = require('./product');
+const productModel = require('../../../api/product/models/product');
 
 // Mock slugify. Virtual: the blog's node_modules may not be installed in this
 // workspace (specs run from the workspace root); the virtual mock keeps this
