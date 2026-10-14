@@ -1,3 +1,13 @@
+## [0.7.1](https://github.com/aldor007/mkaciuba/compare/strapi-0.7.0...strapi-0.7.1) (2026-10-14)
+
+
+### Bug Fixes
+
+* fix release ([101208b](https://github.com/aldor007/mkaciuba/commit/101208bec1fd9dba3e06d08044f4a17a00b3c6b1))
+* fixes ([4472cf4](https://github.com/aldor007/mkaciuba/commit/4472cf495ba5bceb2645dd773f971705678be6c7))
+* fixes ([28c3dfe](https://github.com/aldor007/mkaciuba/commit/28c3dfe8281fa0acfe8d5984341f8322e340c9ce))
+* release ([ebb7fe1](https://github.com/aldor007/mkaciuba/commit/ebb7fe11c009e7b630c465149c8c956163f9b3f2))
+
 # [0.7.0](https://github.com/aldor007/mkaciuba/compare/strapi-0.6.0...strapi-0.7.0) (2025-12-16)
 
 
