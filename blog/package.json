@@ -52,6 +52,9 @@
     "strapi-utils": "^3.6.5",
     "remove-markdown": "0.3.0"
   },
+  "resolutions": {
+    "browserslist": "4.16.6"
+  },
   "author": {
     "name": "A Strapi developer"
   },
