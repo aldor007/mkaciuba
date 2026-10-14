@@ -1,6 +1,11 @@
 import { renderHook } from '@testing-library/react';
 import { BrowserRouter, MemoryRouter } from 'react-router-dom';
-import { useQueryParams } from './qs';
+import {
+  parseListingParams,
+  serializeListingParams,
+  useListingParams,
+  useQueryParams,
+} from './qs';
 import React from 'react';
 
 describe('useQueryParams', () => {
@@ -272,5 +277,169 @@ describe('useQueryParams', () => {
 
       expect(result.current.get('initial')).toBe('test');
     });
+  });
+});
+
+describe('parseListingParams', () => {
+  describe('should parse and validate listing params', () => {
+    const testCases = [
+      {
+        description: 'empty search string',
+        search: '',
+        expected: { page: 1, sort: null, tags: [] as string[], q: null },
+      },
+      {
+        description: 'valid sort',
+        search: '?sort=title:asc',
+        expected: { page: 1, sort: 'title:asc', tags: [] as string[], q: null },
+      },
+      {
+        description: 'sort missing direction is dropped',
+        search: '?sort=title',
+        expected: { page: 1, sort: null, tags: [] as string[], q: null },
+      },
+      {
+        description: 'sort with injection attempt is dropped',
+        search: '?sort=title:asc;drop',
+        expected: { page: 1, sort: null, tags: [] as string[], q: null },
+      },
+      {
+        description: 'sort not in allowedSorts is dropped',
+        search: '?sort=name:asc',
+        allowedSorts: ['title:asc'],
+        expected: { page: 1, sort: null, tags: [] as string[], q: null },
+      },
+      {
+        description: 'sort in allowedSorts is kept',
+        search: '?sort=name:asc',
+        allowedSorts: ['name:asc', 'name:desc'],
+        expected: { page: 1, sort: 'name:asc', tags: [] as string[], q: null },
+      },
+      {
+        description: 'valid page',
+        search: '?page=3',
+        expected: { page: 3, sort: null, tags: [] as string[], q: null },
+      },
+      {
+        description: 'non-numeric page falls back to 1',
+        search: '?page=abc',
+        expected: { page: 1, sort: null, tags: [] as string[], q: null },
+      },
+      {
+        description: 'zero page falls back to 1',
+        search: '?page=0',
+        expected: { page: 1, sort: null, tags: [] as string[], q: null },
+      },
+      {
+        description: 'comma separated tags',
+        search: '?tag=a,b',
+        expected: { page: 1, sort: null, tags: ['a', 'b'], q: null },
+      },
+      {
+        description: 'repeated tag params',
+        search: '?tag=a&tag=b',
+        expected: { page: 1, sort: null, tags: ['a', 'b'], q: null },
+      },
+      {
+        description: 'duplicate tags are deduplicated',
+        search: '?tag=a,b,a',
+        expected: { page: 1, sort: null, tags: ['a', 'b'], q: null },
+      },
+      {
+        description: 'tags with invalid characters are dropped',
+        search: '?tag=<script>,valid',
+        expected: { page: 1, sort: null, tags: ['valid'], q: null },
+      },
+      {
+        description: 'query term is parsed',
+        search: '?q=test',
+        expected: { page: 1, sort: null, tags: [] as string[], q: 'test' },
+      },
+      {
+        description: 'query term is trimmed',
+        search: '?q=%20%20test%20%20',
+        expected: { page: 1, sort: null, tags: [] as string[], q: 'test' },
+      },
+      {
+        description: 'empty query term is dropped',
+        search: '?q=',
+        expected: { page: 1, sort: null, tags: [] as string[], q: null },
+      },
+      {
+        description: 'combined params',
+        search: '?sort=publicationDate:desc&tag=a,b&page=2&q=x',
+        expected: { page: 2, sort: 'publicationDate:desc', tags: ['a', 'b'], q: 'x' },
+      },
+    ];
+
+    test.each(testCases)('should handle $description', ({ search, allowedSorts, expected }) => {
+      const result = allowedSorts
+        ? parseListingParams(search, allowedSorts)
+        : parseListingParams(search);
+      expect(result).toEqual(expected);
+    });
+  });
+
+  test('should cap tags at 12 entries', () => {
+    const tags = Array.from({ length: 15 }, (_, i) => `tag${i}`);
+    const result = parseListingParams(`?tag=${tags.join(',')}`);
+    expect(result.tags).toHaveLength(12);
+    expect(result.tags[0]).toBe('tag0');
+    expect(result.tags[11]).toBe('tag11');
+  });
+
+  test('should cap query term length at 100 characters', () => {
+    const longQuery = 'a'.repeat(150);
+    const result = parseListingParams(`?q=${longQuery}`);
+    expect(result.q).toHaveLength(100);
+  });
+});
+
+describe('serializeListingParams', () => {
+  test('should return empty string for default params', () => {
+    expect(serializeListingParams({})).toBe('');
+    expect(serializeListingParams({ page: 1, sort: null, tags: [], q: null })).toBe('');
+  });
+
+  test('should omit page 1', () => {
+    expect(serializeListingParams({ page: 1, sort: 'title:asc' })).toBe('?sort=title:asc');
+  });
+
+  test('should serialize all params', () => {
+    expect(
+      serializeListingParams({ page: 2, sort: 'title:asc', tags: ['a', 'b'], q: 'test' })
+    ).toBe('?page=2&sort=title:asc&tag=a,b&q=test');
+  });
+
+  test('should round-trip through parseListingParams', () => {
+    const search = '?page=2&sort=title:asc&tag=a,b&q=test';
+    const parsed = parseListingParams(search);
+    expect(serializeListingParams(parsed)).toBe(search);
+  });
+});
+
+describe('useListingParams', () => {
+  test('should read validated params from current location', () => {
+    const wrapper = ({ children }: any) => (
+      <MemoryRouter initialEntries={['/?sort=title:asc&tag=a,b&page=2']}>
+        {children}
+      </MemoryRouter>
+    );
+
+    const { result } = renderHook(() => useListingParams(), { wrapper });
+
+    expect(result.current).toEqual({ page: 2, sort: 'title:asc', tags: ['a', 'b'], q: null });
+  });
+
+  test('should drop invalid values from the URL', () => {
+    const wrapper = ({ children }: any) => (
+      <MemoryRouter initialEntries={['/?sort=invalid&tag=<bad>&page=abc&q=']}>
+        {children}
+      </MemoryRouter>
+    );
+
+    const { result } = renderHook(() => useListingParams(), { wrapper });
+
+    expect(result.current).toEqual({ page: 1, sort: null, tags: [], q: null });
   });
 });

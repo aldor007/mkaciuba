@@ -1,0 +1,53 @@
+{
+  "kind": "collectionType",
+  "collectionName": "products",
+  "info": {
+    "name": "Product"
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": false,
+      "unique": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "dimensions": {
+      "type": "string"
+    },
+    "price": {
+      "type": "decimal",
+      "required": false
+    },
+    "material": {
+      "type": "enumeration",
+      "enum": ["oak", "ash", "walnut", "other"]
+    },
+    "availability": {
+      "type": "enumeration",
+      "enum": ["in_stock", "made_to_order", "unavailable"]
+    },
+    "images": {
+      "collection": "file",
+      "via": "related",
+      "allowedTypes": ["images"],
+      "plugin": "upload",
+      "required": false,
+      "pluginOptions": {}
+    },
+    "publicationDate": {
+      "type": "datetime",
+      "required": true
+    }
+  }
+}

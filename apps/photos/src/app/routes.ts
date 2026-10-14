@@ -33,6 +33,9 @@ export const AppRoutes = {
   'tag': {
         path: '/blog/tag/:slug',
     },
+  'wood': {
+        path: '/wood',
+    },
   'page': {
         path: '/:slug',
     },

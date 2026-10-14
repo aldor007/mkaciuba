@@ -344,3 +344,113 @@ export function createMockMedias(
     });
   });
 }
+
+/**
+ * Product shape for the /wood addon (apps/photos/src/app/addons/wood/types.ts).
+ * Declared locally until `blog/graphql.tsx` is regenerated with the Product type.
+ */
+type MockProductMaterial = 'oak' | 'ash' | 'walnut' | 'other';
+type MockProductAvailability = 'in_stock' | 'made_to_order' | 'unavailable';
+
+interface MockProductImage {
+  __typename?: 'UploadFile';
+  id: string;
+  name?: string | null;
+  alternativeText?: string | null;
+  caption?: string | null;
+  // Loose on purpose — structurally compatible with both @mkaciuba/image's
+  // and @mkaciuba/types' Image types (they differ in nullability).
+  thumbnails: any[];
+}
+
+interface MockProduct {
+  __typename?: 'Product';
+  id: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  dimensions?: string | null;
+  price?: number | null;
+  material?: MockProductMaterial | null;
+  availability?: MockProductAvailability | null;
+  publicationDate: string;
+  images: MockProductImage[];
+}
+
+/**
+ * Creates a mock Product for the /wood addon listings
+ *
+ * @param overrides - Partial Product properties to override defaults
+ * @returns Mock Product object
+ *
+ * @example
+ * const product = createMockProduct({
+ *   name: 'Test Product',
+ *   price: 299,
+ *   images: [createMockUploadFile(), createMockUploadFile()]
+ * });
+ */
+export function createMockProduct(overrides?: Partial<MockProduct>): MockProduct {
+  const name = overrides?.name || 'Test Product';
+  const slug = overrides?.slug || name.toLowerCase().replace(/\s+/g, '-');
+  const now = new Date().toISOString();
+
+  const defaultImages: MockProductImage[] = [
+    {
+      __typename: 'UploadFile',
+      id: `product-image-1-${Math.random().toString(36).substr(2, 9)}`,
+      name: 'test-product-1.jpg',
+      alternativeText: 'Test Product 1',
+      caption: null,
+      thumbnails: mockImageVariants.slice(0, 2),
+    },
+    {
+      __typename: 'UploadFile',
+      id: `product-image-2-${Math.random().toString(36).substr(2, 9)}`,
+      name: 'test-product-2.jpg',
+      alternativeText: 'Test Product 2',
+      caption: null,
+      thumbnails: mockImageVariants.slice(2, 4),
+    },
+  ];
+
+  return {
+    __typename: 'Product',
+    id: `product-${Math.random().toString(36).substr(2, 9)}`,
+    name,
+    slug,
+    description: 'Test product description',
+    dimensions: '38x27x4',
+    price: 299,
+    material: 'oak',
+    availability: 'in_stock',
+    publicationDate: now,
+    images: defaultImages,
+    ...overrides,
+  };
+}
+
+/**
+ * Creates an array of mock products for grid/pagination testing
+ *
+ * @param count - Number of products to create
+ * @param overridesFn - Optional function to customize each product based on index
+ * @returns Array of mock Product objects
+ *
+ * @example
+ * const products = createMockProducts(12, (index) => ({
+ *   name: `Product ${index + 1}`
+ * }));
+ */
+export function createMockProducts(
+  count: number,
+  overridesFn?: (index: number) => Partial<MockProduct>
+): MockProduct[] {
+  return Array.from({ length: count }, (_, index) => {
+    const overrides = overridesFn ? overridesFn(index) : {};
+    return createMockProduct({
+      name: `Test Product ${index + 1}`,
+      ...overrides,
+    });
+  });
+}

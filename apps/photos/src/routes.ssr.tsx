@@ -12,6 +12,8 @@ import { OldPost } from './app/pages/OldPosts';
 import { PostTag } from './app/pages/PostTag';
 import { Page } from './app/pages/Page';
 import { GalleryBlog, GalleryBlogCategory } from './app/pages/GalleryBlog';
+// Addon: woodworking showcase page (/wood) — self-contained module, see app/addons/wood/
+import { WoodPage } from './app/addons/wood/WoodPage';
 
 export const AppRoutesComponent = () => (
   <Routes>
@@ -26,6 +28,8 @@ export const AppRoutesComponent = () => (
     <Route path={AppRoutes.postcategory.path} element={<PostCategory />} />
     <Route path={AppRoutes.oldposts.path} element={<OldPost />} />
     <Route path={AppRoutes.tag.path} element={<PostTag />} />
+    {/* Addon: woodworking showcase (/wood) */}
+    <Route path={AppRoutes.wood.path} element={<WoodPage />} />
     <Route path={AppRoutes.page.path} element={<Page />} />
     <Route path={AppRoutes.oldphotos.path} element={<GalleryBlog />} />
     <Route path={AppRoutes.oldgalleryblog.path} element={<GalleryBlogCategory />} />
