@@ -1,3 +1,11 @@
+## [0.18.2](https://github.com/aldor007/mkaciuba/compare/photos-0.18.1...photos-0.18.2) (2026-10-14)
+
+
+### Bug Fixes
+
+* release ([d546fc6](https://github.com/aldor007/mkaciuba/commit/d546fc6803c4b1b50045cc14f3d88261e68d4680))
+* release ([ebb7fe1](https://github.com/aldor007/mkaciuba/commit/ebb7fe11c009e7b630c465149c8c956163f9b3f2))
+
 ## [0.18.1](https://github.com/aldor007/mkaciuba/compare/photos-0.18.0...photos-0.18.1) (2026-05-18)
 
 
