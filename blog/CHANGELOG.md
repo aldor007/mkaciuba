@@ -1,3 +1,10 @@
+## [0.7.3](https://github.com/aldor007/mkaciuba/compare/strapi-0.7.2...strapi-0.7.3) (2026-10-15)
+
+
+### Bug Fixes
+
+* allow list for products ([1d3f155](https://github.com/aldor007/mkaciuba/commit/1d3f155cf51c3a2b4a83d9c835bb2ea34a50bca9))
+
 ## [0.7.2](https://github.com/aldor007/mkaciuba/compare/strapi-0.7.1...strapi-0.7.2) (2026-10-14)
 
 
