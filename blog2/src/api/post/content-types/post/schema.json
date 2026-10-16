@@ -1,0 +1,116 @@
+{
+  "kind": "collectionType",
+  "collectionName": "posts",
+  "info": {
+    "singularName": "post",
+    "pluralName": "posts",
+    "displayName": "Post",
+    "name": "post"
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "text": {
+      "type": "richtext"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "publicationDate": {
+      "type": "datetime",
+      "required": true
+    },
+    "gallery": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::category.category"
+    },
+    "image": {
+      "type": "media",
+      "allowedTypes": [
+        "images"
+      ],
+      "multiple": false,
+      "required": true
+    },
+    "keywords": {
+      "type": "string"
+    },
+    "description": {
+      "type": "richtext"
+    },
+    "category": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::post-category.post-category"
+    },
+    "slug": {
+      "type": "string",
+      "unique": true,
+      "private": false
+    },
+    "permalink": {
+      "type": "string"
+    },
+    "content_position": {
+      "type": "enumeration",
+      "enum": [
+        "top",
+        "bottom"
+      ],
+      "default": "top"
+    },
+    "gallery_template": {
+      "type": "enumeration",
+      "enum": [
+        "normal",
+        "description"
+      ],
+      "default": "normal"
+    },
+    "tags": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::tag.tag",
+      "inversedBy": "posts"
+    },
+    "post_image_preset": {
+      "type": "enumeration",
+      "enum": [
+        "postlist",
+        "postimg_ac"
+      ],
+      "private": true,
+      "default": "postlist"
+    },
+    "cover_image": {
+      "type": "media",
+      "allowedTypes": [
+        "images"
+      ],
+      "multiple": false,
+      "required": false
+    },
+    "cover_image_preset": {
+      "type": "enumeration",
+      "enum": [
+        "coverimg",
+        "cover_s"
+      ],
+      "private": true,
+      "default": "postlist"
+    },
+    "content_type": {
+      "type": "enumeration",
+      "enum": [
+        "HTML",
+        "MARKDOWN"
+      ],
+      "default": "MARKDOWN"
+    }
+  }
+}
