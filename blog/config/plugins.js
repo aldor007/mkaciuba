@@ -53,6 +53,10 @@ function buildApolloServerConfig() {
       host: process.env.REDIS_HOST,
       family: 4,
       db: parseInt(process.env.REDIS_DB || '1', 10),
+      // Connect lazily: an eager ioredis connection keeps the Node event
+      // loop alive and prevents `strapi build` from exiting after the admin
+      // panel is compiled (the Docker build would hang).
+      lazyConnect: true,
     });
     config.cache = redisCache;
     config.persistedQueries = { ttl: 10 * MAX_AGE, cache: redisCache };
