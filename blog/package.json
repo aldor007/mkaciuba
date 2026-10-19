@@ -38,19 +38,11 @@
     "mysql-await": "^2.1.6",
     "node-cache-redis": "^6.4.2",
     "slugify": "^1.4.6",
-    "strapi": "^3.6.10",
-    "strapi-admin": "^3.6.5",
-    "strapi-connector-bookshelf": "^3.6.5",
-    "strapi-hook-redis": "^3.6.5",
-    "strapi-plugin-content-manager": "^3.6.5",
-    "strapi-plugin-content-type-builder": "^3.6.5",
-    "strapi-plugin-email": "^3.6.5",
-    "strapi-plugin-graphql": "^3.6.5",
-    "strapi-plugin-upload": "^3.6.5",
-    "strapi-plugin-users-permissions": "^3.6.5",
     "strapi-provider-upload-mort": "file:providers/strapi-provider-upload-mort",
-    "strapi-utils": "^3.6.5",
-    "remove-markdown": "0.3.0"
+    "remove-markdown": "0.3.0",
+    "@strapi/strapi": "5.58.0",
+    "@strapi/plugin-graphql": "5.58.0",
+    "@strapi/plugin-users-permissions": "5.58.0"
   },
   "resolutions": {
     "browserslist": "4.16.6"
@@ -62,7 +54,7 @@
     "uuid": "c97c4237-35f2-4a8c-a18a-29690aa3933c"
   },
   "engines": {
-    "node": ">=10.0.0",
+    "node": ">=14.19.1 <=16.x.x",
     "npm": ">=6.0.0"
   },
   "license": "MIT"
