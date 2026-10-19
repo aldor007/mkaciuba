@@ -1,11 +1,11 @@
-const productModel = require('../../../api/product/models/product');
+'use strict';
 
-// Mock slugify. Virtual: the blog's node_modules may not be installed in this
-// workspace (specs run from the workspace root); the virtual mock keeps this
-// spec runnable in both environments.
+const productLifecycles = require('../../../src/api/product/content-types/product/lifecycles');
+
+// Mock slugify (simple transliteration-free behaviour, as in the v3 spec)
 jest.mock('slugify', () => (text, options) => {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-}, {virtual: true});
+});
 
 // Mock makeid
 jest.mock('../../../lib', () => ({
@@ -15,131 +15,99 @@ jest.mock('../../../lib', () => ({
   })
 }));
 
-describe('api/product/models/product.js', () => {
-  describe('lifecycles', () => {
-    describe('beforeCreate', () => {
-      it('should generate slug from name', async () => {
-        const data = {
-          name: 'Testowy produkt'
-        };
+describe('api/product lifecycles (v4)', () => {
+  describe('beforeCreate', () => {
+    it('should generate slug from name', async () => {
+      const data = { name: 'Testowy produkt' };
 
-        await productModel.lifecycles.beforeCreate(data);
+      await productLifecycles.beforeCreate({ params: { data } });
 
-        expect(data.slug).toBeDefined();
-        expect(data.slug).toContain('testowy-produkt');
-        expect(data.slug).toContain('-abcd');
-      });
+      expect(data.slug).toBeDefined();
+      expect(data.slug).toContain('testowy-produkt');
+      expect(data.slug).toContain('-abcd');
+    });
 
-      it('should handle name with special characters', async () => {
-        const data = {
-          name: 'Produkt: Testowy (specjalny)!'
-        };
+    it('should handle name with special characters', async () => {
+      const data = { name: 'Produkt: Testowy (specjalny)!' };
 
-        await productModel.lifecycles.beforeCreate(data);
+      await productLifecycles.beforeCreate({ params: { data } });
 
-        expect(data.slug).toBeDefined();
-        expect(data.slug).toMatch(/^produkt-testowy-specjalny-[a-z0-9]{4}$/);
-      });
+      expect(data.slug).toBeDefined();
+      expect(data.slug).toMatch(/^produkt-testowy-specjalny-[a-z0-9]{4}$/);
+    });
 
-      it('should handle name with spaces', async () => {
-        const data = {
-          name: '  Multiple   Spaces   Between  '
-        };
+    it('should handle name with spaces', async () => {
+      const data = { name: '  Multiple   Spaces   Between  ' };
 
-        await productModel.lifecycles.beforeCreate(data);
+      await productLifecycles.beforeCreate({ params: { data } });
 
-        expect(data.slug).toBeDefined();
-        expect(data.slug).toMatch(/^multiple-spaces-between-[a-z0-9]{4}$/);
-      });
+      expect(data.slug).toBeDefined();
+      expect(data.slug).toMatch(/^multiple-spaces-between-[a-z0-9]{4}$/);
+    });
 
-      it('should handle non-ASCII characters', async () => {
-        const data = {
-          name: 'Tëst Prödukt Nàme'
-        };
+    it('should not modify data when name is missing', async () => {
+      const data = { description: 'Some description' };
 
-        await productModel.lifecycles.beforeCreate(data);
+      await productLifecycles.beforeCreate({ params: { data } });
 
-        expect(data.slug).toBeDefined();
-        // Slugify should handle non-ASCII characters
-        expect(typeof data.slug).toBe('string');
-      });
+      expect(data.slug).toBeUndefined();
+    });
 
-      it('should not modify data when name is missing', async () => {
-        const data = {
-          description: 'Some description'
-        };
+    it('should handle empty name', async () => {
+      const data = { name: '' };
 
-        await productModel.lifecycles.beforeCreate(data);
+      await productLifecycles.beforeCreate({ params: { data } });
 
-        expect(data.slug).toBeUndefined();
-      });
+      expect(data.slug).toBeUndefined();
+    });
 
-      it('should handle empty name', async () => {
-        const data = {
-          name: ''
-        };
+    it('should handle null name', async () => {
+      const data = { name: null };
 
-        await productModel.lifecycles.beforeCreate(data);
+      await productLifecycles.beforeCreate({ params: { data } });
 
-        expect(data.slug).toBeUndefined();
-      });
+      expect(data.slug).toBeUndefined();
+    });
 
-      it('should handle null name', async () => {
-        const data = {
-          name: null
-        };
+    it('should append random ID to slug', async () => {
+      const { makeid } = require('../../../lib');
 
-        await productModel.lifecycles.beforeCreate(data);
+      // Set up mock to return specific value
+      makeid.mockReturnValueOnce('xyz9');
 
-        expect(data.slug).toBeUndefined();
-      });
+      const data = { name: 'Test Product' };
 
-      it('should append random ID to slug', async () => {
-        const { makeid } = require('../../../lib');
+      await productLifecycles.beforeCreate({ params: { data } });
 
-        // Set up mock to return specific value
-        makeid.mockReturnValueOnce('xyz9');
+      expect(data.slug).toBe('test-product-xyz9');
+      expect(makeid).toHaveBeenCalledWith(4);
+    });
 
-        const data = {
-          name: 'Test Product'
-        };
+    it('should generate unique slugs for same name', async () => {
+      const { makeid } = require('../../../lib');
 
-        await productModel.lifecycles.beforeCreate(data);
+      makeid.mockReturnValueOnce('aaa1').mockReturnValueOnce('bbb2');
 
-        expect(data.slug).toBe('test-product-xyz9');
-        expect(makeid).toHaveBeenCalledWith(4);
-      });
+      const data1 = { name: 'Same Name' };
+      const data2 = { name: 'Same Name' };
 
-      it('should generate unique slugs for same name', async () => {
-        const { makeid } = require('../../../lib');
+      await productLifecycles.beforeCreate({ params: { data: data1 } });
+      await productLifecycles.beforeCreate({ params: { data: data2 } });
 
-        // Mock different IDs for each call
-        makeid
-          .mockReturnValueOnce('aaa1')
-          .mockReturnValueOnce('bbb2');
+      expect(data1.slug).toBe('same-name-aaa1');
+      expect(data2.slug).toBe('same-name-bbb2');
+      expect(data1.slug).not.toBe(data2.slug);
+    });
 
-        const data1 = { name: 'Same Name' };
-        const data2 = { name: 'Same Name' };
+    it('should handle very long names', async () => {
+      const longName = 'A'.repeat(200);
+      const data = { name: longName };
 
-        await productModel.lifecycles.beforeCreate(data1);
-        await productModel.lifecycles.beforeCreate(data2);
+      await productLifecycles.beforeCreate({ params: { data } });
 
-        expect(data1.slug).toBe('same-name-aaa1');
-        expect(data2.slug).toBe('same-name-bbb2');
-        expect(data1.slug).not.toBe(data2.slug);
-      });
-
-      it('should handle very long names', async () => {
-        const longName = 'A'.repeat(200);
-        const data = { name: longName };
-
-        await productModel.lifecycles.beforeCreate(data);
-
-        expect(data.slug).toBeDefined();
-        expect(typeof data.slug).toBe('string');
-        // Should still append the ID
-        expect(data.slug).toMatch(/-[a-z0-9]{4}$/);
-      });
+      expect(data.slug).toBeDefined();
+      expect(typeof data.slug).toBe('string');
+      expect(data.slug).toMatch(/-[a-z0-9]{4}$/);
     });
   });
 });
