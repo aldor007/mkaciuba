@@ -1,7 +1,15 @@
-module.exports = [
+'use strict';
+
+module.exports = ({ env }) => [
   'strapi::errors',
   'strapi::security',
-  'strapi::cors',
+  {
+    name: 'strapi::cors',
+    config: {
+      origin: ['*'],
+      headers: ['*'],
+    },
+  },
   'strapi::poweredBy',
   'strapi::logger',
   'strapi::query',
