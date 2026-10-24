@@ -74,7 +74,7 @@ module.exports = ({ nexus }) => {
               gallery: gallery.id,
               publicationDate: { $lt: new Date() },
             },
-            orderBy: 'id:desc',
+            sort: 'id:desc',
             limit: 100,
             populate: { image: true, gallery: true, file: true, medias: true },
           });

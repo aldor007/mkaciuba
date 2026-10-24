@@ -40,6 +40,30 @@ module.exports = ({ nexus }) => {
     type: 'Category',
     definition(t) {
       t.nonNull.id('id');
+      t.list.field('medias', {
+        type: 'UploadFile',
+        args: { start: 'Int', limit: 'Int', sort: 'String' },
+        resolve(obj, args) {
+          const medias = [...(obj.medias || [])];
+          const sort = args.sort || 'id:desc';
+          if (sort && sort !== 'id:desc') {
+            const [field, direction = 'desc'] = sort.split(':');
+            const dir = direction === 'asc' ? 1 : -1;
+            medias.sort((a, b) => {
+              const left = a?.[field] ?? 0;
+              const right = b?.[field] ?? 0;
+              if (left === right) return 0;
+              return (left < right ? -1 : 1) * dir;
+            });
+          }
+          const start = args.start || 0;
+          const limit = args.limit;
+          if (limit == null) {
+            return medias;
+          }
+          return medias.slice(start, start + limit);
+        },
+      });
       t.field('randomImage', {
         type: 'UploadFile',
         async resolve(obj, args, context, info) {
@@ -76,7 +100,7 @@ module.exports = ({ nexus }) => {
               public: true,
               gallery: { $notNull: true },
             },
-            orderBy: args.sort || 'id:desc',
+            sort: args.sort || 'id:desc',
             start: args.start || 0,
             limit: args.limit,
             populate: POPULATE_CATEGORY_LIST,
@@ -150,7 +174,7 @@ module.exports = ({ nexus }) => {
               public: true,
               gallery: { $notNull: true },
             },
-            orderBy: 'id:desc',
+            sort: 'id:desc',
             limit: args.limit || 3,
             populate: { medias: true },
           });
@@ -250,10 +274,20 @@ module.exports = ({ nexus }) => {
       },
       async medias(obj, args, context, info) {
         setCacheHint(info, { maxAge: 600, scope: 'PUBLIC' });
-        const medias = obj.medias || [];
-        const pagination = args.pagination || {};
-        const start = pagination.start || 0;
-        const limit = pagination.limit;
+        const medias = [...(obj.medias || [])];
+        const start = args.start || 0;
+        const limit = args.limit;
+        const sort = args.sort || 'id:desc';
+        if (sort && sort !== 'id:desc') {
+          const [field, direction = 'desc'] = sort.split(':');
+          const dir = direction === 'asc' ? 1 : -1;
+          medias.sort((a, b) => {
+            const left = a?.[field] ?? 0;
+            const right = b?.[field] ?? 0;
+            if (left === right) return 0;
+            return (left < right ? -1 : 1) * dir;
+          });
+        }
         if (limit == null) {
           return medias;
         }

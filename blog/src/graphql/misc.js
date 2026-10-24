@@ -34,7 +34,7 @@ module.exports = ({ nexus }) => {
         async resolve(obj, args, context, info) {
           return strapi.entityService.findMany('api::product.product', {
             filters: translateWhere(args.where),
-            orderBy: args.sort || 'id:desc',
+            sort: args.sort || 'id:desc',
             start: args.start || 0,
             limit: args.limit,
             populate: { images: true },
@@ -48,7 +48,7 @@ module.exports = ({ nexus }) => {
         async resolve(obj, args, context, info) {
           return strapi.entityService.findMany('api::tag.tag', {
             filters: translateWhere(args.where),
-            orderBy: args.sort || 'id:desc',
+            sort: args.sort || 'id:desc',
             start: args.start || 0,
             limit: args.limit,
             populate: {

@@ -80,7 +80,7 @@ module.exports = ({ nexus }) => {
               ...translateWhere(args.where),
               publicationDate: { $lt: new Date() },
             },
-            orderBy: args.sort || 'id:desc',
+            sort: args.sort || 'id:desc',
             start: args.start || 0,
             limit: args.limit,
             populate: POST_POPULATE,
@@ -158,7 +158,7 @@ module.exports = ({ nexus }) => {
               id: { $lt: post.id },
               publicationDate: { $lt: publicationBound },
             },
-            orderBy: 'id:desc',
+            sort: 'id:desc',
             limit: 1,
             populate: POST_POPULATE,
           });
@@ -167,7 +167,7 @@ module.exports = ({ nexus }) => {
               id: { $gt: post.id },
               publicationDate: { $lt: publicationBound },
             },
-            orderBy: 'id:asc',
+            sort: 'id:asc',
             limit: 1,
             populate: POST_POPULATE,
           });
@@ -196,7 +196,7 @@ module.exports = ({ nexus }) => {
           }
           return strapi.entityService.findMany(POST_UID, {
             filters,
-            orderBy: 'id:desc',
+            sort: 'id:desc',
             limit: 4,
             populate: POST_POPULATE,
           });
