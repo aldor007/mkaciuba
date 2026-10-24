@@ -52,26 +52,6 @@ module.exports = ({ nexus }) => {
       t.list.field('medias', {
         type: 'UploadFile',
         args: { start: 'Int', limit: 'Int', sort: 'String' },
-        resolve(obj, args) {
-          const medias = [...(obj.medias || [])];
-          const sort = args.sort || 'id:desc';
-          if (sort && sort !== 'id:desc') {
-            const [field, direction = 'desc'] = sort.split(':');
-            const dir = direction === 'asc' ? 1 : -1;
-            medias.sort((a, b) => {
-              const left = a?.[field] ?? 0;
-              const right = b?.[field] ?? 0;
-              if (left === right) return 0;
-              return (left < right ? -1 : 1) * dir;
-            });
-          }
-          const start = args.start || 0;
-          const limit = args.limit;
-          if (limit == null) {
-            return medias;
-          }
-          return medias.slice(start, start + limit);
-        },
       });
       t.field('randomImage', {
         type: 'UploadFile',
@@ -104,10 +84,10 @@ module.exports = ({ nexus }) => {
           setCacheHint(info, { maxAge: 600, scope: 'PUBLIC' });
           let categories = await strapi.entityService.findMany(CATEGORY_UID, {
             filters: {
-              ...translateWhere(args.where),
               publicationDate: { $lt: new Date() },
               public: true,
               gallery: { $notNull: true },
+              ...translateWhere(args.where),
             },
             sort: args.sort || 'id:desc',
             start: args.start || 0,
@@ -204,12 +184,12 @@ module.exports = ({ nexus }) => {
           setCacheHint(info, { maxAge: 600, scope: 'PUBLIC' });
           const translated = translateWhere(args.where);
           const where = {
-            ...translated,
             publicationDate: {
               ...(translated.publicationDate || {}),
               $lt: new Date(),
             },
             gallery: { $notNull: true },
+            ...translated,
           };
           return strapi.db.query(CATEGORY_UID).count({ where });
         },
