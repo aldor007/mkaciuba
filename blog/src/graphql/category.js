@@ -82,12 +82,22 @@ module.exports = ({ nexus }) => {
         args: { where: 'JSON', limit: 'Int', start: 'Int', sort: 'String' },
         async resolve(obj, args, context, info) {
           setCacheHint(info, { maxAge: 600, scope: 'PUBLIC' });
+          const translated = translateWhere(args.where);
+          const galleryFilter =
+            translated.gallery == null
+              ? { $notNull: true }
+              : typeof translated.gallery === 'object' && !Array.isArray(translated.gallery)
+                ? { ...translated.gallery, $notNull: true }
+                : { id: translated.gallery, $notNull: true };
           let categories = await strapi.entityService.findMany(CATEGORY_UID, {
             filters: {
-              publicationDate: { $lt: new Date() },
+              ...translated,
+              publicationDate: {
+                ...(translated.publicationDate || {}),
+                $lt: new Date(),
+              },
               public: true,
-              gallery: { $notNull: true },
-              ...translateWhere(args.where),
+              gallery: galleryFilter,
             },
             sort: args.sort || 'id:desc',
             start: args.start || 0,
@@ -183,13 +193,20 @@ module.exports = ({ nexus }) => {
         async resolve(obj, args, context, info) {
           setCacheHint(info, { maxAge: 600, scope: 'PUBLIC' });
           const translated = translateWhere(args.where);
+          const galleryFilter =
+            translated.gallery == null
+              ? { $notNull: true }
+              : typeof translated.gallery === 'object' && !Array.isArray(translated.gallery)
+                ? { ...translated.gallery, $notNull: true }
+                : { id: translated.gallery, $notNull: true };
           const where = {
+            ...translated,
             publicationDate: {
               ...(translated.publicationDate || {}),
               $lt: new Date(),
             },
-            gallery: { $notNull: true },
-            ...translated,
+            public: true,
+            gallery: galleryFilter,
           };
           return strapi.db.query(CATEGORY_UID).count({ where });
         },
