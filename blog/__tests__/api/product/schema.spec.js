@@ -6,6 +6,8 @@
  * captures the field definitions so the resolvers can be invoked directly.
  */
 const miscModule = require('../../../src/graphql/misc');
+const categoryModule = require('../../../src/graphql/category');
+const postModule = require('../../../src/graphql/post');
 
 function buildFakeNexus() {
   const captured = { queryFields: {}, extendedTypes: [] };
@@ -13,6 +15,12 @@ function buildFakeNexus() {
     const t = {
       _fields: {},
       field(name, cfg) {
+        t._fields[name] = cfg;
+      },
+      id(name, cfg) {
+        t._fields[name] = cfg;
+      },
+      string(name, cfg) {
         t._fields[name] = cfg;
       },
       nonNull: {
@@ -32,6 +40,16 @@ function buildFakeNexus() {
         },
       },
     };
+    t.list = Object.assign((name, cfg) => {
+      if (typeof name === 'string') {
+        return { name, cfg };
+      }
+      return null;
+    }, {
+      field(name, cfg) {
+        t._fields[name] = cfg;
+      },
+    });
     return t;
   };
   const nexus = {
@@ -46,9 +64,38 @@ function buildFakeNexus() {
       }
     },
     nonNull: (inner) => ({ _nonNull: inner }),
+    list: (inner) => ({ _list: inner }),
   };
   return { nexus, captured };
 }
+
+describe('src/graphql compatibility layer', () => {
+  it('registers the flat relation/media fields expected by the v3 frontend on Category', () => {
+    const { nexus, captured } = buildFakeNexus();
+    categoryModule({ nexus });
+    const categoryFields = captured.extendedTypes.find((entry) => entry.type === 'Category').fields;
+    expect(categoryFields.file).toBeDefined();
+    expect(categoryFields.gallery).toBeDefined();
+    expect(categoryFields.image).toBeDefined();
+    expect(categoryFields.medias).toBeDefined();
+    expect(categoryFields.medias.args).toEqual({
+      start: 'Int',
+      limit: 'Int',
+      sort: 'String',
+    });
+  });
+
+  it('registers the flat relation/media fields expected by the v3 frontend on Post', () => {
+    const { nexus, captured } = buildFakeNexus();
+    postModule({ nexus });
+    const postFields = captured.extendedTypes.find((entry) => entry.type === 'Post').fields;
+    expect(postFields.image).toBeDefined();
+    expect(postFields.cover_image).toBeDefined();
+    expect(postFields.gallery).toBeDefined();
+    expect(postFields.category).toBeDefined();
+    expect(postFields.tags).toBeDefined();
+  });
+});
 
 describe('src/graphql/misc — productsCount', () => {
   let productsCount;

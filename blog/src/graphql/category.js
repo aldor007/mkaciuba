@@ -40,6 +40,15 @@ module.exports = ({ nexus }) => {
     type: 'Category',
     definition(t) {
       t.nonNull.id('id');
+      t.field('file', {
+        type: 'UploadFile',
+      });
+      t.field('gallery', {
+        type: 'Gallery',
+      });
+      t.field('image', {
+        type: 'UploadFile',
+      });
       t.list.field('medias', {
         type: 'UploadFile',
         args: { start: 'Int', limit: 'Int', sort: 'String' },

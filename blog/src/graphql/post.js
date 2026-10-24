@@ -34,6 +34,21 @@ module.exports = ({ nexus }) => {
     type: 'Post',
     definition(t) {
       t.nonNull.id('id');
+      t.field('image', {
+        type: 'UploadFile',
+      });
+      t.field('cover_image', {
+        type: 'UploadFile',
+      });
+      t.field('gallery', {
+        type: 'Category',
+      });
+      t.field('category', {
+        type: 'PostCategory',
+      });
+      t.list.field('tags', {
+        type: 'Tag',
+      });
       t.list.field('mainImage', {
         type: 'Image',
         resolve(obj) {
